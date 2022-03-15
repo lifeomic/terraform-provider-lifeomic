@@ -1,0 +1,8 @@
+terraform-provider-marketplace
+icon-240.png
+terraform.tfstate
+terraform.tfstate.backup
+.terraform
+.terraform.lock.hcl
+.DS_STORE
+
