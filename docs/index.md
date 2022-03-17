@@ -1,42 +1,79 @@
 # <provider> Provider
 
-This provider is for managing LifeOmic app store resources. Typically these applets are then published on the marketplace (marketplace provider is still under development). If you're working to use this provider for external app tiles, contact LifeOmic for assistance. A self-serve experience in under development.
+This provider is for managing LifeOmic PHC resources.
 
 The provider uses your local AWS config in order to authenticate. Support for token-based authentication with the public graphql-proxy will probably come in the future.
 
 ## Example Usage
 
 ```hcl
-provider "marketplace" {}
-
-resource "app_tile" "example" {
-  provider       = marketplace
-  name           = "Example App Tile for Marketplace"
-  description    = "This applet is created and managed using terraform"
-  author_display = "LifeOmic"
-  app_tile_id    = "some_id" # Probably get this from a applet resource from appstore
-  image          = "icon.png"
-  image_hash     = filemd5("./icon.png")
-  version        = "0.0.12"
+provider "phc" {
+  account = "lifeomic"
+  rules = {
+    publishContent = true
+  }
 }
 
-resource "app_tile" "auto_version_example" {
-  provider       = marketplace
-  name           = "Example App Tile for Marketplace"
-  description    = "This applet is created and managed using terraform"
+# Aliasing allows you have to clients to multiple accounts
+provider "phc" {
+  alias   = "lifeomiclife"
+  account = "lifeomiclife"
+  rules = {
+    createData = true
+    deleteData = true
+    updateData = true
+  }
+}
+
+locals {
+  name        = "New Example Applet"
+  description = "This is just used for verifying that the terraform provider works. This should never appear in prod"
+  app_url     = "https://lifeapplets.dev.lifeomic.com/anxiety"
+}
+
+resource "phc_applet" "terraform_test_applet" {
+  provider       = phc.lifeomiclife
+  name           = local.name
+  description    = local.description
   author_display = "LifeOmic"
-  app_tile_id    = "some_id" # Probably get this from a applet resource from appstore
-  image          = "icon.png"
-  image_hash     = filemd5("./icon.png")
-  auto_version   = true
+  url            = local.app_url
+  image          = "${local.app_url}/icon-240.png"
+}
+
+resource "phc_app_tile" "example_applet" {
+  name         = local.name
+  description  = local.description
+  image        = "icon-240.png"
+  image_hash   = filemd5("./icon-240.png")
+  app_tile_id  = phc_applet.terraform_test_applet.id
+  auto_version = true
+  lifecycle {
+    ignore_changes = [
+      image,   # Hash is what actually matters
+      version, # Autoversioned
+    ]
+  }
 }
 ```
 
 ## Argument Reference
 
+### Provider Args
+* account: string # Determines what account you are using for these resources
+* rules: string # Principle of least privilege, you should specify only the privileges you need
+* user: string # Allows specifying a specific user. Defaults to phc-tf. Useful for log searching
+
+### phc_applet
 * name: string
 * description: string
 * author_display: string
+* image: string # URL to hosted image
+* url: string
+
+### phc_app_tile
+
+* name: string
+* description: string
 * app_tile_id: string
 * image: string # Path to image
 * image_hash: string # Hash so that we know when the image has changed
