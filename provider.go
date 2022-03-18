@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/lifeomic/terraform-provider-phc/appstore"
 	"github.com/lifeomic/terraform-provider-phc/marketplace"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -22,7 +23,7 @@ func buildRules(rawRules map[string]interface{}) map[string]bool {
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	rules := buildRules(d.Get("rules").(map[string]interface{}))
-	return client.BuildClient("lifeomic", "phc-tf", rules)
+	return client.BuildClient(d.Get("account").(string), d.Get("user").(string), rules)
 }
 
 func Provider() terraform.ResourceProvider {
@@ -34,9 +35,19 @@ func Provider() terraform.ResourceProvider {
 				Optional: true,
 				Default:  map[string]interface{}{},
 			},
+			"account": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"user": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "phc-tf",
+			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"app_tile": marketplace.AppTileResource(),
+			"phc_app_tile": marketplace.AppTileResource(),
+			"phc_applet":   appstore.AppletResource(),
 		},
 	}
 }
