@@ -17,7 +17,7 @@ var (
 )
 
 const (
-	userAgentPrefix = "phc-sdk-go/"
+	userAgentPrefix = "terraform-provider-phc/"
 
 	defaultAPIVersion = "v1"
 	defaultHost       = "api.us.lifeomic.com"
