@@ -37,30 +37,23 @@ type ListLinks struct {
 // ListResponse represents the base object for generic list responses.
 type ListResponse struct {
 	Links *ListLinks `json:"links"`
-
-	NextPageToken *string `json:"nextPageToken"`
 }
 
 func (r *ListResponse) HasNextPage() bool {
-	return (r.Links != nil && r.Links.Next != nil) || r.NextPageToken != nil
+	return r.Links != nil && r.Links.Next != nil
 }
 
 // GetNextPageToken returns a nextPageToken or an empty string.
 func (r *ListResponse) GetNextPageToken() string {
-	if r.Links != nil && r.Links.Next != nil {
-		url, err := url.Parse(*r.Links.Next)
-		if err != nil {
-			return ""
-		}
-
-		return url.Query().Get("nextPageToken")
+	if !r.HasNextPage() {
+		return ""
 	}
 
-	if r.NextPageToken != nil {
-		return *r.NextPageToken
+	url, err := url.Parse(*r.Links.Next)
+	if err != nil {
+		return ""
 	}
-
-	return ""
+	return url.Query().Get("nextPageToken")
 }
 
 // buildQueryURL formats an endpoint with query parameters.
