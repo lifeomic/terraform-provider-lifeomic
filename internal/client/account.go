@@ -10,7 +10,7 @@ import (
 type AccountService interface {
 	// Returns a list of accounts that the user has access to.
 	// See: https://docs.us.lifeomic.com/api/#list-all-accounts
-	List(context.Context) ([]Account, error)
+	List(context.Context, ListOptions) ([]Account, error)
 }
 
 // AccountType represents the type of an Account.
@@ -41,7 +41,7 @@ type accountListResponse struct {
 	Accounts []Account `json:"accounts"`
 }
 
-func (s *accountService) List(ctx context.Context) ([]Account, error) {
+func (s *accountService) List(ctx context.Context, options ListOptions) ([]Account, error) {
 	req := s.Request(ctx).SetResult(&accountListResponse{})
 	req.Header.Del(accountHeader)
 

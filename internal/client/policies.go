@@ -11,7 +11,7 @@ import (
 type PolicyService interface {
 	// List returns all policies.
 	// See: https://docs.us.lifeomic.com/api/#list-policies
-	List(context.Context) ([]Policy, error)
+	List(context.Context, ListOptions) (PaginatedList[Policy], error)
 	// Create creates a new policy.
 	// See: https://docs.us.lifeomic.com/api/#create-policy
 	Create(context.Context, *Policy) (*Policy, error)
@@ -91,16 +91,42 @@ type policyService struct {
 // policyService implements PolicyService.
 var _ PolicyService = &policyService{}
 
-type policyListResponse struct {
-	Items []Policy `json:"items"`
+type policyList struct {
+	ListResponse
+
+	Policies []Policy `json:"items"`
+
+	listOptions   ListOptions   `json:"-"`
+	policyService PolicyService `json:"-"`
 }
 
-func (s *policyService) List(ctx context.Context) ([]Policy, error) {
-	res, err := checkResponse(s.Request(ctx).SetResult(&policyListResponse{}).Get("/policies"))
+func (l *policyList) GetNextPage(ctx context.Context) (PaginatedList[Policy], error) {
+	if !l.HasNextPage() {
+		return nil, ErrNoNextPage
+	}
+
+	options := l.listOptions
+	options.NextPageToken = l.GetNextPageToken()
+	return l.policyService.List(ctx, options)
+}
+
+func (l *policyList) Items() []Policy { return l.Policies }
+
+func (s *policyService) List(ctx context.Context, options ListOptions) (PaginatedList[Policy], error) {
+	endpoint, err := buildQueryURL("/policies", &options)
 	if err != nil {
 		return nil, err
 	}
-	return res.Result().(*policyListResponse).Items, nil
+
+	res, err := checkResponse(s.Request(ctx).SetResult(&policyList{}).Get(endpoint))
+	if err != nil {
+		return nil, err
+	}
+
+	policyList := res.Result().(*policyList)
+	policyList.policyService = s
+	policyList.listOptions = options
+	return policyList, nil
 }
 
 func (s *policyService) Create(ctx context.Context, policy *Policy) (*Policy, error) {
