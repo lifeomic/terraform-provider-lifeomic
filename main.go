@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/lifeomic/terraform-provider-phc/internal/client"
 )
@@ -11,6 +12,16 @@ func main() {
 	cli := client.New(client.Config{
 		Account: "tfprovidertest",
 	})
+
+	// List accounts
+	accountList, err := cli.Accounts().List(ctx, client.ListOptions{
+		PageSize: 1,
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("accountList: %+v\n", accountList)
 
 	policyClient := cli.Policies()
 
@@ -29,6 +40,25 @@ func main() {
 	})
 	if err != nil {
 		panic(err)
+	}
+
+	// List all policies with pagination.
+	policyList, err := policyClient.List(ctx, client.ListOptions{
+		PageSize: 2,
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("policies: %+v", policyList.Items())
+
+	for policyList.HasNextPage() {
+		policyList, err = policyList.GetNextPage(ctx)
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Printf("paged policies: %+v\n", policyList)
 	}
 
 	// Rename the policy.

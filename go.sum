@@ -1,3 +1,5 @@
+github.com/dyninc/qstring v0.0.0-20160719172318-ab5840a88e81 h1:qUs1h5OM0AIdSmU+1E70ux/Rof7c1Sl+alkoail17p8=
+github.com/dyninc/qstring v0.0.0-20160719172318-ab5840a88e81/go.mod h1:epYnJgywZjJA8pFn29PbCtok40fkEXYz6985IbLTTzs=
 github.com/go-resty/resty/v2 v2.7.0 h1:me+K9p3uhSmXtrBZ4k9jcEAfJmuC8IivWHwaLZwPrFY=
 github.com/go-resty/resty/v2 v2.7.0/go.mod h1:9PWDzw47qPphMRFfhsyk0NnSgvluHcljSMVIq3w7q0I=
 golang.org/x/net v0.0.0-20211029224645-99673261e6eb h1:pirldcYWx7rx7kE5r+9WsOXPXK0+WH5+uZ7uPmJ44uM=
