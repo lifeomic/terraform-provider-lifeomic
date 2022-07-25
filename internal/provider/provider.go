@@ -23,6 +23,11 @@ func New() *schema.Provider {
 				DefaultFunc: schema.EnvDefaultFunc("PHC_TOKEN", ""),
 				Description: "The token to use for authenticating with the PHC API. If not explicitly set, it will be sourced from the PHC_TOKEN environment variable.",
 			},
+			"account_id": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "The unique identifier of the LifeOmic account to use when communicating with the API.",
+			},
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{},
@@ -40,6 +45,7 @@ func configureProvider(ctx context.Context, d *schema.ResourceData) (any, diag.D
 	config := client.Config{
 		Host:      d.Get("host").(string),
 		AuthToken: d.Get("token").(string),
+		Account:   d.Get("account_id").(string),
 	}
 	return &providerMeta{Client: client.New(config)}, nil
 }
