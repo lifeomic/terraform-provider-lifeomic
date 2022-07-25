@@ -14,9 +14,7 @@ func main() {
 	})
 
 	// List accounts
-	accountList, err := cli.Accounts().List(ctx, client.ListOptions{
-		PageSize: 1,
-	})
+	accountList, err := cli.Accounts().List(ctx)
 	if err != nil {
 		panic(err)
 	}
