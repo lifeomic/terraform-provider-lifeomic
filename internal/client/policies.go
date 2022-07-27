@@ -206,8 +206,8 @@ type Comparison interface {
 // value.
 // See: https://phc.docs.lifeomic.com/development/abac-syntax#comparisons
 type ValueComparison struct {
-	Comparison ComparisonType `json:"comparison,omitempty"`
-	Value      string         `json:"value,omitempty"`
+	Comparison ComparisonType `json:"comparison"`
+	Value      string         `json:"value"`
 }
 
 func (c ValueComparison) GetComparisonType() ComparisonType { return c.Comparison }
@@ -216,16 +216,16 @@ func (c ValueComparison) GetComparisonType() ComparisonType { return c.Compariso
 // some values.
 // See: https://phc.docs.lifeomic.com/development/abac-syntax#comparisons
 type MultivalueComparison struct {
-	Comparison ComparisonType `json:"comparison,omitempty"`
-	Values     []string       `json:"value,omitempty"`
+	Comparison ComparisonType `json:"comparison"`
+	Values     []string       `json:"value"`
 }
 
 func (c MultivalueComparison) GetComparisonType() ComparisonType { return c.Comparison }
 
 // TargetComparison represents an ABAC comparison against some attribute.
 type TargetComparison struct {
-	Comparison ComparisonType `json:"Comparison,omitempty"`
-	Target     string         `json:"target,omitempty"`
+	Comparison ComparisonType `json:"comparison"`
+	Target     string         `json:"target"`
 }
 
 func (c TargetComparison) GetComparisonType() ComparisonType { return c.Comparison }
