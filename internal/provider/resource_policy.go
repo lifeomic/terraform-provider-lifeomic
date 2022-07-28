@@ -3,7 +3,6 @@ package provider
 import (
 	"context"
 	"fmt"
-	"reflect"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -37,7 +36,6 @@ func resourcePolicy() *schema.Resource {
 				// TODO: implement SchemaDiffSuppressFunc to
 				// compare the spec of rules against the state of
 				// the world without order mattering.
-				RequiredWith: []string{"name"},
 			},
 		},
 	}
@@ -51,62 +49,93 @@ func policyRuleResource() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"comparison": {
-				Description: "The ABAC attribute comparison of this policy rule.",
-				Required:    true,
-				Type:        schema.TypeList,
-				Elem:        policyRuleComparisonResource(),
+
+			"value_comparison": {
+				Optional: true,
+				Type:     schema.TypeList,
+				Elem:     policyRuleValueComparisonResource(),
+			},
+			"target_comparison": {
+				Optional: true,
+				Type:     schema.TypeList,
+				Elem:     policyRuleTargetComparisonResource(),
+			},
+			"multivalue_comparison": {
+				Optional: true,
+				Type:     schema.TypeList,
+				Elem:     policyRuleMultivalueComparisonResource(),
 			},
 		},
 	}
 }
 
-func policyRuleComparisonResource() *schema.Resource {
+func policyRuleComparisonTypeSchema() *schema.Schema {
+	return &schema.Schema{
+		Description: "The type of ABAC comparison.",
+		Type:        schema.TypeString,
+		Required:    true,
+		ValidateFunc: validation.StringInSlice([]string{
+			string(client.ComparisonEndsWith),
+			string(client.ComparisonEquals),
+			string(client.ComparisonExists),
+			string(client.ComparisonIn),
+			string(client.ComparisonIncludes),
+			string(client.ComparisonNotEquals),
+			string(client.ComparisonNotIn),
+			string(client.ComparisonStartsWith),
+			string(client.ComparisonSubset),
+			string(client.ComparisonSuperset),
+		}, false),
+	}
+}
+
+func policyRuleComparisonSubjectSchema() *schema.Schema {
+	return &schema.Schema{
+		Description: "The subject of this comparison.",
+		Type:        schema.TypeString,
+		Required:    true,
+	}
+}
+
+func policyRuleMultivalueComparisonResource() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"type": {
-				Description: "The type of ABAC comparison.",
-				Type:        schema.TypeString,
-				Required:    true,
-				ValidateFunc: validation.StringInSlice([]string{
-					string(client.ComparisonEndsWith),
-					string(client.ComparisonEquals),
-					string(client.ComparisonExists),
-					string(client.ComparisonIn),
-					string(client.ComparisonIncludes),
-					string(client.ComparisonNotEquals),
-					string(client.ComparisonNotIn),
-					string(client.ComparisonStartsWith),
-					string(client.ComparisonSubset),
-					string(client.ComparisonSuperset),
-				}, false),
-			},
-			"subject": {
-				Description: "The subject of this comparison.",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
-			"value": {
-				Description: "The value to compare the subject to.",
-				Type:        schema.TypeString,
-				Optional:    true,
-
-				ConflictsWith: []string{"values", "target"},
-			},
+			"type":    policyRuleComparisonTypeSchema(),
+			"subject": policyRuleComparisonSubjectSchema(),
 			"values": {
 				Description: "The values to compare the subject to.",
 				Type:        schema.TypeList,
 				Elem:        &schema.Schema{Type: schema.TypeString},
-				Optional:    true,
-
-				ConflictsWith: []string{"value", "target"},
+				Required:    true,
+				MinItems:    1,
 			},
+		},
+	}
+}
+
+func policyRuleTargetComparisonResource() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"type":    policyRuleComparisonTypeSchema(),
+			"subject": policyRuleComparisonSubjectSchema(),
 			"target": {
 				Description: "The attribute to compare the subject to.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
+			},
+		},
+	}
+}
 
-				ConflictsWith: []string{"value", "values"},
+func policyRuleValueComparisonResource() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"type":    policyRuleComparisonTypeSchema(),
+			"subject": policyRuleComparisonSubjectSchema(),
+			"value": {
+				Description: "The value to compare the subject to.",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 		},
 	}
@@ -116,60 +145,71 @@ func policyRuleComparisonResource() *schema.Resource {
 // schema into the structs used by the go-client so changes can be pushed up to
 // the API accordingly.
 func expandPolicyDocument(rules []any) (*client.PolicyDocument, error) {
-	policy := client.PolicyDocument{Rules: make(client.PolicyRules)}
-	for i, rule := range rules {
+	policyRules := make(client.PolicyRules, len(rules))
+	for _, rule := range rules {
 		ruleSpec := rule.(map[string]any)
 		operation := ruleSpec["operation"].(string)
 
 		// Expand and accumulate each comparison for all operations
 		// from the spec.
-		for j, comparision := range ruleSpec["comparison"].([]any) {
+		var valueComparisons, multiValueComparisons, targetComparsions []any
+
+		if specs, ok := ruleSpec["value_comparison"]; ok {
+			valueComparisons = specs.([]any)
+		}
+		if specs, ok := ruleSpec["multivalue_comparison"]; ok {
+			multiValueComparisons = specs.([]any)
+		}
+		if specs, ok := ruleSpec["target_comparison"]; ok {
+			targetComparsions = specs.([]any)
+		}
+
+		count := len(valueComparisons) + len(multiValueComparisons) + len(targetComparsions)
+
+		if count == 0 {
+			continue
+		}
+		comparisons := make(client.RuleMappings, 0, count)
+
+		for _, comparision := range valueComparisons {
 			comparisonSpec := comparision.(map[string]any)
 			subject := comparisonSpec["subject"].(string)
-			comparisonType := client.ComparisonType(comparisonSpec["type"].(string))
+			comparison := &client.ValueComparison{
+				Comparison: client.ComparisonType(comparisonSpec["type"].(string)),
+				Value:      comparisonSpec["value"].(string),
+			}
+			comparisons = append(comparisons, client.RuleMap{subject: comparison})
+		}
 
-			var comparison client.Comparison
-
-			// Build attribute-comparison mapping for the current rule.
-			if value, ok := comparisonSpec["value"]; ok {
-				comparison = &client.ValueComparison{
-					Comparison: comparisonType,
-					Value:      value.(string),
-				}
-			} else if target, ok := comparisonSpec["target"]; ok {
-				comparison = &client.TargetComparison{
-					Comparison: comparisonType,
-					Target:     target.(string),
-				}
-			} else if values, ok := comparisonSpec["values"]; ok {
-				// Typecast slice of interfaces to strings.
-				values := values.([]any)
-				stringValues := make([]string, len(values))
-				for i := range values {
-					stringValues[i] = values[i].(string)
-				}
-
-				comparison = &client.MultivalueComparison{
-					Comparison: comparisonType,
-					Values:     stringValues,
-				}
-			} else {
-				// If we've gotten to this point, no valid
-				// client.Comparison struct can be built. The
-				// resource is missing some pseudo-required
-				// fields.
-				// TODO: use diag.Diagnostic with AttributePath.
-				return nil, fmt.Errorf("either value, values, or target must be set on .rule.%d.comparison.%d", i, j)
+		for _, comparision := range multiValueComparisons {
+			comparisonSpec := comparision.(map[string]any)
+			subject := comparisonSpec["subject"].(string)
+			values := comparisonSpec["values"].([]any)
+			valueStrings := make([]string, len(values))
+			for i := range values {
+				valueStrings[i] = values[i].(string)
 			}
 
-			ruleMappings := policy.Rules[operation].(client.RuleMappings)
-			policy.Rules[operation] = append(ruleMappings, map[string]client.Comparison{
-				subject: comparison,
-			})
+			comparison := &client.MultivalueComparison{
+				Comparison: client.ComparisonType(comparisonSpec["type"].(string)),
+				Values:     valueStrings,
+			}
+			comparisons = append(comparisons, client.RuleMap{subject: comparison})
 		}
-	}
 
-	return &policy, nil
+		for _, comparision := range targetComparsions {
+			comparisonSpec := comparision.(map[string]any)
+			subject := comparisonSpec["subject"].(string)
+			comparison := &client.TargetComparison{
+				Comparison: client.ComparisonType(comparisonSpec["type"].(string)),
+				Target:     comparisonSpec["target"].(string),
+			}
+			comparisons = append(comparisons, client.RuleMap{subject: comparison})
+		}
+
+		policyRules[operation] = comparisons
+	}
+	return &client.PolicyDocument{Rules: policyRules}, nil
 }
 
 // flattenPolicyDocument flattens the rules for each operation specified in the
@@ -180,12 +220,10 @@ func expandPolicyDocument(rules []any) (*client.PolicyDocument, error) {
 // differences will be otherwise ignored and resolved after the next apply is
 // executed.
 func flattenPolicyDocument(document client.PolicyDocument) (flattend []map[string]any, diagnostics diag.Diagnostics) {
-	flattend = make([]map[string]any, len(document.Rules))
+	flattend = make([]map[string]any, 0, len(document.Rules))
 	diagnostics = make(diag.Diagnostics, 0)
 
-	for i, operation := range reflect.ValueOf(document.Rules).MapKeys() {
-		rulesValue := document.Rules[operation.String()]
-
+	for operation, rulesValue := range document.Rules {
 		// Ensure this operation's rules are valid for Terraform.
 		if value, ok := rulesValue.(client.StaticRule); ok {
 			// StaticRules cannot be expressed in Terraform because
@@ -202,7 +240,9 @@ func flattenPolicyDocument(document client.PolicyDocument) (flattend []map[strin
 
 		// If we got here, rules has to be a slice of RuleMaps.
 		rules := rulesValue.(client.RuleMappings)
-		comparisons := make([]map[string]any, len(rules))
+		valueComparisons := make([]map[string]any, 0, len(rules))
+		multiValueComparisons := make([]map[string]any, 0, len(rules))
+		targetComparisons := make([]map[string]any, 0, len(rules))
 
 		// Extract the comparisons from each rule for the current
 		// operation.
@@ -218,7 +258,6 @@ func flattenPolicyDocument(document client.PolicyDocument) (flattend []map[strin
 					Severity: diag.Warning,
 					Summary:  fmt.Sprintf("found a malformed comparison [%d] for operation %q; will be corrected on next apply", j, operation),
 				})
-				comparisons[j] = make(map[string]any)
 				continue
 			}
 
@@ -232,18 +271,22 @@ func flattenPolicyDocument(document client.PolicyDocument) (flattend []map[strin
 			switch c := comparison.(type) {
 			case *client.ValueComparison:
 				comparisonMap["value"] = c.Value
+				valueComparisons = append(valueComparisons, comparisonMap)
 			case *client.MultivalueComparison:
 				comparisonMap["values"] = c.Values
+				multiValueComparisons = append(multiValueComparisons, comparisonMap)
 			case *client.TargetComparison:
 				comparisonMap["target"] = c.Target
+				targetComparisons = append(targetComparisons, comparisonMap)
 			}
-			comparisons[j] = comparisonMap
 		}
 
-		flattend[i] = map[string]any{
-			"operation":  operation.String(),
-			"comparison": comparisons,
-		}
+		flattend = append(flattend, map[string]any{
+			"operation":             operation,
+			"value_comparison":      valueComparisons,
+			"multivalue_comparison": multiValueComparisons,
+			"target_comparison":     targetComparisons,
+		})
 	}
 	return
 }
@@ -257,8 +300,6 @@ func resourcePolicyRead(ctx context.Context, d *schema.ResourceData, meta interf
 		// handle 404 here as deleting the id
 		return diag.Errorf("failed to get the policy %q: %s", name, err)
 	}
-
-	fmt.Printf("[INFO] rules = %+v", policy.Policy.Rules)
 
 	d.Set("name", policy.Name)
 
