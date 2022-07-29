@@ -31,7 +31,9 @@ func New() *schema.Provider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{},
-		ResourcesMap:   map[string]*schema.Resource{},
+		ResourcesMap: map[string]*schema.Resource{
+			"phc_policy": resourcePolicy(),
+		},
 
 		ConfigureContextFunc: configureProvider,
 	}
