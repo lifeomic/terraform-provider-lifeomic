@@ -2,52 +2,112 @@ package provider
 
 import (
 	"context"
+	"fmt"
+	"os"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/lifeomic/terraform-provider-phc/internal/client"
 )
 
-func New() *schema.Provider {
-	return &schema.Provider{
-		Schema: map[string]*schema.Schema{
-			"host": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "The PHC API host to configure the client to use.",
+type provider struct {
+	client     client.Interface
+	configured bool
+}
+
+type providerData struct {
+	AccountID types.String `tfsdk:"account_id"`
+	Token     types.String `tfsdk:"token"`
+	Host      types.String `tfsdk:"host"`
+}
+
+func New() tfsdk.Provider {
+	return &provider{}
+}
+
+func (p *provider) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics) {
+	return tfsdk.Schema{
+		Attributes: map[string]tfsdk.Attribute{
+			"account_id": {
+				Type:     types.StringType,
+				Optional: true,
 			},
 			"token": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Sensitive:   true,
-				DefaultFunc: schema.EnvDefaultFunc("PHC_TOKEN", ""),
-				Description: "The token to use for authenticating with the PHC API. If not explicitly set, it will be sourced from the PHC_TOKEN environment variable.",
+				Type:      types.StringType,
+				Sensitive: true,
+				Optional:  true,
 			},
-			"account_id": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "The unique identifier of the LifeOmic account to use when communicating with the API.",
+			"host": {
+				Type:     types.StringType,
+				Optional: true,
 			},
 		},
+	}, nil
+}
 
-		DataSourcesMap: map[string]*schema.Resource{},
-		ResourcesMap: map[string]*schema.Resource{
-			"phc_policy": resourcePolicy(),
-		},
+func (p *provider) Configure(ctx context.Context, req tfsdk.ConfigureProviderRequest, resp *tfsdk.ConfigureProviderResponse) {
+	tflog.Trace(ctx, "Configuring provider")
+	config := new(providerData)
 
-		ConfigureContextFunc: configureProvider,
+	diags := req.Config.Get(ctx, &config)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	requireProviderValue(resp, "token", "PHC_TOKEN", &config.Token)
+	requireProviderValue(resp, "account_id", "LIFEOMIC_ACCOUNT", &config.AccountID)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	tflog.Trace(ctx, "Provider configuration", map[string]any{
+		"provider": p,
+	})
+
+	p.client = client.New(config.ClientConfig())
+	p.configured = true
+}
+
+func (d *providerData) ClientConfig() client.Config {
+	return client.Config{
+		Account:   d.AccountID.Value,
+		AuthToken: d.Token.Value,
+		Host:      d.Host.Value,
 	}
 }
 
-type providerMeta struct {
-	Client client.Interface
+func requireProviderValue(resp *tfsdk.ConfigureProviderResponse, attribute, envVar string, value *types.String) {
+	if value.Value != "" {
+		return
+	}
+
+	val, ok := os.LookupEnv(envVar)
+	if !ok {
+		resp.Diagnostics.AddAttributeError(path.Root(attribute),
+			fmt.Sprintf("Missing required provider value %q", attribute),
+			fmt.Sprintf("Either set %q in the provider block or via the %s environment variable", attribute, envVar))
+		return
+	}
+
+	value.Value = val
 }
 
-func configureProvider(ctx context.Context, d *schema.ResourceData) (any, diag.Diagnostics) {
-	config := client.Config{
-		Host:      d.Get("host").(string),
-		AuthToken: d.Get("token").(string),
-		Account:   d.Get("account_id").(string),
-	}
-	return &providerMeta{Client: client.New(config)}, nil
+func (p *provider) GetResources(_ context.Context) (map[string]tfsdk.ResourceType, diag.Diagnostics) {
+	return map[string]tfsdk.ResourceType{
+		"phc_policy": policyResourceType{},
+	}, nil
+}
+
+func (p *provider) GetDataSources(_ context.Context) (map[string]tfsdk.DataSourceType, diag.Diagnostics) {
+	return map[string]tfsdk.DataSourceType{}, nil
+}
+
+func errorConvertingProvider(v any) diag.Diagnostics {
+	return diag.Diagnostics{diag.NewErrorDiagnostic("Error converting provider",
+		fmt.Sprintf("An unexpected error was encountered converting the provider."+
+			"This is always a bug in the provider.\n\nType: %T", v))}
 }
