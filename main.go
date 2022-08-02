@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
 	"flag"
+	"log"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
+	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/lifeomic/terraform-provider-phc/internal/provider"
 )
 
@@ -13,10 +15,14 @@ func main() {
 	flag.BoolVar(&debugMode, "debug", false, "Set true to run the provider with support for debuggers like delve")
 	flag.Parse()
 
-	opts := &plugin.ServeOpts{ProviderFunc: provider.New}
-	if debugMode {
-		opts.Debug = true
+	opts := providerserver.ServeOpts{
+		Address: "registry.terraform.io/lifeomic/phc",
+		Debug:   debugMode,
 	}
 
-	plugin.Serve(opts)
+	err := providerserver.Serve(context.Background(), provider.New, opts)
+
+	if err != nil {
+		log.Fatalf("failed to initialize provider: %v\n", err)
+	}
 }
