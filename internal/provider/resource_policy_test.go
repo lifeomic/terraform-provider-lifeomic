@@ -151,7 +151,7 @@ func checkPolicyExists(s *terraform.State) error {
 
 		fmt.Printf("attributes: %+v\n", res.Primary.Attributes)
 
-		if _, err := policyClient.Get(context.TODO(), res.Primary.Attributes["name"]); err != nil {
+		if _, err := policyClient.Get(context.Background(), res.Primary.Attributes["name"]); err != nil {
 			return err
 		}
 		break
