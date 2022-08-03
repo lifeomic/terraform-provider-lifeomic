@@ -58,8 +58,8 @@ func (p *provider) Configure(ctx context.Context, req tfsdk.ConfigureProviderReq
 		return
 	}
 
-	requireProviderValue(resp, "token", "PHC_TOKEN", &config.Token)
-	requireProviderValue(resp, "account_id", "LIFEOMIC_ACCOUNT", &config.AccountID)
+	requireProviderValue(resp, "token", client.AuthTokenEnvVar, &config.Token)
+	requireProviderValue(resp, "account_id", client.AccountIDEnvVar, &config.AccountID)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -74,7 +74,7 @@ func (p *provider) Configure(ctx context.Context, req tfsdk.ConfigureProviderReq
 
 func (d *providerData) ClientConfig() client.Config {
 	return client.Config{
-		Account:   d.AccountID.Value,
+		AccountID: d.AccountID.Value,
 		AuthToken: d.Token.Value,
 		Host:      d.Host.Value,
 	}
