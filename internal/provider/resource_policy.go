@@ -13,6 +13,15 @@ import (
 	"github.com/lifeomic/terraform-provider-phc/internal/client"
 )
 
+const (
+	policyDocsURL                     = "https://phc.docs.lifeomic.com/user-guides/access-control#privileges-and-permissions"
+	policyRuleDocsURL                 = "https://phc.docs.lifeomic.com/development/abac-syntax#rules"
+	policyComparisonDocsURL           = "https://phc.docs.lifeomic.com/development/abac-syntax#comparisons"
+	policyOperationDocsURL            = "https://phc.docs.lifeomic.com/development/abac-syntax#operations"
+	policyAttributeDocsURL            = "https://phc.docs.lifeomic.com/development/abac-syntax#attributes"
+	policySupportedComparisonsDocsURL = "https://phc.docs.lifeomic.com/development/abac-syntax#supported-comparisons"
+)
+
 // policy represents the state of a phc_policy resource.
 type policy struct {
 	ID   types.String `tfsdk:"id"`
@@ -50,21 +59,23 @@ type policyResourceType struct {
 
 func (policyResourceType) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
+		Description: fmt.Sprintf("`phc_policy` manages an [Attribute Based Access Control (ABAC) policy](%s).", policyDocsURL),
 		Attributes: map[string]tfsdk.Attribute{
 			"name": {
 				Required:    true,
 				Type:        types.StringType,
-				Description: "The name of this policy.",
+				Description: "The unique name of this ABAC policy.",
 			},
 			"id": {
 				Type:        types.StringType,
 				Optional:    true,
 				Computed:    true,
-				Description: "The ID of this policy resource.",
+				Description: "The ID of this ABAC policy resource.",
 			},
 		},
 		Blocks: map[string]tfsdk.Block{
 			"rule": {
+				Description: fmt.Sprintf("An ABAC [rule](%s) containing comparisons to be evaluated for the given operation.", policyRuleDocsURL),
 				NestingMode: tfsdk.BlockNestingModeList,
 				Validators: []tfsdk.AttributeValidator{
 					&policyRulesValidator{},
@@ -72,12 +83,14 @@ func (policyResourceType) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagn
 				MinItems: 1,
 				Attributes: map[string]tfsdk.Attribute{
 					"operation": {
-						Type:     types.StringType,
-						Required: true,
+						Type:        types.StringType,
+						Required:    true,
+						Description: fmt.Sprintf("The [operation](%s) this ABAC rule governs.", policyOperationDocsURL),
 					},
 				},
 				Blocks: map[string]tfsdk.Block{
 					"comparison": {
+						Description: "An ABAC comparison. Exactly one of `value`, `values`, or `target` should be set.",
 						MinItems:    1,
 						NestingMode: tfsdk.BlockNestingModeList,
 						Validators: []tfsdk.AttributeValidator{
@@ -85,24 +98,29 @@ func (policyResourceType) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagn
 						},
 						Attributes: map[string]tfsdk.Attribute{
 							"type": {
-								Type:     types.StringType,
-								Required: true,
+								Type:        types.StringType,
+								Required:    true,
+								Description: fmt.Sprintf("The [type](%s) of ABAC comparison.", policySupportedComparisonsDocsURL),
 							},
 							"subject": {
-								Type:     types.StringType,
-								Required: true,
+								Type:        types.StringType,
+								Required:    true,
+								Description: fmt.Sprintf("The subject is the [attribute](%s) used in this ABAC comparison.", policyAttributeDocsURL),
 							},
 							"values": {
-								Type:     types.ListType{ElemType: types.StringType},
-								Optional: true,
+								Type:        types.ListType{ElemType: types.StringType},
+								Optional:    true,
+								Description: "The values to use in this ABAC comparison.",
 							},
 							"value": {
-								Type:     types.StringType,
-								Optional: true,
+								Type:        types.StringType,
+								Optional:    true,
+								Description: "The value to use in this ABAC comparison.",
 							},
 							"target": {
-								Type:     types.StringType,
-								Optional: true,
+								Type:        types.StringType,
+								Optional:    true,
+								Description: "The target to use in this ABAC comparison.",
 							},
 						},
 					},

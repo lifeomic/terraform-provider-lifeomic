@@ -26,4 +26,7 @@ acctest:
 
 test: unittest acctest
 
-.PHONY: build clean unittest acctest test
+generate:
+	go generate ./...
+
+.PHONY: build clean unittest acctest test generate

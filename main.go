@@ -9,6 +9,8 @@ import (
 	"github.com/lifeomic/terraform-provider-phc/internal/provider"
 )
 
+//go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs
+
 func main() {
 	var debugMode bool
 
