@@ -26,6 +26,10 @@ const (
 	defaultRetryMaxWaitTime = time.Second
 
 	accountHeader = "LifeOmic-Account"
+
+	AuthTokenEnvVar = "PHC_TOKEN"
+	HostEnvVar      = "PHC_HOST"
+	AccountIDEnvVar = "PHC_ACCOUNT"
 )
 
 type Interface interface {
@@ -38,7 +42,7 @@ type Config struct {
 	APIVersion string
 	Host       string
 
-	Account   string
+	AccountID string
 	AuthToken string
 
 	MaxRetries       int
@@ -63,10 +67,13 @@ func (e APIError) Error() string { return e.Message }
 // New creates a new Client with the given Config.
 func New(config Config) *Client {
 	if config.AuthToken == "" {
-		config.AuthToken = os.Getenv("PHC_TOKEN")
+		config.AuthToken = os.Getenv(AuthTokenEnvVar)
+	}
+	if config.AccountID == "" {
+		config.AccountID = os.Getenv(AccountIDEnvVar)
 	}
 	if config.Host == "" {
-		config.Host = defaultStr(os.Getenv("LIFEOMIC_HOST"), defaultHost)
+		config.Host = defaultStr(os.Getenv(HostEnvVar), defaultHost)
 	}
 	if config.APIVersion == "" {
 		config.APIVersion = defaultAPIVersion
@@ -121,7 +128,7 @@ func (c *Client) SetAuthToken(token string) {
 // SetAccount updates the client to send a LifeOmic-Account header with the
 // given name.
 func (c *Client) SetAccount(account string) {
-	c.config.Account = account
+	c.config.AccountID = account
 	if account == "" {
 		c.httpClient.Header.Del(accountHeader)
 	}
@@ -135,7 +142,7 @@ func (c *Client) init() {
 	// Set default headers for all requests.
 	c.httpClient.SetHeader("Content-Type", "application/json")
 	c.httpClient.SetHeader("Accept", "application/json")
-	c.SetAccount(c.config.Account)
+	c.SetAccount(c.config.AccountID)
 	c.SetAuthToken(c.config.AuthToken)
 	c.SetUserAgent(fmt.Sprintf("%s%s %s", userAgentPrefix, GitRef, GitCommit))
 
