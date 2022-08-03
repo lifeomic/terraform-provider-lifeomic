@@ -28,21 +28,28 @@ func New() tfsdk.Provider {
 	return &provider{}
 }
 
+func providerAttributeDescription(description, envVar string) string {
+	return fmt.Sprintf("%s. If not set explicitly in the provider block, `$%s` will be used.", description, envVar)
+}
+
 func (p *provider) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		Attributes: map[string]tfsdk.Attribute{
 			"account_id": {
-				Type:     types.StringType,
-				Optional: true,
+				Type:        types.StringType,
+				Optional:    true,
+				Description: providerAttributeDescription("The unique ID of the PHC Account to use this provider with", client.AccountIDEnvVar),
 			},
 			"token": {
-				Type:      types.StringType,
-				Sensitive: true,
-				Optional:  true,
+				Type:        types.StringType,
+				Sensitive:   true,
+				Optional:    true,
+				Description: providerAttributeDescription("The token to use for authenticating with the PHC API", client.AuthTokenEnvVar),
 			},
 			"host": {
-				Type:     types.StringType,
-				Optional: true,
+				Type:        types.StringType,
+				Optional:    true,
+				Description: providerAttributeDescription("The PHC API host to communicate with.", client.HostEnvVar),
 			},
 		},
 	}, nil
