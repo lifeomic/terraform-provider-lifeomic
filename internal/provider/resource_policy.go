@@ -15,6 +15,7 @@ import (
 
 // policy represents the state of a phc_policy resource.
 type policy struct {
+	ID   types.String `tfsdk:"id"`
 	Name types.String `tfsdk:"name"`
 	Rule []policyRule `tfsdk:"rule"`
 }
@@ -54,6 +55,12 @@ func (policyResourceType) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagn
 				Required:    true,
 				Type:        types.StringType,
 				Description: "The name of this policy.",
+			},
+			"id": {
+				Type:        types.StringType,
+				Optional:    true,
+				Computed:    true,
+				Description: "The ID of this policy resource.",
 			},
 		},
 		Blocks: map[string]tfsdk.Block{
@@ -441,6 +448,7 @@ func setPolicyState(ctx context.Context, config *policy, state *tfsdk.State, p *
 	}
 
 	diags.Append(state.Set(ctx, policy{
+		ID:   types.String{Value: p.Name},
 		Name: types.String{Value: p.Name},
 		Rule: rules,
 	})...)
