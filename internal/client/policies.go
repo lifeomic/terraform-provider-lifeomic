@@ -236,16 +236,19 @@ type ComparisonType string
 
 // supported comparison constants
 const (
-	ComparisonEquals     ComparisonType = "equals"
-	ComparisonNotEquals  ComparisonType = "notEquals"
-	ComparisonIncludes   ComparisonType = "includes"
-	ComparisonIn         ComparisonType = "in"
-	ComparisonNotIn      ComparisonType = "notIn"
-	ComparisonExists     ComparisonType = "exists"
-	ComparisonSuperset   ComparisonType = "superset"
-	ComparisonSubset     ComparisonType = "subset"
-	ComparisonStartsWith ComparisonType = "startsWith"
-	ComparisonEndsWith   ComparisonType = "endsWith"
+	ComparisonEquals       ComparisonType = "equals"
+	ComparisonNotEquals    ComparisonType = "notEquals"
+	ComparisonIncludes     ComparisonType = "includes"
+	ComparisonNotIncludes  ComparisonType = "notIncludes"
+	ComparisonIn           ComparisonType = "in"
+	ComparisonNotIn        ComparisonType = "notIn"
+	ComparisonExists       ComparisonType = "exists"
+	ComparisonSuperset     ComparisonType = "superset"
+	ComparisonSubset       ComparisonType = "subset"
+	ComparisonStartsWith   ComparisonType = "startsWith"
+	ComparisonPrefixOf     ComparisonType = "prefixOf"
+	ComparisonEndsWith     ComparisonType = "endsWith"
+	ComparisonSuffixOf     ComparisonType = "suffixOf"
 )
 
 type policyService struct {
