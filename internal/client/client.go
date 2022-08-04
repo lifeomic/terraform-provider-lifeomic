@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/go-resty/resty/v2"
@@ -30,6 +31,7 @@ const (
 	AuthTokenEnvVar = "PHC_TOKEN"
 	HostEnvVar      = "PHC_HOST"
 	AccountIDEnvVar = "PHC_ACCOUNT"
+	DebugEnvVar     = "PHC_DEBUG"
 )
 
 type Interface interface {
@@ -47,6 +49,8 @@ type Config struct {
 
 	MaxRetries       int
 	MaxRetryWaitTime time.Duration
+
+	Debug bool
 }
 
 // Client interfaces with the PHC API.
@@ -84,12 +88,16 @@ func New(config Config) *Client {
 	if config.MaxRetryWaitTime == 0 {
 		config.MaxRetryWaitTime = defaultRetryMaxWaitTime
 	}
+	if !config.Debug {
+		// Treat any malformed value as false.
+		config.Debug, _ = strconv.ParseBool(os.Getenv(DebugEnvVar))
+	}
 
 	client := &Client{httpClient: resty.New(), config: &config}
 	client.accounts = &accountService{Client: client}
 	client.policies = &policyService{Client: client}
+	client.httpClient.SetDebug(config.Debug)
 	client.init()
-	client.httpClient.SetDebug(true)
 	return client
 }
 
