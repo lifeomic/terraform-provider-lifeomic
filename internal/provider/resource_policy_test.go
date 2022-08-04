@@ -124,6 +124,51 @@ func TestAccPHCPolicy_duplicateRuleBlock(t *testing.T) {
 	})
 }
 
+func TestAccPHCPolicy_staticRule(t *testing.T) {
+	// TODO: update this test to assert a warning diagnostic is emitted
+	// about the detected drift once this is made possible in the
+	// plugin-sdk test framework.
+	// issue: https://github.com/hashicorp/terraform-plugin-sdk/issues/864
+
+	t.Parallel()
+	name := randomResourceName(t, 8)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 testAccPreCheck(t),
+		ProtoV6ProviderFactories: testAccProviderFactories,
+
+		Steps: []resource.TestStep{
+			{
+				Config: testAccPHCPolicy_basic(name),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					checkPolicyExists,
+					resource.TestCheckResourceAttr(testPolicyResName, "rule.0.comparison.#", "1"),
+				),
+			},
+			{
+				PreConfig: func() {
+					// Update the policy to use a static
+					// rule for. Making it incompatible
+					// with the Terraform schema.
+					policyClient := client.New(client.Config{}).Policies()
+					if _, err := policyClient.Update(context.Background(), name, &client.Policy{
+						Name: name,
+						Policy: client.PolicyDocument{
+							Rules: client.PolicyRules{"readData": client.StaticRule(true)},
+						},
+					}); err != nil {
+						t.Fatal(err)
+					}
+				},
+				Config: testAccPHCPolicy_basic(name),
+				// The state drift should be corrected without
+				// panicking.
+				Check: resource.TestCheckResourceAttr(testPolicyResName, "rule.0.comparison.#", "1"),
+			},
+		},
+	})
+}
+
 func TestAccPHCPolicy_conflictingComparisonFields(t *testing.T) {
 	t.Parallel()
 	name := randomResourceName(t, 8)
@@ -148,8 +193,6 @@ func checkPolicyExists(s *terraform.State) error {
 		if res.Type != "phc_policy" {
 			continue
 		}
-
-		fmt.Printf("attributes: %+v\n", res.Primary.Attributes)
 
 		if _, err := policyClient.Get(context.Background(), res.Primary.Attributes["name"]); err != nil {
 			return err

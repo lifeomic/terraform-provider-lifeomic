@@ -418,6 +418,20 @@ func setPolicyState(ctx context.Context, config *policy, state *tfsdk.State, p *
 	walkPolicyRuleList(ctx, path.Root("rule"), config.Rule, func(index int, ruleSpec *policyRule) {
 		operation := ruleSpec.Operation.Value
 		ruleElem := policyRule{Operation: types.String{Value: operation}}
+
+		// Ensure this operation's rules are valid for Terraform
+		if _, ok := p.Policy.Rules[operation].(client.StaticRule); ok {
+			// StaticRules cannot be expressed in Terraform because
+			// they break the shape of the schema and are bad
+			// practice. We will interpret this as an empty slice
+			// and next apply will overwrite this rule with either
+			// nothing or a valid set of comparisons.
+			diags.AddWarning(fmt.Sprintf("Detected incompatible rule for operation %s", operation),
+				"Using a static boolean value for rules is bad practice and not supported. "+
+					"The changes happened outside of Terraform")
+			return
+		}
+
 		ruleMappings := p.Policy.Rules[operation].(client.RuleMappings)
 
 		// Build comparison objects.
