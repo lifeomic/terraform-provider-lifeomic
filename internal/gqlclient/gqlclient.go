@@ -1,3 +1,3 @@
-package gqclient
+package gqlclient
 
 //go:generate go run github.com/Khan/genqlient
