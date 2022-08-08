@@ -1,6 +1,10 @@
 PROJECT := terraform-provider-phc
 PKG     := github.com/lifeomic/$(PROJECT)
 
+GQL_PKG              := ./internal/gqlclient
+GQL_SCHEMA_DIR       := $(GQL_PKG)/schemas
+GQL_GENERATED_SCHEMA := $(GQL_PKG)/schema.graphql
+
 GIT_HEAD := $(shell git rev-list --all | head -n 1)
 GIT_REF  ?= dev
 
@@ -10,13 +14,24 @@ ACC_TEST_COUNT       ?= 1
 ACC_TEST_PARALLELISM ?= 10
 ACC_TEST_PKG         := ./internal/provider/...
 
-clean:
-	rm $(PROJECT)
+default: clean generate build
 
-build: clean
-	go build -ldflags=$(LD_FLAGS) -o $(PROJECT) main.go
+$(GQL_SCHEMA_DIR):
+	mkdir -p $(GQL_SCHEMA_DIR)
+	cd $(GQL_PKG) && lifeomic-fetch-individual-graphql-schemas -s marketplace,marketplaceAuthed,appStore
+
+$(GQL_GENERATED_SCHEMA):
+	cd $(GQL_PKG) && yarn graphql-codegen
+
+$(GQL_PKG)/generated.go: generate
 
 $(PROJECT): build
+
+clean:
+	rm -rf $(PROJECT) $(GQL_SCHEMA_DIR) $(GQL_GENERATED_SCHEMA)
+
+build:
+	go build -ldflags=$(LD_FLAGS) -o $(PROJECT) main.go
 
 unittest:
 	go test -v $(TESTARGS) ./...
@@ -26,7 +41,11 @@ acctest:
 
 test: unittest acctest
 
-generate:
+generate-docs:
+	go generate main.go
+
+generate: $(GQL_SCHEMA_DIR) $(GQL_GENERATED_SCHEMA)
 	go generate ./...
 
-.PHONY: build clean unittest acctest test generate
+.PHONY: build clean unittest acctest test generate generate-docs
+

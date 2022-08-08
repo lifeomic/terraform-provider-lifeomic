@@ -7,6 +7,9 @@ package tools
 // See: https://github.com/go-modules-by-example/index/blob/master/010_tools/README.md
 
 import (
+	// genqlient generates the GraphQL client.
+	_ "github.com/Khan/genqlient"
+
 	// tfplugindocs generates and validates Terraform plugin docs.
 	_ "github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs"
 )
