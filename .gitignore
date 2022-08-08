@@ -2,4 +2,6 @@ terraform-provider-phc
 terraform.tfstate
 terraform.tfstate.backup
 .DS_STORE
+**/node_modules/
+**/yarn-error.log
 
