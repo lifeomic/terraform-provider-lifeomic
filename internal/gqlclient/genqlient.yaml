@@ -3,9 +3,12 @@
 schema: schema.graphql
 package: gqlclient
 operations:
-  - genqlient.graphql
+  - marketplace.graphql
+  - appstore.graphql
 generated: generated.go
 bindings:
+  URL:
+    type: string
   Upload:
     type: string
   JSON:

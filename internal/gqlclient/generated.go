@@ -10,6 +10,27 @@ import (
 	"github.com/Khan/genqlient/graphql"
 )
 
+type AppLocale struct {
+	Description string `json:"description"`
+	LangCode    string `json:"langCode"`
+	Name        string `json:"name"`
+}
+
+// GetDescription returns AppLocale.Description, and is useful for accessing the field via an interface.
+func (v *AppLocale) GetDescription() string { return v.Description }
+
+// GetLangCode returns AppLocale.LangCode, and is useful for accessing the field via an interface.
+func (v *AppLocale) GetLangCode() string { return v.LangCode }
+
+// GetName returns AppLocale.Name, and is useful for accessing the field via an interface.
+func (v *AppLocale) GetName() string { return v.Name }
+
+type AppStoreProduct string
+
+const (
+	AppStoreProductLx AppStoreProduct = "LX"
+)
+
 // AppTileModule includes the GraphQL fields of MarketplaceModule requested by the fragment AppTileModule.
 type AppTileModule struct {
 	Title       string                                     `json:"title"`
@@ -482,6 +503,27 @@ type AppTileModuleSourceWorkflow struct {
 // GetTypename returns AppTileModuleSourceWorkflow.Typename, and is useful for accessing the field via an interface.
 func (v *AppTileModuleSourceWorkflow) GetTypename() string { return v.Typename }
 
+// CreateAppStoreListingCreateWebAppAppStoreWebApplication includes the requested fields of the GraphQL type AppStoreWebApplication.
+// The GraphQL type's documentation follows.
+//
+// a basic app meant to simply be loaded in a browser
+type CreateAppStoreListingCreateWebAppAppStoreWebApplication struct {
+	Id string `json:"id"`
+}
+
+// GetId returns CreateAppStoreListingCreateWebAppAppStoreWebApplication.Id, and is useful for accessing the field via an interface.
+func (v *CreateAppStoreListingCreateWebAppAppStoreWebApplication) GetId() string { return v.Id }
+
+// CreateAppStoreListingResponse is returned by CreateAppStoreListing on success.
+type CreateAppStoreListingResponse struct {
+	CreateWebApp CreateAppStoreListingCreateWebAppAppStoreWebApplication `json:"createWebApp"`
+}
+
+// GetCreateWebApp returns CreateAppStoreListingResponse.CreateWebApp, and is useful for accessing the field via an interface.
+func (v *CreateAppStoreListingResponse) GetCreateWebApp() CreateAppStoreListingCreateWebAppAppStoreWebApplication {
+	return v.CreateWebApp
+}
+
 // CreateDraftModuleCreateDraftModuleCreateDraftModuleResponse includes the requested fields of the GraphQL type CreateDraftModuleResponse.
 type CreateDraftModuleCreateDraftModuleCreateDraftModuleResponse struct {
 	Id string `json:"id"`
@@ -568,6 +610,53 @@ func (v *CreateDraftModuleResponse) GetCreateDraftModule() CreateDraftModuleCrea
 	return v.CreateDraftModule
 }
 
+type CreateWebAppInput struct {
+	AbacResource  string          `json:"abacResource"`
+	AuthorDisplay string          `json:"authorDisplay"`
+	Description   string          `json:"description"`
+	Id            string          `json:"id"`
+	Image         string          `json:"image"`
+	Locales       []AppLocale     `json:"locales"`
+	Name          string          `json:"name"`
+	Product       AppStoreProduct `json:"product"`
+	Url           string          `json:"url"`
+}
+
+// GetAbacResource returns CreateWebAppInput.AbacResource, and is useful for accessing the field via an interface.
+func (v *CreateWebAppInput) GetAbacResource() string { return v.AbacResource }
+
+// GetAuthorDisplay returns CreateWebAppInput.AuthorDisplay, and is useful for accessing the field via an interface.
+func (v *CreateWebAppInput) GetAuthorDisplay() string { return v.AuthorDisplay }
+
+// GetDescription returns CreateWebAppInput.Description, and is useful for accessing the field via an interface.
+func (v *CreateWebAppInput) GetDescription() string { return v.Description }
+
+// GetId returns CreateWebAppInput.Id, and is useful for accessing the field via an interface.
+func (v *CreateWebAppInput) GetId() string { return v.Id }
+
+// GetImage returns CreateWebAppInput.Image, and is useful for accessing the field via an interface.
+func (v *CreateWebAppInput) GetImage() string { return v.Image }
+
+// GetLocales returns CreateWebAppInput.Locales, and is useful for accessing the field via an interface.
+func (v *CreateWebAppInput) GetLocales() []AppLocale { return v.Locales }
+
+// GetName returns CreateWebAppInput.Name, and is useful for accessing the field via an interface.
+func (v *CreateWebAppInput) GetName() string { return v.Name }
+
+// GetProduct returns CreateWebAppInput.Product, and is useful for accessing the field via an interface.
+func (v *CreateWebAppInput) GetProduct() AppStoreProduct { return v.Product }
+
+// GetUrl returns CreateWebAppInput.Url, and is useful for accessing the field via an interface.
+func (v *CreateWebAppInput) GetUrl() string { return v.Url }
+
+// DeleteAppStoreListingResponse is returned by DeleteAppStoreListing on success.
+type DeleteAppStoreListingResponse struct {
+	DeleteApp bool `json:"deleteApp"`
+}
+
+// GetDeleteApp returns DeleteAppStoreListingResponse.DeleteApp, and is useful for accessing the field via an interface.
+func (v *DeleteAppStoreListingResponse) GetDeleteApp() bool { return v.DeleteApp }
+
 // DeleteModuleDeleteModuleDeleteModuleResponse includes the requested fields of the GraphQL type DeleteModuleResponse.
 type DeleteModuleDeleteModuleDeleteModuleResponse struct {
 	Id string `json:"id"`
@@ -608,6 +697,45 @@ func (v *DraftModulePriceInput) GetAmount() int { return v.Amount }
 
 // GetInterval returns DraftModulePriceInput.Interval, and is useful for accessing the field via an interface.
 func (v *DraftModulePriceInput) GetInterval() PaymentInterval { return v.Interval }
+
+// EditAppStoreListingResponse is returned by EditAppStoreListing on success.
+type EditAppStoreListingResponse struct {
+	EditWebApp bool `json:"editWebApp"`
+}
+
+// GetEditWebApp returns EditAppStoreListingResponse.EditWebApp, and is useful for accessing the field via an interface.
+func (v *EditAppStoreListingResponse) GetEditWebApp() bool { return v.EditWebApp }
+
+type EditWebAppInput struct {
+	AbacResource  string      `json:"abacResource"`
+	AuthorDisplay string      `json:"authorDisplay"`
+	Description   string      `json:"description"`
+	Image         string      `json:"image"`
+	Locales       []AppLocale `json:"locales"`
+	Name          string      `json:"name"`
+	Url           string      `json:"url"`
+}
+
+// GetAbacResource returns EditWebAppInput.AbacResource, and is useful for accessing the field via an interface.
+func (v *EditWebAppInput) GetAbacResource() string { return v.AbacResource }
+
+// GetAuthorDisplay returns EditWebAppInput.AuthorDisplay, and is useful for accessing the field via an interface.
+func (v *EditWebAppInput) GetAuthorDisplay() string { return v.AuthorDisplay }
+
+// GetDescription returns EditWebAppInput.Description, and is useful for accessing the field via an interface.
+func (v *EditWebAppInput) GetDescription() string { return v.Description }
+
+// GetImage returns EditWebAppInput.Image, and is useful for accessing the field via an interface.
+func (v *EditWebAppInput) GetImage() string { return v.Image }
+
+// GetLocales returns EditWebAppInput.Locales, and is useful for accessing the field via an interface.
+func (v *EditWebAppInput) GetLocales() []AppLocale { return v.Locales }
+
+// GetName returns EditWebAppInput.Name, and is useful for accessing the field via an interface.
+func (v *EditWebAppInput) GetName() string { return v.Name }
+
+// GetUrl returns EditWebAppInput.Url, and is useful for accessing the field via an interface.
+func (v *EditWebAppInput) GetUrl() string { return v.Url }
 
 type FileWithDescription struct {
 	Description string `json:"description"`
@@ -662,6 +790,181 @@ func (v *FinalizeUploadInput) GetPriority() int { return v.Priority }
 
 // GetType returns FinalizeUploadInput.Type, and is useful for accessing the field via an interface.
 func (v *FinalizeUploadInput) GetType() UploadType { return v.Type }
+
+// GetAppStoreListingAppAppStoreApplication includes the requested fields of the GraphQL interface AppStoreApplication.
+//
+// GetAppStoreListingAppAppStoreApplication is implemented by the following types:
+// GetAppStoreListingAppAppStoreWebApplication
+type GetAppStoreListingAppAppStoreApplication interface {
+	implementsGraphQLInterfaceGetAppStoreListingAppAppStoreApplication()
+	// GetTypename returns the receiver's concrete GraphQL type-name (see interface doc for possible values).
+	GetTypename() string
+	// GetName returns the interface-field "name" from its implementation.
+	GetName() string
+	// GetDescription returns the interface-field "description" from its implementation.
+	GetDescription() string
+	// GetAuthorDisplay returns the interface-field "authorDisplay" from its implementation.
+	// The GraphQL interface field's documentation follows.
+	//
+	// Optional display string - used to display the author if not LifeOmic
+	GetAuthorDisplay() string
+	// GetImage returns the interface-field "image" from its implementation.
+	GetImage() string
+}
+
+func (v *GetAppStoreListingAppAppStoreWebApplication) implementsGraphQLInterfaceGetAppStoreListingAppAppStoreApplication() {
+}
+
+func __unmarshalGetAppStoreListingAppAppStoreApplication(b []byte, v *GetAppStoreListingAppAppStoreApplication) error {
+	if string(b) == "null" {
+		return nil
+	}
+
+	var tn struct {
+		TypeName string `json:"__typename"`
+	}
+	err := json.Unmarshal(b, &tn)
+	if err != nil {
+		return err
+	}
+
+	switch tn.TypeName {
+	case "AppStoreWebApplication":
+		*v = new(GetAppStoreListingAppAppStoreWebApplication)
+		return json.Unmarshal(b, *v)
+	case "":
+		return fmt.Errorf(
+			"response was missing AppStoreApplication.__typename")
+	default:
+		return fmt.Errorf(
+			`unexpected concrete type for GetAppStoreListingAppAppStoreApplication: "%v"`, tn.TypeName)
+	}
+}
+
+func __marshalGetAppStoreListingAppAppStoreApplication(v *GetAppStoreListingAppAppStoreApplication) ([]byte, error) {
+
+	var typename string
+	switch v := (*v).(type) {
+	case *GetAppStoreListingAppAppStoreWebApplication:
+		typename = "AppStoreWebApplication"
+
+		result := struct {
+			TypeName string `json:"__typename"`
+			*GetAppStoreListingAppAppStoreWebApplication
+		}{typename, v}
+		return json.Marshal(result)
+	case nil:
+		return []byte("null"), nil
+	default:
+		return nil, fmt.Errorf(
+			`unexpected concrete type for GetAppStoreListingAppAppStoreApplication: "%T"`, v)
+	}
+}
+
+// GetAppStoreListingAppAppStoreWebApplication includes the requested fields of the GraphQL type AppStoreWebApplication.
+// The GraphQL type's documentation follows.
+//
+// a basic app meant to simply be loaded in a browser
+type GetAppStoreListingAppAppStoreWebApplication struct {
+	Typename    string `json:"__typename"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	// Optional display string - used to display the author if not LifeOmic
+	AuthorDisplay string `json:"authorDisplay"`
+	Image         string `json:"image"`
+	Url           string `json:"url"`
+}
+
+// GetTypename returns GetAppStoreListingAppAppStoreWebApplication.Typename, and is useful for accessing the field via an interface.
+func (v *GetAppStoreListingAppAppStoreWebApplication) GetTypename() string { return v.Typename }
+
+// GetName returns GetAppStoreListingAppAppStoreWebApplication.Name, and is useful for accessing the field via an interface.
+func (v *GetAppStoreListingAppAppStoreWebApplication) GetName() string { return v.Name }
+
+// GetDescription returns GetAppStoreListingAppAppStoreWebApplication.Description, and is useful for accessing the field via an interface.
+func (v *GetAppStoreListingAppAppStoreWebApplication) GetDescription() string { return v.Description }
+
+// GetAuthorDisplay returns GetAppStoreListingAppAppStoreWebApplication.AuthorDisplay, and is useful for accessing the field via an interface.
+func (v *GetAppStoreListingAppAppStoreWebApplication) GetAuthorDisplay() string {
+	return v.AuthorDisplay
+}
+
+// GetImage returns GetAppStoreListingAppAppStoreWebApplication.Image, and is useful for accessing the field via an interface.
+func (v *GetAppStoreListingAppAppStoreWebApplication) GetImage() string { return v.Image }
+
+// GetUrl returns GetAppStoreListingAppAppStoreWebApplication.Url, and is useful for accessing the field via an interface.
+func (v *GetAppStoreListingAppAppStoreWebApplication) GetUrl() string { return v.Url }
+
+// GetAppStoreListingResponse is returned by GetAppStoreListing on success.
+type GetAppStoreListingResponse struct {
+	App GetAppStoreListingAppAppStoreApplication `json:"-"`
+}
+
+// GetApp returns GetAppStoreListingResponse.App, and is useful for accessing the field via an interface.
+func (v *GetAppStoreListingResponse) GetApp() GetAppStoreListingAppAppStoreApplication { return v.App }
+
+func (v *GetAppStoreListingResponse) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*GetAppStoreListingResponse
+		App json.RawMessage `json:"app"`
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.GetAppStoreListingResponse = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	{
+		dst := &v.App
+		src := firstPass.App
+		if len(src) != 0 && string(src) != "null" {
+			err = __unmarshalGetAppStoreListingAppAppStoreApplication(
+				src, dst)
+			if err != nil {
+				return fmt.Errorf(
+					"Unable to unmarshal GetAppStoreListingResponse.App: %w", err)
+			}
+		}
+	}
+	return nil
+}
+
+type __premarshalGetAppStoreListingResponse struct {
+	App json.RawMessage `json:"app"`
+}
+
+func (v *GetAppStoreListingResponse) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *GetAppStoreListingResponse) __premarshalJSON() (*__premarshalGetAppStoreListingResponse, error) {
+	var retval __premarshalGetAppStoreListingResponse
+
+	{
+
+		dst := &retval.App
+		src := v.App
+		var err error
+		*dst, err = __marshalGetAppStoreListingAppAppStoreApplication(
+			&src)
+		if err != nil {
+			return nil, fmt.Errorf(
+				"Unable to marshal GetAppStoreListingResponse.App: %w", err)
+		}
+	}
+	return &retval, nil
+}
 
 // GetPublishedModuleMyModuleMarketplaceModule includes the requested fields of the GraphQL type MarketplaceModule.
 type GetPublishedModuleMyModuleMarketplaceModule struct {
@@ -975,6 +1278,14 @@ const (
 	UploadTypePreviewImage UploadType = "PREVIEW_IMAGE"
 )
 
+// __CreateAppStoreListingInput is used internally by genqlient
+type __CreateAppStoreListingInput struct {
+	Input CreateWebAppInput `json:"input"`
+}
+
+// GetInput returns __CreateAppStoreListingInput.Input, and is useful for accessing the field via an interface.
+func (v *__CreateAppStoreListingInput) GetInput() CreateWebAppInput { return v.Input }
+
 // __CreateDraftModuleInput is used internally by genqlient
 type __CreateDraftModuleInput struct {
 	Input CreateDraftModuleInput `json:"input"`
@@ -982,6 +1293,14 @@ type __CreateDraftModuleInput struct {
 
 // GetInput returns __CreateDraftModuleInput.Input, and is useful for accessing the field via an interface.
 func (v *__CreateDraftModuleInput) GetInput() CreateDraftModuleInput { return v.Input }
+
+// __DeleteAppStoreListingInput is used internally by genqlient
+type __DeleteAppStoreListingInput struct {
+	Id string `json:"id"`
+}
+
+// GetId returns __DeleteAppStoreListingInput.Id, and is useful for accessing the field via an interface.
+func (v *__DeleteAppStoreListingInput) GetId() string { return v.Id }
 
 // __DeleteModuleInput is used internally by genqlient
 type __DeleteModuleInput struct {
@@ -991,6 +1310,18 @@ type __DeleteModuleInput struct {
 // GetInput returns __DeleteModuleInput.Input, and is useful for accessing the field via an interface.
 func (v *__DeleteModuleInput) GetInput() DeleteModuleInput { return v.Input }
 
+// __EditAppStoreListingInput is used internally by genqlient
+type __EditAppStoreListingInput struct {
+	Id    string          `json:"id"`
+	Edits EditWebAppInput `json:"edits"`
+}
+
+// GetId returns __EditAppStoreListingInput.Id, and is useful for accessing the field via an interface.
+func (v *__EditAppStoreListingInput) GetId() string { return v.Id }
+
+// GetEdits returns __EditAppStoreListingInput.Edits, and is useful for accessing the field via an interface.
+func (v *__EditAppStoreListingInput) GetEdits() EditWebAppInput { return v.Edits }
+
 // __FinalizeImageUploadInput is used internally by genqlient
 type __FinalizeImageUploadInput struct {
 	Input FinalizeUploadInput `json:"input"`
@@ -998,6 +1329,14 @@ type __FinalizeImageUploadInput struct {
 
 // GetInput returns __FinalizeImageUploadInput.Input, and is useful for accessing the field via an interface.
 func (v *__FinalizeImageUploadInput) GetInput() FinalizeUploadInput { return v.Input }
+
+// __GetAppStoreListingInput is used internally by genqlient
+type __GetAppStoreListingInput struct {
+	Id string `json:"id"`
+}
+
+// GetId returns __GetAppStoreListingInput.Id, and is useful for accessing the field via an interface.
+func (v *__GetAppStoreListingInput) GetId() string { return v.Id }
 
 // __GetPublishedModuleInput is used internally by genqlient
 type __GetPublishedModuleInput struct {
@@ -1035,6 +1374,38 @@ type __StartImageUploadInput struct {
 // GetInput returns __StartImageUploadInput.Input, and is useful for accessing the field via an interface.
 func (v *__StartImageUploadInput) GetInput() StartUploadInput { return v.Input }
 
+func CreateAppStoreListing(
+	ctx context.Context,
+	client graphql.Client,
+	input CreateWebAppInput,
+) (*CreateAppStoreListingResponse, error) {
+	req := &graphql.Request{
+		OpName: "CreateAppStoreListing",
+		Query: `
+mutation CreateAppStoreListing ($input: CreateWebAppInput!) {
+	createWebApp(input: $input) {
+		id
+	}
+}
+`,
+		Variables: &__CreateAppStoreListingInput{
+			Input: input,
+		},
+	}
+	var err error
+
+	var data CreateAppStoreListingResponse
+	resp := &graphql.Response{Data: &data}
+
+	err = client.MakeRequest(
+		ctx,
+		req,
+		resp,
+	)
+
+	return &data, err
+}
+
 func CreateDraftModule(
 	ctx context.Context,
 	client graphql.Client,
@@ -1056,6 +1427,36 @@ mutation CreateDraftModule ($input: CreateDraftModuleInput!) {
 	var err error
 
 	var data CreateDraftModuleResponse
+	resp := &graphql.Response{Data: &data}
+
+	err = client.MakeRequest(
+		ctx,
+		req,
+		resp,
+	)
+
+	return &data, err
+}
+
+func DeleteAppStoreListing(
+	ctx context.Context,
+	client graphql.Client,
+	id string,
+) (*DeleteAppStoreListingResponse, error) {
+	req := &graphql.Request{
+		OpName: "DeleteAppStoreListing",
+		Query: `
+mutation DeleteAppStoreListing ($id: ID!) {
+	deleteApp(id: $id)
+}
+`,
+		Variables: &__DeleteAppStoreListingInput{
+			Id: id,
+		},
+	}
+	var err error
+
+	var data DeleteAppStoreListingResponse
 	resp := &graphql.Response{Data: &data}
 
 	err = client.MakeRequest(
@@ -1099,6 +1500,38 @@ mutation DeleteModule ($input: DeleteModuleInput!) {
 	return &data, err
 }
 
+func EditAppStoreListing(
+	ctx context.Context,
+	client graphql.Client,
+	id string,
+	edits EditWebAppInput,
+) (*EditAppStoreListingResponse, error) {
+	req := &graphql.Request{
+		OpName: "EditAppStoreListing",
+		Query: `
+mutation EditAppStoreListing ($id: ID!, $edits: EditWebAppInput!) {
+	editWebApp(id: $id, edits: $edits)
+}
+`,
+		Variables: &__EditAppStoreListingInput{
+			Id:    id,
+			Edits: edits,
+		},
+	}
+	var err error
+
+	var data EditAppStoreListingResponse
+	resp := &graphql.Response{Data: &data}
+
+	err = client.MakeRequest(
+		ctx,
+		req,
+		resp,
+	)
+
+	return &data, err
+}
+
 func FinalizeImageUpload(
 	ctx context.Context,
 	client graphql.Client,
@@ -1120,6 +1553,45 @@ mutation FinalizeImageUpload ($input: FinalizeUploadInput!) {
 	var err error
 
 	var data FinalizeImageUploadResponse
+	resp := &graphql.Response{Data: &data}
+
+	err = client.MakeRequest(
+		ctx,
+		req,
+		resp,
+	)
+
+	return &data, err
+}
+
+func GetAppStoreListing(
+	ctx context.Context,
+	client graphql.Client,
+	id string,
+) (*GetAppStoreListingResponse, error) {
+	req := &graphql.Request{
+		OpName: "GetAppStoreListing",
+		Query: `
+query GetAppStoreListing ($id: ID!) {
+	app(id: $id) {
+		__typename
+		name
+		description
+		authorDisplay
+		image
+		... on AppStoreWebApplication {
+			url
+		}
+	}
+}
+`,
+		Variables: &__GetAppStoreListingInput{
+			Id: id,
+		},
+	}
+	var err error
+
+	var data GetAppStoreListingResponse
 	resp := &graphql.Response{Data: &data}
 
 	err = client.MakeRequest(

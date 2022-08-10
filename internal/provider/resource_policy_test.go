@@ -8,7 +8,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/lifeomic/terraform-provider-phc/internal/client"
 )
 
 var testPolicyResName = "phc_policy.test"
@@ -142,14 +141,12 @@ func TestAccPHCPolicy_conflictingComparisonFields(t *testing.T) {
 }
 
 func checkPolicyExists(s *terraform.State) error {
-	policyClient := client.New(client.Config{}).Policies()
+	policyClient := newClientSet("", "").Policies
 
 	for _, res := range s.RootModule().Resources {
 		if res.Type != "phc_policy" {
 			continue
 		}
-
-		fmt.Printf("attributes: %+v\n", res.Primary.Attributes)
 
 		if _, err := policyClient.Get(context.Background(), res.Primary.Attributes["name"]); err != nil {
 			return err

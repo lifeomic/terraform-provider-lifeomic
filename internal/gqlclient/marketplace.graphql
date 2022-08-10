@@ -47,6 +47,7 @@ mutation PublishModule($input: PublishDraftModuleInputV2!) {
     }
   }
 }
+
 mutation StartImageUpload($input: StartUploadInput!) {
   startUpload(input: $input) {
     id

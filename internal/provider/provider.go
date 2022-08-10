@@ -13,8 +13,10 @@ import (
 	"github.com/lifeomic/terraform-provider-phc/internal/client"
 )
 
+const useLambdaEnvVar = "LIFEOMIC_USE_LAMBDA"
+
 type provider struct {
-	client     client.Interface
+	clientSet  *clientSet
 	configured bool
 }
 
@@ -75,16 +77,8 @@ func (p *provider) Configure(ctx context.Context, req tfsdk.ConfigureProviderReq
 		"provider": p,
 	})
 
-	p.client = client.New(config.ClientConfig())
+	p.clientSet = newClientSet(config.Token.Value, config.AccountID.Value)
 	p.configured = true
-}
-
-func (d *providerData) ClientConfig() client.Config {
-	return client.Config{
-		AccountID: d.AccountID.Value,
-		AuthToken: d.Token.Value,
-		Host:      d.Host.Value,
-	}
 }
 
 func requireProviderValue(resp *tfsdk.ConfigureProviderResponse, attribute, envVar string, value *types.String) {

@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"os"
 	"strconv"
 	"time"
@@ -51,12 +52,16 @@ type Config struct {
 	MaxRetryWaitTime time.Duration
 
 	Debug bool
+
+	ServiceName string
+	Transport   http.RoundTripper
 }
 
 // Client interfaces with the PHC API.
 type Client struct {
 	config     *Config
 	httpClient *resty.Client
+	transport  *AuthedTransport
 
 	accounts AccountService
 	policies PolicyService
@@ -88,13 +93,16 @@ func New(config Config) *Client {
 	if config.MaxRetryWaitTime == 0 {
 		config.MaxRetryWaitTime = defaultRetryMaxWaitTime
 	}
+
 	if !config.Debug {
 		// Treat any malformed value as false.
 		config.Debug, _ = strconv.ParseBool(os.Getenv(DebugEnvVar))
 	}
 
-	client := &Client{httpClient: resty.New(), config: &config}
-	client.accounts = &accountService{Client: client}
+	transport := NewAuthedTransport(config.AuthToken, config.AccountID, config.ServiceName)
+	httpClient := &http.Client{Transport: transport}
+	client := &Client{httpClient: resty.NewWithClient(httpClient), config: &config}
+	client.transport = transport
 	client.policies = &policyService{Client: client}
 	client.httpClient.SetDebug(config.Debug)
 	client.init()
@@ -129,18 +137,13 @@ func (c *Client) SetAPIVersion(version string) {
 // SetAuthToken updates the Authorization header on the underlying http client
 // to the given value.
 func (c *Client) SetAuthToken(token string) {
-	c.config.AuthToken = token
-	c.httpClient.SetAuthToken(token)
+	c.transport.AuthToken = token
 }
 
 // SetAccount updates the client to send a LifeOmic-Account header with the
 // given name.
 func (c *Client) SetAccount(account string) {
-	c.config.AccountID = account
-	if account == "" {
-		c.httpClient.Header.Del(accountHeader)
-	}
-	c.httpClient.SetHeader(accountHeader, account)
+	c.transport.AccountID = account
 }
 
 // init is ran to initialize the underlying http client.
@@ -150,8 +153,6 @@ func (c *Client) init() {
 	// Set default headers for all requests.
 	c.httpClient.SetHeader("Content-Type", "application/json")
 	c.httpClient.SetHeader("Accept", "application/json")
-	c.SetAccount(c.config.AccountID)
-	c.SetAuthToken(c.config.AuthToken)
 	c.SetUserAgent(fmt.Sprintf("%s%s %s", userAgentPrefix, GitRef, GitCommit))
 
 	// Configure retries.
