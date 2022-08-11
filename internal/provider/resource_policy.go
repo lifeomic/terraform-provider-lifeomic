@@ -50,7 +50,7 @@ type policyRuleWalkFunc func(index int, rule *policyRule)
 
 // policyResource implements tfsdk.
 type policyResource struct {
-	client client.Interface
+	clientSet *clientSet
 }
 
 // policyResource implements tfsdk.ResourceType
@@ -137,7 +137,7 @@ func (policyResourceType) NewResource(_ context.Context, p tfsdk.Provider) (tfsd
 	}
 
 	return &policyResource{
-		client: pr.client,
+		clientSet: pr.clientSet,
 	}, nil
 }
 
@@ -327,7 +327,7 @@ func (r policyResource) Create(ctx context.Context, req tfsdk.CreateResourceRequ
 	}
 
 	// Create the policy.
-	p, err := r.client.Policies().Create(ctx, p)
+	p, err := r.clientSet.Policies.Create(ctx, p)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to create policy", err.Error())
 		return
@@ -348,7 +348,7 @@ func (r policyResource) Read(ctx context.Context, req tfsdk.ReadResourceRequest,
 	}
 
 	// Get the underlying Policy object.
-	p, err := r.client.Policies().Get(ctx, state.Name.Value)
+	p, err := r.clientSet.Policies.Get(ctx, state.Name.Value)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to get policy", err.Error())
 		return
@@ -381,7 +381,7 @@ func (r policyResource) Update(ctx context.Context, req tfsdk.UpdateResourceRequ
 		return
 	}
 
-	p, err := r.client.Policies().Update(ctx, state.Name.Value, p)
+	p, err := r.clientSet.Policies.Update(ctx, state.Name.Value, p)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to create policy", err.Error())
 		return
@@ -401,7 +401,7 @@ func (r policyResource) Delete(ctx context.Context, req tfsdk.DeleteResourceRequ
 		return
 	}
 
-	if err := r.client.Policies().Delete(ctx, state.Name.Value); err != nil {
+	if err := r.clientSet.Policies.Delete(ctx, state.Name.Value); err != nil {
 		resp.Diagnostics.AddError("failed to delete Policy", err.Error())
 	}
 

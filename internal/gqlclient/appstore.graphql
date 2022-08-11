@@ -1,0 +1,26 @@
+query GetAppStoreListing($id: ID!) {
+  app(id: $id) {
+    name
+    description
+    authorDisplay
+    image
+    ... on AppStoreWebApplication {
+      url
+    }
+  }
+}
+
+mutation DeleteAppStoreListing($id: ID!) {
+  deleteApp(id: $id)
+}
+
+mutation CreateAppStoreListing($input: CreateWebAppInput!) {
+  createWebApp(input: $input) {
+    id
+  }
+}
+
+mutation EditAppStoreListing($id: ID!, $edits: EditWebAppInput!) {
+  editWebApp(id: $id, edits: $edits) 
+}
+
