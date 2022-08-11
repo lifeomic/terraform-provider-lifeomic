@@ -134,14 +134,14 @@ func writeFactory(w io.Writer, c client) {
 	fmt.Fprintf(w, "func New%sClient(authToken string, accountID string) %s {\n", c.UppercaseName(), c.InterfaceName())
 	fmt.Fprintf(w, "\ttransport := client.NewAuthedTransport(authToken, accountID, %s)\n", c.ServiceConstName())
 	fmt.Fprintf(w, "\treturn &%s{client: graphql.NewClient(%s, transport)}\n", c.StructName(), c.EndpointConstName())
-	fmt.Fprintln(w, "}\n")
+	fmt.Fprint(w, "}\n\n")
 }
 
 func writeConstants(w io.Writer, c client) {
 	fmt.Fprintln(w, "const (")
 	fmt.Fprintf(w, "\t%s = \"%s\"\n", c.ServiceConstName(), c.ServiceName)
 	fmt.Fprintf(w, "\t%s = \"%s/graphql\"\n", c.EndpointConstName(), c.BaseURL)
-	fmt.Fprintln(w, ")\n")
+	fmt.Fprint(w, ")\n\n")
 }
 
 func writeImports(w io.Writer, pkgs ...string) {
