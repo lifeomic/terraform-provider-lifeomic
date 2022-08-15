@@ -21,7 +21,7 @@ $(GQL_SCHEMA_DIR):
 	cd $(GQL_PKG) && lifeomic-fetch-individual-graphql-schemas -s marketplace,marketplaceAuthed,appStore
 
 $(GQL_GENERATED_SCHEMA):
-	cd $(GQL_PKG) && yarn graphql-codegen
+	cd $(GQL_PKG) && yarn && yarn graphql-codegen
 
 $(GQL_PKG)/generated.go: generate
 

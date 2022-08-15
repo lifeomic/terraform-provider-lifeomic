@@ -48,6 +48,15 @@ mutation PublishModule($input: PublishDraftModuleInputV2!) {
   }
 }
 
+mutation PublishModuleV3($input: PublishDraftModuleInputV3!) {
+  publishDraftModuleV3(input: $input) {
+    id
+    version {
+      version
+    }
+  }
+}
+
 mutation StartImageUpload($input: StartUploadInput!) {
   startUpload(input: $input) {
     id
@@ -59,5 +68,40 @@ mutation StartImageUpload($input: StartUploadInput!) {
 mutation FinalizeImageUpload($input: FinalizeUploadInput!) {
   finalizeUpload(input: $input) {
     moduleId
+  }
+}
+
+mutation SetWellnessOfferingDraftModuleSource(
+  $input: SetDraftModuleWellnessOfferingSourceInput!
+) {
+  setWellnessOfferingDraftModuleSource(input: $input) {
+    id
+  }
+}
+
+fragment WellnessOfferingModule on MarketplaceModule {
+  title
+  description
+  version
+  source {
+    ... on WellnessOffering {
+      provider
+      imageUrl
+      infoUrl
+      configurationSchema
+      approximateUnitCost
+    }
+  }
+}
+
+query GetWellnessOfferingModule($moduleId: ID!) {
+  myModule(moduleId: $moduleId) {
+    ...WellnessOfferingModule
+  }
+}
+
+mutation UpdateDraftModule($input: UpdateDraftModuleInput!) {
+  updateDraftModule(input: $input) {
+    id
   }
 }

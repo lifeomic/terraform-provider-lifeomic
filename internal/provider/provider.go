@@ -99,7 +99,8 @@ func requireProviderValue(resp *tfsdk.ConfigureProviderResponse, attribute, envV
 
 func (p *provider) GetResources(_ context.Context) (map[string]tfsdk.ResourceType, diag.Diagnostics) {
 	return map[string]tfsdk.ResourceType{
-		"phc_policy": policyResourceType{},
+		"phc_policy":                    policyResourceType{},
+		"marketplace_wellness_offering": wellnessOfferingResourceType{},
 	}, nil
 }
 
