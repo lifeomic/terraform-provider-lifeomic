@@ -1,12 +1,12 @@
 packageName: gqlclient
 clients:
-- name: AppStore
-  serviceName: app-store-service
-  baseURL: https://api.us.lifeomic.com/api/v1
-  gqlFile: ./appstore.graphql 
-  goFile: ./appstore.go
-- name: Marketplace
-  serviceName: marketplace-service
-  baseURL: https://marketplace.us.lifeomic.com/api/v1/marketplace
-  gqlFile: ./marketplace.graphql
-  goFile: ./marketplace.go
+  - name: AppStore
+    serviceName: app-store-service
+    baseURL: https://api.us.lifeomic.com/api/v1
+    gqlFile: ./appstore.graphql
+    goFile: ./appstore.go
+  - name: Marketplace
+    serviceName: marketplace-service
+    baseURL: https://marketplace.us.lifeomic.com/v1/marketplace/authenticated
+    gqlFile: ./marketplace.graphql
+    goFile: ./marketplace.go

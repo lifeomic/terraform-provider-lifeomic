@@ -10,7 +10,7 @@ import (
 
 const (
 	marketplaceServiceName     = "marketplace-service"
-	marketplaceDefaultEndpoint = "https://marketplace.us.lifeomic.com/api/v1/marketplace/graphql"
+	marketplaceDefaultEndpoint = "https://marketplace.us.lifeomic.com/v1/marketplace/authenticated/graphql"
 )
 
 type MarketplaceService interface {

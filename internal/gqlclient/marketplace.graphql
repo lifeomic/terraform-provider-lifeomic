@@ -21,7 +21,11 @@ query GetPublishedModule($id: ID!, $version: String) {
   }
 }
 
-mutation CreateDraftModule($input: CreateDraftModuleInput!) {
+# @genqlient(for: "CreateDraftModuleInput.scope", omitempty: true)
+mutation CreateDraftModule(
+  # https://github.com/Khan/genqlient/issues/151
+  $input: CreateDraftModuleInput!
+) {
   createDraftModule(input: $input) {
     id
   }
@@ -80,6 +84,7 @@ mutation SetWellnessOfferingDraftModuleSource(
 }
 
 fragment WellnessOfferingModule on MarketplaceModule {
+  id
   title
   description
   version
