@@ -13,19 +13,19 @@ import (
 
 // wellnessOffering represents the state of marketplace_wellness_offering resource
 type wellnessOffering struct {
-	ID                         types.String `tfsdk:"id"`
-	ParentModuleId             types.String `tfsdk:"parent_module_id"`
-	Title                      types.String `tfsdk:"title"`
-	Description                types.String `tfsdk:"description"`
-	MarketplaceProvider        types.String `tfsdk:"marketplace_provider"`
-	Version                    types.String `tfsdk:"version"`
-	ImageURL                   types.String `tfsdk:"image_url"`
-	InfoURL                    types.String `tfsdk:"info_url"`
-	ApproximateUnitCostPennies types.Int64  `tfsdk:"approximate_unit_cost_pennies"`
-	InstallURL                 types.String `tfsdk:"install_url"`
-	ConfigurationSchema        types.String `tfsdk:"configuration_schema"`
-	IsEnabled                  types.Bool   `tfsdk:"is_enabled"`
-	IsTestModule               types.Bool   `tfsdk:"is_test_module"`
+	ID                  types.String `tfsdk:"id"`
+	ParentModuleId      types.String `tfsdk:"parent_module_id"`
+	Title               types.String `tfsdk:"title"`
+	Description         types.String `tfsdk:"description"`
+	MarketplaceProvider types.String `tfsdk:"marketplace_provider"`
+	Version             types.String `tfsdk:"version"`
+	ImageURL            types.String `tfsdk:"image_url"`
+	InfoURL             types.String `tfsdk:"info_url"`
+	ApproximateUnitCost types.Int64  `tfsdk:"approximate_unit_cost"`
+	InstallURL          types.String `tfsdk:"install_url"`
+	ConfigurationSchema types.String `tfsdk:"configuration_schema"`
+	IsEnabled           types.Bool   `tfsdk:"is_enabled"`
+	IsTestModule        types.Bool   `tfsdk:"is_test_module"`
 }
 
 // wellnessOfferingResource implements tfsdk
@@ -75,9 +75,10 @@ func (wellnessOfferingResourceType) GetSchema(_ context.Context) (tfsdk.Schema, 
 				Required: true,
 				Type:     types.StringType,
 			},
-			"approximate_unit_cost_pennies": {
-				Required: true,
-				Type:     types.Int64Type,
+			"approximate_unit_cost": {
+				Required:    true,
+				Type:        types.Int64Type,
+				Description: "The approximate per unit cost of the module represented in USD Pennies",
 			},
 			"install_url": {
 				Required: true,
@@ -160,7 +161,7 @@ func (w wellnessOfferingResource) Create(ctx context.Context, req tfsdk.CreateRe
 	setSourceResp, err := w.clientSet.Marketplace.SetWellnessOfferingDraftModuleSource(ctx, gqlclient.SetDraftModuleWellnessOfferingSourceInput{
 		ModuleId: draftModuleResp.CreateDraftModule.Id,
 		SourceInfo: gqlclient.WellnessOfferingModuleSourceInfo{
-			ApproximateUnitCost: int(plan.ApproximateUnitCostPennies.Value),
+			ApproximateUnitCost: int(plan.ApproximateUnitCost.Value),
 			ConfigurationSchema: plan.ConfigurationSchema.Value,
 			ImageUrl:            plan.ImageURL.Value,
 			InfoUrl:             plan.InfoURL.Value,
@@ -253,7 +254,7 @@ func (w wellnessOfferingResource) Update(ctx context.Context, req tfsdk.UpdateRe
 	setSourceResp, err := w.clientSet.Marketplace.SetWellnessOfferingDraftModuleSource(ctx, gqlclient.SetDraftModuleWellnessOfferingSourceInput{
 		ModuleId: updateResp.UpdateDraftModule.Id,
 		SourceInfo: gqlclient.WellnessOfferingModuleSourceInfo{
-			ApproximateUnitCost: int(plan.ApproximateUnitCostPennies.Value),
+			ApproximateUnitCost: int(plan.ApproximateUnitCost.Value),
 			ConfigurationSchema: plan.ConfigurationSchema.Value,
 			ImageUrl:            plan.ImageURL.Value,
 			InfoUrl:             plan.InfoURL.Value,
@@ -315,15 +316,15 @@ func setWellnessOfferingState(ctx context.Context, config *wellnessOffering, sta
 		IsTestModule:   config.IsTestModule,
 		InstallURL:     config.InstallURL,
 
-		ID:                         types.String{Value: w.Id},
-		Title:                      types.String{Value: w.Title},
-		Description:                types.String{Value: w.Description},
-		MarketplaceProvider:        types.String{Value: source.Provider},
-		Version:                    types.String{Value: w.Version},
-		ImageURL:                   types.String{Value: source.ImageUrl},
-		InfoURL:                    types.String{Value: source.InfoUrl},
-		ApproximateUnitCostPennies: types.Int64{Value: int64(source.ApproximateUnitCost)},
-		ConfigurationSchema:        types.String{Value: source.ConfigurationSchema},
+		ID:                  types.String{Value: w.Id},
+		Title:               types.String{Value: w.Title},
+		Description:         types.String{Value: w.Description},
+		MarketplaceProvider: types.String{Value: source.Provider},
+		Version:             types.String{Value: w.Version},
+		ImageURL:            types.String{Value: source.ImageUrl},
+		InfoURL:             types.String{Value: source.InfoUrl},
+		ApproximateUnitCost: types.Int64{Value: int64(source.ApproximateUnitCost)},
+		ConfigurationSchema: types.String{Value: source.ConfigurationSchema},
 	})...)
 	return
 }

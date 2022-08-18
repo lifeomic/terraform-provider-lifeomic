@@ -17,7 +17,7 @@ marketplace_wellness_offering manages Wellness Offering subsidies
 
 ### Required
 
-- `approximate_unit_cost_pennies` (Number)
+- `approximate_unit_cost` (Number) The approximate per unit cost of the module represented in USD Pennies
 - `configuration_schema` (String)
 - `description` (String) The description of the Wellness Offering
 - `image_url` (String)

@@ -29,7 +29,7 @@ func TestAccMarketplaceWellnessOffering_basic(t *testing.T) {
 						version = "1.0.0"
 						image_url = "https://placekitten.com/1800/1600"
 						info_url = "https://example.com"
-						approximate_unit_cost_pennies = 10000
+						approximate_unit_cost = 10000
 						configuration_schema = jsonencode({
 							"version": "06-28-2021",
 							"fields": []

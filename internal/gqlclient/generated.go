@@ -535,7 +535,7 @@ func (v *CreateDraftModuleCreateDraftModuleCreateDraftModuleResponse) GetId() st
 type CreateDraftModuleInput struct {
 	Category    ModuleCategory `json:"category"`
 	Description string         `json:"description"`
-	Icon        interface{}    `json:"icon"`
+	Icon        any            `json:"icon"`
 	// A unique identifier to use for the new module. If not provided, one will be generated.
 	Id               string                  `json:"id"`
 	Languages        []string                `json:"languages"`
@@ -559,7 +559,7 @@ func (v *CreateDraftModuleInput) GetCategory() ModuleCategory { return v.Categor
 func (v *CreateDraftModuleInput) GetDescription() string { return v.Description }
 
 // GetIcon returns CreateDraftModuleInput.Icon, and is useful for accessing the field via an interface.
-func (v *CreateDraftModuleInput) GetIcon() interface{} { return v.Icon }
+func (v *CreateDraftModuleInput) GetIcon() any { return v.Icon }
 
 // GetId returns CreateDraftModuleInput.Id, and is useful for accessing the field via an interface.
 func (v *CreateDraftModuleInput) GetId() string { return v.Id }
@@ -738,15 +738,15 @@ func (v *EditWebAppInput) GetName() string { return v.Name }
 func (v *EditWebAppInput) GetUrl() string { return v.Url }
 
 type FileWithDescription struct {
-	Description string      `json:"description"`
-	File        interface{} `json:"file"`
+	Description string `json:"description"`
+	File        any    `json:"file"`
 }
 
 // GetDescription returns FileWithDescription.Description, and is useful for accessing the field via an interface.
 func (v *FileWithDescription) GetDescription() string { return v.Description }
 
 // GetFile returns FileWithDescription.File, and is useful for accessing the field via an interface.
-func (v *FileWithDescription) GetFile() interface{} { return v.File }
+func (v *FileWithDescription) GetFile() any { return v.File }
 
 // FinalizeImageUploadFinalizeUploadFinalizeUploadResponse includes the requested fields of the GraphQL type FinalizeUploadResponse.
 type FinalizeImageUploadFinalizeUploadFinalizeUploadResponse struct {
@@ -1467,7 +1467,7 @@ func (v *StartUploadInput) GetFileName() string { return v.FileName }
 
 type UpdateDraftModuleInput struct {
 	Description      string                  `json:"description"`
-	Icon             interface{}             `json:"icon"`
+	Icon             any                     `json:"icon"`
 	Languages        []string                `json:"languages"`
 	ModuleId         string                  `json:"moduleId"`
 	ParentModuleId   string                  `json:"parentModuleId"`
@@ -1485,7 +1485,7 @@ type UpdateDraftModuleInput struct {
 func (v *UpdateDraftModuleInput) GetDescription() string { return v.Description }
 
 // GetIcon returns UpdateDraftModuleInput.Icon, and is useful for accessing the field via an interface.
-func (v *UpdateDraftModuleInput) GetIcon() interface{} { return v.Icon }
+func (v *UpdateDraftModuleInput) GetIcon() any { return v.Icon }
 
 // GetLanguages returns UpdateDraftModuleInput.Languages, and is useful for accessing the field via an interface.
 func (v *UpdateDraftModuleInput) GetLanguages() []string { return v.Languages }

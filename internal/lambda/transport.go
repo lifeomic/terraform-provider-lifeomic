@@ -77,8 +77,6 @@ func responseFromOutput(output *lambda.InvokeOutput) (*http.Response, error) {
 		header.Set(key, value)
 	}
 
-	fmt.Printf("resp %v\n", respPayload)
-
 	return &http.Response{
 		Body:       ioutil.NopCloser(strings.NewReader(respPayload.Body)),
 		Header:     header,
@@ -94,8 +92,6 @@ type response struct {
 
 func (r *RoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
 	payload, err := payloadFromRequest(req)
-
-	fmt.Printf("req payload: %v\n", string(payload))
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal lambda payload: %w", err)
