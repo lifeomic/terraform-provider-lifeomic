@@ -41,6 +41,10 @@ func payloadFromRequest(req *http.Request) ([]byte, error) {
 	for key := range req.Header {
 		header[key] = req.Header.Get(key)
 	}
+	// TODO: allow custom headers
+	header["LifeOmic-Policy"] = "{\"rules\":{\"publishContent\":true}}"
+	header["LifeOmic-User"] = `wellness-service`
+	header["LifeOmic-Account"] = `lifeomic`
 
 	payload := map[string]any{
 		"headers":    header,
@@ -88,6 +92,7 @@ type response struct {
 
 func (r *RoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
 	payload, err := payloadFromRequest(req)
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal lambda payload: %w", err)
 	}
