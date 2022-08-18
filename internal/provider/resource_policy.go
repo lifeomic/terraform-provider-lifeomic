@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"reflect"
 
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
@@ -32,6 +33,7 @@ type policy struct {
 // policyRule represents the state of a phc_policy resource's rule block.
 type policyRule struct {
 	Operation  types.String           `tfsdk:"operation"`
+	Allowed    *bool                  `tfsdk:"allowed"`
 	Comparison []policyRuleComparison `tfsdk:"comparison"`
 }
 
@@ -53,6 +55,37 @@ type policyResource struct {
 	clientSet *clientSet
 }
 
+// concreteValuePlanModifier is an implementation of a tfsdk.AttributePlanModifier
+// that modifies the plan to reflect a known value for a pseudo-computed field.
+// The main use-case here is to prevent phc_policy.id (which effectively is just
+// an alias to name and will never be different) from showing as `known after
+// apply` at plan-time. -- this has been causing issues with testing.
+//
+// The value is determined by Getter.
+type concreteValuePlanModifier struct {
+	terraformDescriptionNoop
+
+	Getter func(context.Context, tfsdk.ModifyAttributePlanRequest) (attr.Value, diag.Diagnostics)
+}
+
+func (m *concreteValuePlanModifier) Modify(ctx context.Context, req tfsdk.ModifyAttributePlanRequest, res *tfsdk.ModifyAttributePlanResponse) {
+	value, diags := m.Getter(ctx, req)
+	if diags.HasError() {
+		res.Diagnostics.Append(diags...)
+		return
+	}
+	res.AttributePlan = value
+}
+
+func policyIDPlanModifier() tfsdk.AttributePlanModifier {
+	return &concreteValuePlanModifier{
+		Getter: func(ctx context.Context, req tfsdk.ModifyAttributePlanRequest) (val attr.Value, diags diag.Diagnostics) {
+			diags = req.Config.GetAttribute(ctx, path.Root("name"), &val)
+			return
+		},
+	}
+}
+
 // policyResource implements tfsdk.ResourceType
 type policyResourceType struct {
 }
@@ -71,6 +104,9 @@ func (policyResourceType) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagn
 				Optional:    true,
 				Computed:    true,
 				Description: "The ID of this ABAC policy resource.",
+				PlanModifiers: tfsdk.AttributePlanModifiers{
+					policyIDPlanModifier(),
+				},
 			},
 		},
 		Blocks: map[string]tfsdk.Block{
@@ -83,15 +119,20 @@ func (policyResourceType) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagn
 				MinItems: 1,
 				Attributes: map[string]tfsdk.Attribute{
 					"operation": {
-						Type:        types.StringType,
-						Required:    true,
-						Description: fmt.Sprintf("The [operation](%s) this ABAC rule governs.", policyOperationDocsURL),
+						Type:     types.StringType,
+						Required: true,
+						Description: fmt.Sprintf("The [operation](%s) this ABAC rule governs."+
+							"Exactly one of `comparison` and `allowed` should be set.", policyOperationDocsURL),
+					},
+					"allowed": {
+						Type:        types.BoolType,
+						Optional:    true,
+						Description: "A describing whether this operation is allowed. Must either be null or true.",
 					},
 				},
 				Blocks: map[string]tfsdk.Block{
 					"comparison": {
 						Description: "An ABAC comparison. Exactly one of `value`, `values`, or `target` should be set.",
-						MinItems:    1,
 						NestingMode: tfsdk.BlockNestingModeList,
 						Validators: []tfsdk.AttributeValidator{
 							&policyRuleComparisonValidator{},
@@ -150,6 +191,7 @@ func walkPolicyRuleList(ctx context.Context, basePath path.Path, rules []policyR
 	// Map rule operations to their respective indicies in the rule list.
 	// If there are multiple occurances of an operation, tell the user to
 	// consolidate their rules.
+	// Will also ensure exactly one of `comparison` and `allowed` are provided.
 	// All errors with the rule configuration will be accumulated before
 	// returning.
 	seen := make(map[string]int, len(rules))
@@ -164,6 +206,20 @@ func walkPolicyRuleList(ctx context.Context, basePath path.Path, rules []policyR
 			diags.AddAttributeError(basePath.AtListIndex(i),
 				fmt.Sprintf("Duplicate occurance of rule for operation %q", operation),
 				fmt.Sprintf("Consolidate %q rules with block at index %d", operation, location))
+			continue
+		}
+
+		// Ensure exactly one of comparison and allowed are set.
+		if (len(rule.Comparison) == 0) == (rule.Allowed == nil) {
+			diags.AddAttributeError(basePath.AtListIndex(i),
+				"Exactly one of comparison and allowed should be set", "")
+			continue
+		}
+
+		// Ensure that if allowed is set, it's true. False is invalid.
+		if rule.Allowed != nil && !*rule.Allowed {
+			diags.AddAttributeError(basePath.AtListIndex(i).AtName("allowed"),
+				"allowed must either be true or null", "")
 			continue
 		}
 
@@ -187,6 +243,14 @@ func (p *policy) ToPolicyObject(ctx context.Context) (policy *client.Policy, dia
 
 	walkPolicyRuleList(ctx, path.Root("rule"), p.Rule, func(index int, rule *policyRule) {
 		operation := rule.Operation.Value
+
+		if rule.Allowed != nil {
+			rules[operation] = client.StaticRule(*rule.Allowed)
+			return
+		}
+
+		// If we're at this point, the rule definitely has a set of
+		// comparisons.
 		ruleMappings := make(client.RuleMappings, len(rule.Comparison))
 
 		for i, comparisonSpec := range rule.Comparison {
@@ -230,24 +294,26 @@ func (p *policy) ToPolicyObject(ctx context.Context) (policy *client.Policy, dia
 	return
 }
 
-type emptyValidatorDescriptions struct{}
+type terraformDescriptionNoop struct{}
 
-func (emptyValidatorDescriptions) MarkdownDescription(_ context.Context) string {
+func (terraformDescriptionNoop) MarkdownDescription(_ context.Context) string {
 	return ""
 }
 
-func (emptyValidatorDescriptions) Description(_ context.Context) string {
+func (terraformDescriptionNoop) Description(_ context.Context) string {
 	return ""
 }
 
 // policyRulesValidator is a tfsdk.AttributeValidator for the phc_policy.rule
 // blocks.
 type policyRulesValidator struct {
-	emptyValidatorDescriptions
+	terraformDescriptionNoop
 }
 
-// Validate ensures that the phc_policy.rule blocks are not duplicates. An
-// operation should only be referenced in a single block.
+// Validate ensures that the phc_policy.rule blocks are not duplicates (an
+// operation should only be referenced in a single block) and that either
+// a set of comparisons or a static boolean value is provided, but not
+// both.
 func (v *policyRulesValidator) Validate(ctx context.Context, req tfsdk.ValidateAttributeRequest, resp *tfsdk.ValidateAttributeResponse) {
 	if req.AttributeConfig.IsUnknown() {
 		// It's okay if the values are unknown at plan time. It's means
@@ -273,7 +339,7 @@ func (v *policyRulesValidator) Validate(ctx context.Context, req tfsdk.ValidateA
 }
 
 type policyRuleComparisonValidator struct {
-	emptyValidatorDescriptions
+	terraformDescriptionNoop
 }
 
 // Validate enures that the phc_policy.rule[*].comparison blocks only specify
@@ -409,6 +475,35 @@ func (r policyResource) Delete(ctx context.Context, req tfsdk.DeleteResourceRequ
 	tflog.Info(ctx, "Deleted existing Policy", map[string]any{"name": state.Name})
 }
 
+// flattenRuleMappings flattens a RuleMappings into a slice of
+// policyRuleComparison resources.
+func flattenRuleMappings(ruleMappings client.RuleMappings) []policyRuleComparison {
+	comparisons := make([]policyRuleComparison, len(ruleMappings))
+	for i, ruleMap := range ruleMappings {
+		subject, comparison, ok := ruleMap.GetComparison()
+		if !ok {
+			continue
+		}
+
+		comparisonElem := policyRuleComparison{
+			Subject: types.String{Value: subject},
+			Type:    types.String{Value: string(comparison.GetComparisonType())},
+		}
+
+		switch c := comparison.(type) {
+		case *client.ValueComparison:
+			comparisonElem.Value = &c.Value
+		case *client.MultivalueComparison:
+			comparisonElem.Values = &c.Values
+		case *client.TargetComparison:
+			comparisonElem.Target = &c.Target
+		}
+		comparisons[i] = comparisonElem
+	}
+
+	return comparisons
+}
+
 func setPolicyState(ctx context.Context, config *policy, state *tfsdk.State, p *client.Policy) (diags diag.Diagnostics) {
 	rules := make([]policyRule, 0, len(p.Policy.Rules))
 
@@ -418,33 +513,17 @@ func setPolicyState(ctx context.Context, config *policy, state *tfsdk.State, p *
 	walkPolicyRuleList(ctx, path.Root("rule"), config.Rule, func(index int, ruleSpec *policyRule) {
 		operation := ruleSpec.Operation.Value
 		ruleElem := policyRule{Operation: types.String{Value: operation}}
-		ruleMappings := p.Policy.Rules[operation].(client.RuleMappings)
 
-		// Build comparison objects.
-		comparisons := make([]policyRuleComparison, len(ruleMappings))
-		for i, ruleMap := range ruleMappings {
-			subject, comparison, ok := ruleMap.GetComparison()
-			if !ok {
-				continue
-			}
+		// Build policyRule resource from this rule.
+		switch expression := p.Policy.Rules[operation].(type) {
+		case client.StaticRule:
+			allowed := bool(expression)
+			ruleElem.Allowed = &allowed
 
-			comparisonElem := policyRuleComparison{
-				Subject: types.String{Value: subject},
-				Type:    types.String{Value: string(comparison.GetComparisonType())},
-			}
-
-			switch c := comparison.(type) {
-			case *client.ValueComparison:
-				comparisonElem.Value = &c.Value
-			case *client.MultivalueComparison:
-				comparisonElem.Values = &c.Values
-			case *client.TargetComparison:
-				comparisonElem.Target = &c.Target
-			}
-			comparisons[i] = comparisonElem
+		case client.RuleMappings:
+			ruleElem.Comparison = flattenRuleMappings(expression)
 		}
 
-		ruleElem.Comparison = comparisons
 		rules = append(rules, ruleElem)
 
 		// Removed processed rule block from the policy object to keep
