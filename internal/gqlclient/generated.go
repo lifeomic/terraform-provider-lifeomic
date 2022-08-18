@@ -535,7 +535,7 @@ func (v *CreateDraftModuleCreateDraftModuleCreateDraftModuleResponse) GetId() st
 type CreateDraftModuleInput struct {
 	Category    ModuleCategory `json:"category"`
 	Description string         `json:"description"`
-	Icon        string         `json:"icon"`
+	Icon        interface{}    `json:"icon"`
 	// A unique identifier to use for the new module. If not provided, one will be generated.
 	Id               string                  `json:"id"`
 	Languages        []string                `json:"languages"`
@@ -545,7 +545,7 @@ type CreateDraftModuleInput struct {
 	PreviewVideoUrls []string                `json:"previewVideoUrls"`
 	Prices           []DraftModulePriceInput `json:"prices"`
 	Products         []ModuleProduct         `json:"products"`
-	Scope            MarketplaceModuleScope  `json:"scope"`
+	Scope            MarketplaceModuleScope  `json:"scope,omitempty"`
 	Support          string                  `json:"support"`
 	Tags             []string                `json:"tags"`
 	Title            string                  `json:"title"`
@@ -559,7 +559,7 @@ func (v *CreateDraftModuleInput) GetCategory() ModuleCategory { return v.Categor
 func (v *CreateDraftModuleInput) GetDescription() string { return v.Description }
 
 // GetIcon returns CreateDraftModuleInput.Icon, and is useful for accessing the field via an interface.
-func (v *CreateDraftModuleInput) GetIcon() string { return v.Icon }
+func (v *CreateDraftModuleInput) GetIcon() interface{} { return v.Icon }
 
 // GetId returns CreateDraftModuleInput.Id, and is useful for accessing the field via an interface.
 func (v *CreateDraftModuleInput) GetId() string { return v.Id }
@@ -738,15 +738,15 @@ func (v *EditWebAppInput) GetName() string { return v.Name }
 func (v *EditWebAppInput) GetUrl() string { return v.Url }
 
 type FileWithDescription struct {
-	Description string `json:"description"`
-	File        string `json:"file"`
+	Description string      `json:"description"`
+	File        interface{} `json:"file"`
 }
 
 // GetDescription returns FileWithDescription.Description, and is useful for accessing the field via an interface.
 func (v *FileWithDescription) GetDescription() string { return v.Description }
 
 // GetFile returns FileWithDescription.File, and is useful for accessing the field via an interface.
-func (v *FileWithDescription) GetFile() string { return v.File }
+func (v *FileWithDescription) GetFile() interface{} { return v.File }
 
 // FinalizeImageUploadFinalizeUploadFinalizeUploadResponse includes the requested fields of the GraphQL type FinalizeUploadResponse.
 type FinalizeImageUploadFinalizeUploadFinalizeUploadResponse struct {
@@ -1076,6 +1076,11 @@ type GetWellnessOfferingModuleMyModuleMarketplaceModule struct {
 	WellnessOfferingModule `json:"-"`
 }
 
+// GetId returns GetWellnessOfferingModuleMyModuleMarketplaceModule.Id, and is useful for accessing the field via an interface.
+func (v *GetWellnessOfferingModuleMyModuleMarketplaceModule) GetId() string {
+	return v.WellnessOfferingModule.Id
+}
+
 // GetTitle returns GetWellnessOfferingModuleMyModuleMarketplaceModule.Title, and is useful for accessing the field via an interface.
 func (v *GetWellnessOfferingModuleMyModuleMarketplaceModule) GetTitle() string {
 	return v.WellnessOfferingModule.Title
@@ -1122,6 +1127,8 @@ func (v *GetWellnessOfferingModuleMyModuleMarketplaceModule) UnmarshalJSON(b []b
 }
 
 type __premarshalGetWellnessOfferingModuleMyModuleMarketplaceModule struct {
+	Id string `json:"id"`
+
 	Title string `json:"title"`
 
 	Description string `json:"description"`
@@ -1142,6 +1149,7 @@ func (v *GetWellnessOfferingModuleMyModuleMarketplaceModule) MarshalJSON() ([]by
 func (v *GetWellnessOfferingModuleMyModuleMarketplaceModule) __premarshalJSON() (*__premarshalGetWellnessOfferingModuleMyModuleMarketplaceModule, error) {
 	var retval __premarshalGetWellnessOfferingModuleMyModuleMarketplaceModule
 
+	retval.Id = v.WellnessOfferingModule.Id
 	retval.Title = v.WellnessOfferingModule.Title
 	retval.Description = v.WellnessOfferingModule.Description
 	retval.Version = v.WellnessOfferingModule.Version
@@ -1459,7 +1467,7 @@ func (v *StartUploadInput) GetFileName() string { return v.FileName }
 
 type UpdateDraftModuleInput struct {
 	Description      string                  `json:"description"`
-	Icon             string                  `json:"icon"`
+	Icon             interface{}             `json:"icon"`
 	Languages        []string                `json:"languages"`
 	ModuleId         string                  `json:"moduleId"`
 	ParentModuleId   string                  `json:"parentModuleId"`
@@ -1477,7 +1485,7 @@ type UpdateDraftModuleInput struct {
 func (v *UpdateDraftModuleInput) GetDescription() string { return v.Description }
 
 // GetIcon returns UpdateDraftModuleInput.Icon, and is useful for accessing the field via an interface.
-func (v *UpdateDraftModuleInput) GetIcon() string { return v.Icon }
+func (v *UpdateDraftModuleInput) GetIcon() interface{} { return v.Icon }
 
 // GetLanguages returns UpdateDraftModuleInput.Languages, and is useful for accessing the field via an interface.
 func (v *UpdateDraftModuleInput) GetLanguages() []string { return v.Languages }
@@ -1539,11 +1547,15 @@ const (
 
 // WellnessOfferingModule includes the GraphQL fields of MarketplaceModule requested by the fragment WellnessOfferingModule.
 type WellnessOfferingModule struct {
+	Id          string                                              `json:"id"`
 	Title       string                                              `json:"title"`
 	Description string                                              `json:"description"`
 	Version     string                                              `json:"version"`
 	Source      WellnessOfferingModuleSourceMarketplaceModuleSource `json:"-"`
 }
+
+// GetId returns WellnessOfferingModule.Id, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingModule) GetId() string { return v.Id }
 
 // GetTitle returns WellnessOfferingModule.Title, and is useful for accessing the field via an interface.
 func (v *WellnessOfferingModule) GetTitle() string { return v.Title }
@@ -1593,6 +1605,8 @@ func (v *WellnessOfferingModule) UnmarshalJSON(b []byte) error {
 }
 
 type __premarshalWellnessOfferingModule struct {
+	Id string `json:"id"`
+
 	Title string `json:"title"`
 
 	Description string `json:"description"`
@@ -1613,6 +1627,7 @@ func (v *WellnessOfferingModule) MarshalJSON() ([]byte, error) {
 func (v *WellnessOfferingModule) __premarshalJSON() (*__premarshalWellnessOfferingModule, error) {
 	var retval __premarshalWellnessOfferingModule
 
+	retval.Id = v.Id
 	retval.Title = v.Title
 	retval.Description = v.Description
 	retval.Version = v.Version
@@ -2472,6 +2487,7 @@ query GetWellnessOfferingModule ($moduleId: ID!) {
 	}
 }
 fragment WellnessOfferingModule on MarketplaceModule {
+	id
 	title
 	description
 	version

@@ -10,6 +10,6 @@ bindings:
   URL:
     type: string
   Upload:
-    type: string
+    type: interface{}
   JSON:
     type: map[string]string

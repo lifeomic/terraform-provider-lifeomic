@@ -25,6 +25,7 @@ type wellnessOffering struct {
 	InstallURL                 types.String `tfsdk:"install_url"`
 	ConfigurationSchema        types.String `tfsdk:"configuration_schema"`
 	IsEnabled                  types.Bool   `tfsdk:"is_enabled"`
+	IsTestModule               types.Bool   `tfsdk:"is_test_module"`
 }
 
 // wellnessOfferingResource implements tfsdk
@@ -90,6 +91,10 @@ func (wellnessOfferingResourceType) GetSchema(_ context.Context) (tfsdk.Schema, 
 				Required: true,
 				Type:     types.BoolType,
 			},
+			"is_test_module": {
+				Optional: true,
+				Type:     types.BoolType,
+			},
 		},
 	}, nil
 }
@@ -97,19 +102,20 @@ func (wellnessOfferingResourceType) GetSchema(_ context.Context) (tfsdk.Schema, 
 func (w wellnessOffering) ToMarketplaceInputObject(ctx context.Context) (gqlclient.CreateDraftModuleInput, diag.Diagnostics) {
 	return gqlclient.CreateDraftModuleInput{
 		Category:       "WELLNESS_OFFERING",
-		Description:    w.Description.String(),
-		Id:             w.ID.String(),
-		Title:          w.Title.String(),
+		Description:    w.Description.Value,
+		Id:             w.ID.Value,
+		Title:          w.Title.Value,
 		ParentModuleId: w.ParentModuleId.Value,
+		Icon:           nil,
 	}, nil
 }
 
 func (w wellnessOffering) ToMarketplaceUpdateInput(ctx context.Context) (gqlclient.UpdateDraftModuleInput, diag.Diagnostics) {
 	return gqlclient.UpdateDraftModuleInput{
-		Description:    w.Description.String(),
-		Title:          w.Title.String(),
-		ModuleId:       w.ID.String(),
-		ParentModuleId: w.ParentModuleId.String(),
+		Description:    w.Description.Value,
+		Title:          w.Title.Value,
+		ModuleId:       w.ID.Value,
+		ParentModuleId: w.ParentModuleId.Value,
 	}, nil
 }
 
@@ -155,11 +161,11 @@ func (w wellnessOfferingResource) Create(ctx context.Context, req tfsdk.CreateRe
 		ModuleId: draftModuleResp.CreateDraftModule.Id,
 		SourceInfo: gqlclient.WellnessOfferingModuleSourceInfo{
 			ApproximateUnitCost: int(plan.ApproximateUnitCostPennies.Value),
-			ConfigurationSchema: plan.ConfigurationSchema.String(),
-			ImageUrl:            plan.ImageURL.String(),
-			InfoUrl:             plan.InfoURL.String(),
-			InstallUrl:          plan.InstallURL.String(),
-			Provider:            plan.MarketplaceProvider.String(),
+			ConfigurationSchema: plan.ConfigurationSchema.Value,
+			ImageUrl:            plan.ImageURL.Value,
+			InfoUrl:             plan.InfoURL.Value,
+			InstallUrl:          plan.InstallURL.Value,
+			Provider:            plan.MarketplaceProvider.Value,
 		},
 	})
 	if err != nil {
@@ -175,6 +181,7 @@ func (w wellnessOfferingResource) Create(ctx context.Context, req tfsdk.CreateRe
 		Version: gqlclient.ModuleVersionInput{
 			Version: plan.Version.Value,
 		},
+		IsTestModule: plan.IsTestModule.Value,
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("failed to publish Wellness Offering Module", err.Error())
@@ -247,11 +254,11 @@ func (w wellnessOfferingResource) Update(ctx context.Context, req tfsdk.UpdateRe
 		ModuleId: updateResp.UpdateDraftModule.Id,
 		SourceInfo: gqlclient.WellnessOfferingModuleSourceInfo{
 			ApproximateUnitCost: int(plan.ApproximateUnitCostPennies.Value),
-			ConfigurationSchema: plan.ConfigurationSchema.String(),
-			ImageUrl:            plan.ImageURL.String(),
-			InfoUrl:             plan.InfoURL.String(),
-			InstallUrl:          plan.InstallURL.String(),
-			Provider:            plan.MarketplaceProvider.String(),
+			ConfigurationSchema: plan.ConfigurationSchema.Value,
+			ImageUrl:            plan.ImageURL.Value,
+			InfoUrl:             plan.InfoURL.Value,
+			InstallUrl:          plan.InstallURL.Value,
+			Provider:            plan.MarketplaceProvider.Value,
 		},
 	})
 	if err != nil {
@@ -295,6 +302,28 @@ func (w wellnessOfferingResource) Delete(ctx context.Context, req tfsdk.DeleteRe
 }
 
 func setWellnessOfferingState(ctx context.Context, config *wellnessOffering, state *tfsdk.State, w gqlclient.WellnessOfferingModule) (diags diag.Diagnostics) {
-	diags.Append(state.Set(ctx, w)...)
+
+	source, ok := w.Source.(*gqlclient.WellnessOfferingModuleSourceWellnessOffering)
+	if !ok {
+		diags.AddError("expected module source to be a wellness module", w.Source.GetTypename())
+		return
+	}
+
+	diags.Append(state.Set(ctx, wellnessOffering{
+		ParentModuleId: config.ParentModuleId,
+		IsEnabled:      config.IsEnabled,
+		IsTestModule:   config.IsTestModule,
+		InstallURL:     config.InstallURL,
+
+		ID:                         types.String{Value: w.Id},
+		Title:                      types.String{Value: w.Title},
+		Description:                types.String{Value: w.Description},
+		MarketplaceProvider:        types.String{Value: source.Provider},
+		Version:                    types.String{Value: w.Version},
+		ImageURL:                   types.String{Value: source.ImageUrl},
+		InfoURL:                    types.String{Value: source.InfoUrl},
+		ApproximateUnitCostPennies: types.Int64{Value: int64(source.ApproximateUnitCost)},
+		ConfigurationSchema:        types.String{Value: source.ConfigurationSchema},
+	})...)
 	return
 }
