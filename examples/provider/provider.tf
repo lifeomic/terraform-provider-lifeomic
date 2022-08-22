@@ -1,13 +1,13 @@
 terraform {
   required_providers {
-    phc = {
-      source  = "lifeomic/phc"
+    lifeomic = {
+      source  = "lifeomic/lifeomic"
       version = "~> 1.0"
     }
   }
 }
 
-provider "phc" {
+provider "lifeomic" {
   account_id = "my-account"
 }
 

@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
-	"github.com/lifeomic/terraform-provider-phc/internal/client"
+	"github.com/lifeomic/terraform-provider-lifeomic/internal/client"
 )
 
 const (
@@ -23,21 +23,21 @@ const (
 	policySupportedComparisonsDocsURL = "https://phc.docs.lifeomic.com/development/abac-syntax#supported-comparisons"
 )
 
-// policy represents the state of a phc_policy resource.
+// policy represents the state of a lifeomic_policy resource.
 type policy struct {
 	ID   types.String `tfsdk:"id"`
 	Name types.String `tfsdk:"name"`
 	Rule []policyRule `tfsdk:"rule"`
 }
 
-// policyRule represents the state of a phc_policy resource's rule block.
+// policyRule represents the state of a lifeomic_policy resource's rule block.
 type policyRule struct {
 	Operation  types.String           `tfsdk:"operation"`
 	Allowed    *bool                  `tfsdk:"allowed"`
 	Comparison []policyRuleComparison `tfsdk:"comparison"`
 }
 
-// policyRuleComparison represents the state of a phc_policy resource's
+// policyRuleComparison represents the state of a lifeomic_policy resource's
 // comparison block.
 type policyRuleComparison struct {
 	Type    types.String `tfsdk:"type"`
@@ -57,7 +57,7 @@ type policyResource struct {
 
 // concreteValuePlanModifier is an implementation of a tfsdk.AttributePlanModifier
 // that modifies the plan to reflect a known value for a pseudo-computed field.
-// The main use-case here is to prevent phc_policy.id (which effectively is just
+// The main use-case here is to prevent lifeomic_policy.id (which effectively is just
 // an alias to name and will never be different) from showing as `known after
 // apply` at plan-time. -- this has been causing issues with testing.
 //
@@ -92,7 +92,7 @@ type policyResourceType struct {
 
 func (policyResourceType) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
-		Description: fmt.Sprintf("`phc_policy` manages an [Attribute Based Access Control (ABAC) policy](%s).", policyDocsURL),
+		Description: fmt.Sprintf("`lifeomic_policy` manages an [Attribute Based Access Control (ABAC) policy](%s).", policyDocsURL),
 		Attributes: map[string]tfsdk.Attribute{
 			"name": {
 				Required:    true,
@@ -304,13 +304,13 @@ func (terraformDescriptionNoop) Description(_ context.Context) string {
 	return ""
 }
 
-// policyRulesValidator is a tfsdk.AttributeValidator for the phc_policy.rule
+// policyRulesValidator is a tfsdk.AttributeValidator for the lifeomic_policy.rule
 // blocks.
 type policyRulesValidator struct {
 	terraformDescriptionNoop
 }
 
-// Validate ensures that the phc_policy.rule blocks are not duplicates (an
+// Validate ensures that the lifeomic_policy.rule blocks are not duplicates (an
 // operation should only be referenced in a single block) and that either
 // a set of comparisons or a static boolean value is provided, but not
 // both.
@@ -342,7 +342,7 @@ type policyRuleComparisonValidator struct {
 	terraformDescriptionNoop
 }
 
-// Validate enures that the phc_policy.rule[*].comparison blocks only specify
+// Validate enures that the lifeomic_policy.rule[*].comparison blocks only specify
 // one of the target, value, or values fields.
 func (v *policyRuleComparisonValidator) Validate(ctx context.Context, req tfsdk.ValidateAttributeRequest, resp *tfsdk.ValidateAttributeResponse) {
 	if req.AttributeConfig.IsUnknown() {

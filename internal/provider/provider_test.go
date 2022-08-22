@@ -8,11 +8,11 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
-	"github.com/lifeomic/terraform-provider-phc/internal/client"
+	"github.com/lifeomic/terraform-provider-lifeomic/internal/client"
 )
 
 var testAccProviderFactories = map[string]func() (tfprotov6.ProviderServer, error){
-	"phc": func() (tfprotov6.ProviderServer, error) {
+	"lifeomic": func() (tfprotov6.ProviderServer, error) {
 		prv := New()
 		server := providerserver.NewProtocol6(prv)
 		return server(), nil

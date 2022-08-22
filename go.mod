@@ -1,4 +1,4 @@
-module github.com/lifeomic/terraform-provider-phc
+module github.com/lifeomic/terraform-provider-lifeomic
 
 go 1.19
 

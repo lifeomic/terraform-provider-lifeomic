@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
-	"github.com/lifeomic/terraform-provider-phc/internal/gqlclient"
+	"github.com/lifeomic/terraform-provider-lifeomic/internal/gqlclient"
 )
 
 // wellnessOffering represents the state of marketplace_wellness_offering resource

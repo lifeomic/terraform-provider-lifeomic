@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-var testPolicyResName = "phc_policy.test"
+var testPolicyResName = "lifeomic_policy.test"
 
 func TestAccPHCPolicy_basic(t *testing.T) {
 	t.Parallel()
@@ -210,7 +210,7 @@ func checkPolicyExists(s *terraform.State) error {
 	policyClient := newClientSet("", "").Policies
 
 	for _, res := range s.RootModule().Resources {
-		if res.Type != "phc_policy" {
+		if res.Type != "lifeomic_policy" {
 			continue
 		}
 
@@ -223,7 +223,7 @@ func checkPolicyExists(s *terraform.State) error {
 }
 
 func testAccPHCPolicy_basic(name string) string {
-	return fmt.Sprintf(`resource "phc_policy" "test" {
+	return fmt.Sprintf(`resource "lifeomic_policy" "test" {
   name = "%s"
   
   rule {
@@ -239,7 +239,7 @@ func testAccPHCPolicy_basic(name string) string {
 }
 
 func testAccPHCPolicy_staticRule(name string) string {
-	return fmt.Sprintf(`resource "phc_policy" "test" {
+	return fmt.Sprintf(`resource "lifeomic_policy" "test" {
   name = "%s"
   
   rule {
@@ -250,7 +250,7 @@ func testAccPHCPolicy_staticRule(name string) string {
 }
 
 func testAccPHCPolicy_conflictingRule(name string) string {
-	return fmt.Sprintf(`resource "phc_policy" "test" {
+	return fmt.Sprintf(`resource "lifeomic_policy" "test" {
   name = "%s"
   
   rule {
@@ -268,7 +268,7 @@ func testAccPHCPolicy_conflictingRule(name string) string {
 }
 
 func testAccPHCPolicy_invalidAllowed(name string) string {
-	return fmt.Sprintf(`resource "phc_policy" "test" {
+	return fmt.Sprintf(`resource "lifeomic_policy" "test" {
   name = "%s"
   
   rule {
@@ -279,7 +279,7 @@ func testAccPHCPolicy_invalidAllowed(name string) string {
 }
 
 func testAccPHCPolicy_conflictingComparisonFields(name string) string {
-	return fmt.Sprintf(`resource "phc_policy" "test" {
+	return fmt.Sprintf(`resource "lifeomic_policy" "test" {
   name = "%s"
   
   rule {
@@ -297,7 +297,7 @@ func testAccPHCPolicy_conflictingComparisonFields(name string) string {
 }
 
 func testAccPHCPolicy_duplicateRuleBlock(name string) string {
-	return fmt.Sprintf(`resource "phc_policy" "test" {
+	return fmt.Sprintf(`resource "lifeomic_policy" "test" {
   name = "%s"
   
   rule {
@@ -323,7 +323,7 @@ func testAccPHCPolicy_duplicateRuleBlock(name string) string {
 }
 
 func testAccPHCPolicy_manyRules(name string) string {
-	return fmt.Sprintf(`resource "phc_policy" "test" {
+	return fmt.Sprintf(`resource "lifeomic_policy" "test" {
   name = "%s"
   rule {
     operation = "readMaskedData"

@@ -5,7 +5,7 @@ package gqlclient
 import (
 	"context"
 	"github.com/Khan/genqlient/graphql"
-	"github.com/lifeomic/terraform-provider-phc/internal/client"
+	"github.com/lifeomic/terraform-provider-lifeomic/internal/client"
 )
 
 const (

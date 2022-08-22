@@ -1,11 +1,11 @@
-# terraform-provider-phc
+# terraform-provider-lifeomic
 
 The Terraform PHC provider is a plugin for Terraform that allows for the full
 lifecycle managment of PHC resources.
 
 ## Usage
 
-See the [PHC Provider documentation](https://registry.terraform.io/providers/lifeomic/phc)
+See the [PHC Provider documentation](https://registry.terraform.io/providers/lifeomic/lifeomic)
 to get started using the PHC prvoider. There are also some basic [examples](./examples/)
 in this repository to demonstrate usage.
 
@@ -23,11 +23,11 @@ Refer to the upstream documentation on [development overrides][tf-dev-overrides]
 ### Running acceptance tests
 
 In order to run acceptance test, you must first [obtain an auth token][auth-token-guide].
-Set the `PHC_TOKEN` environment variable to your token and `PHC_ACCOUNT` to your
+Set the `LIFEOMIC_TOKEN` environment variable to your token and `LIFEOMIC_ACCOUNT` to your
 account's unique identifier.
 
 ```shell
-PHC_TOKEN=<auth-token> PHC_ACCOUNT=<account-id> make acctest
+LIFEOMIC_TOKEN=<auth-token> LIFEOMIC_ACCOUNT=<account-id> make acctest
 ```
 
 [go-binaries]: https://go.dev/dl/

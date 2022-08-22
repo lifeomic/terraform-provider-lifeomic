@@ -1,8 +1,8 @@
 package provider
 
 import (
-	"github.com/lifeomic/terraform-provider-phc/internal/client"
-	"github.com/lifeomic/terraform-provider-phc/internal/gqlclient"
+	"github.com/lifeomic/terraform-provider-lifeomic/internal/client"
+	"github.com/lifeomic/terraform-provider-lifeomic/internal/gqlclient"
 )
 
 type clientSet struct {

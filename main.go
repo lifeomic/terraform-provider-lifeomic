@@ -6,7 +6,7 @@ import (
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
-	"github.com/lifeomic/terraform-provider-phc/internal/provider"
+	"github.com/lifeomic/terraform-provider-lifeomic/internal/provider"
 )
 
 //go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs
@@ -18,7 +18,7 @@ func main() {
 	flag.Parse()
 
 	opts := providerserver.ServeOpts{
-		Address: "registry.terraform.io/lifeomic/phc",
+		Address: "registry.terraform.io/lifeomic/lifeomic",
 		Debug:   debugMode,
 	}
 

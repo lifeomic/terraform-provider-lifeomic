@@ -1,4 +1,4 @@
-resource "phc_policy" "my-policy" {
+resource "lifeomic_policy" "my-policy" {
   name = "my-policy"
 
   rule {
@@ -22,7 +22,6 @@ resource "phc_policy" "my-policy" {
       target  = "resource.subjects"
     }
   }
-
 
   rule {
     operation = "readMaskedData"

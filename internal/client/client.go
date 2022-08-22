@@ -19,7 +19,7 @@ var (
 )
 
 const (
-	userAgentPrefix = "terraform-provider-phc/"
+	userAgentPrefix = "terraform-provider-lifeomic/"
 
 	defaultAPIVersion = "v1"
 	defaultHost       = "api.us.lifeomic.com"
@@ -29,10 +29,10 @@ const (
 
 	accountHeader = "LifeOmic-Account"
 
-	AuthTokenEnvVar = "PHC_TOKEN"
-	HostEnvVar      = "PHC_HOST"
-	AccountIDEnvVar = "PHC_ACCOUNT"
-	DebugEnvVar     = "PHC_DEBUG"
+	AuthTokenEnvVar = "LIFEOMIC_TOKEN"
+	HostEnvVar      = "LIFEOMIC_HOST"
+	AccountIDEnvVar = "LIFEOMIC_ACCOUNT"
+	DebugEnvVar     = "LIFEOMIC_DEBUG"
 )
 
 type Interface interface {
