@@ -68,8 +68,12 @@ resource "phc_policy" "my-policy" {
 
 Required:
 
-- `comparison` (Block List, Min: 1) An ABAC comparison. Exactly one of `value`, `values`, or `target` should be set. (see [below for nested schema](#nestedblock--rule--comparison))
-- `operation` (String) The [operation](https://phc.docs.lifeomic.com/development/abac-syntax#operations) this ABAC rule governs.
+- `operation` (String) The [operation](https://phc.docs.lifeomic.com/development/abac-syntax#operations) this ABAC rule governs.Exactly one of `comparison` and `allowed` should be set.
+
+Optional:
+
+- `allowed` (Boolean) A describing whether this operation is allowed. Must either be null or true.
+- `comparison` (Block List) An ABAC comparison. Exactly one of `value`, `values`, or `target` should be set. (see [below for nested schema](#nestedblock--rule--comparison))
 
 <a id="nestedblock--rule--comparison"></a>
 ### Nested Schema for `rule.comparison`

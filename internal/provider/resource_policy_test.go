@@ -43,6 +43,38 @@ func TestAccPHCPolicy_basic(t *testing.T) {
 	})
 }
 
+func TestAccPHCPolicy_staticRule(t *testing.T) {
+	t.Parallel()
+	name := randomResourceName(t, 8)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 testAccPreCheck(t),
+		ProtoV6ProviderFactories: testAccProviderFactories,
+
+		Steps: []resource.TestStep{
+			{
+				Config: testAccPHCPolicy_staticRule(name),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					checkPolicyExists,
+					resource.TestCheckResourceAttr(testPolicyResName, "name", name),
+					resource.TestCheckResourceAttr(testPolicyResName, "rule.#", "1"),
+					resource.TestCheckResourceAttr(testPolicyResName, "rule.0.operation", "readData"),
+					resource.TestCheckResourceAttr(testPolicyResName, "rule.0.allowed", "true"),
+				),
+
+				// Unfortunately something about the schema is causing Terraform to produce
+				// a *empty* plan to update-in-place after every apply where `allowed` is not
+				// null. This is probably an upstream bug with the new framework-sdk that
+				// needs more investigation and an issue to be created (probably has something
+				// to do with `allowed` being a pointer).
+				//
+				// TODO: remove this flag when fixed
+				ExpectNonEmptyPlan: true,
+			},
+		},
+	})
+}
+
 func TestAccPHCPolicy_update(t *testing.T) {
 	t.Parallel()
 	name := randomResourceName(t, 8)
@@ -123,6 +155,40 @@ func TestAccPHCPolicy_duplicateRuleBlock(t *testing.T) {
 	})
 }
 
+func TestAccPHCPolicy_conflictingRule(t *testing.T) {
+	t.Parallel()
+	name := randomResourceName(t, 8)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 testAccPreCheck(t),
+		ProtoV6ProviderFactories: testAccProviderFactories,
+
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccPHCPolicy_conflictingRule(name),
+				ExpectError: regexp.MustCompile("Exactly one of comparison and allowed should be set"),
+			},
+		},
+	})
+}
+
+func TestAccPHCPolicy_invalidAllowed(t *testing.T) {
+	t.Parallel()
+	name := randomResourceName(t, 8)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 testAccPreCheck(t),
+		ProtoV6ProviderFactories: testAccProviderFactories,
+
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccPHCPolicy_invalidAllowed(name),
+				ExpectError: regexp.MustCompile("allowed must either be true or null"),
+			},
+		},
+	})
+}
+
 func TestAccPHCPolicy_conflictingComparisonFields(t *testing.T) {
 	t.Parallel()
 	name := randomResourceName(t, 8)
@@ -171,6 +237,47 @@ func testAccPHCPolicy_basic(name string) string {
   }
 }`, name)
 }
+
+func testAccPHCPolicy_staticRule(name string) string {
+	return fmt.Sprintf(`resource "phc_policy" "test" {
+  name = "%s"
+  
+  rule {
+    operation = "readData"
+    allowed   = true
+  }
+}`, name)
+}
+
+func testAccPHCPolicy_conflictingRule(name string) string {
+	return fmt.Sprintf(`resource "phc_policy" "test" {
+  name = "%s"
+  
+  rule {
+    operation = "readData"
+
+    allowed = true
+
+    comparison {
+      subject = "user.groups"
+      type    = "includes"
+      value   = "admin"
+    }
+  }
+}`, name)
+}
+
+func testAccPHCPolicy_invalidAllowed(name string) string {
+	return fmt.Sprintf(`resource "phc_policy" "test" {
+  name = "%s"
+  
+  rule {
+    operation = "readData"
+    allowed   = false
+  }
+}`, name)
+}
+
 func testAccPHCPolicy_conflictingComparisonFields(name string) string {
 	return fmt.Sprintf(`resource "phc_policy" "test" {
   name = "%s"
@@ -250,7 +357,6 @@ func testAccPHCPolicy_manyRules(name string) string {
     }
   }
 
- 
   rule {
     operation = "writeData"
 
