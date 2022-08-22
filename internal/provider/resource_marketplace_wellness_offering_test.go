@@ -21,7 +21,7 @@ func TestAccMarketplaceWellnessOffering_basic(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: fmt.Sprintf(`
-				  resource "phc_marketplace_wellness_offering" "test" {
+				  resource "lifeomic_marketplace_wellness_offering" "test" {
 						id = "%s"
 						title = "Fake Module"
 						description = "A fake marketplace module"

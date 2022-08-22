@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
-	"github.com/lifeomic/terraform-provider-phc/internal/client"
+	"github.com/lifeomic/terraform-provider-lifeomic/internal/client"
 )
 
 const useLambdaEnvVar = "LIFEOMIC_USE_LAMBDA"
@@ -99,8 +99,8 @@ func requireProviderValue(resp *tfsdk.ConfigureProviderResponse, attribute, envV
 
 func (p *provider) GetResources(_ context.Context) (map[string]tfsdk.ResourceType, diag.Diagnostics) {
 	return map[string]tfsdk.ResourceType{
-		"phc_policy":                        policyResourceType{},
-		"phc_marketplace_wellness_offering": wellnessOfferingResourceType{},
+		"lifeomic_policy":                        policyResourceType{},
+		"lifeomic_marketplace_wellness_offering": wellnessOfferingResourceType{},
 	}, nil
 }
 

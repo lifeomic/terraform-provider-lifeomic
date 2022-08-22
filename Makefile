@@ -1,4 +1,4 @@
-PROJECT := terraform-provider-phc
+PROJECT := terraform-provider-lifeomic
 PKG     := github.com/lifeomic/$(PROJECT)
 
 GQL_PKG              := ./internal/gqlclient

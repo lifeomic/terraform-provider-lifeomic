@@ -155,7 +155,7 @@ func generateServiceFile(packageName string, c client, document *ast.QueryDocume
 	writeImports(fileBuf,
 		"context",
 		"github.com/Khan/genqlient/graphql",
-		"github.com/lifeomic/terraform-provider-phc/internal/client")
+		"github.com/lifeomic/terraform-provider-lifeomic/internal/client")
 	writeConstants(fileBuf, c)
 
 	writeInterface(fileBuf, c, document.Operations)

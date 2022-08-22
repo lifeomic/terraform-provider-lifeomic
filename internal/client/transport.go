@@ -8,7 +8,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/lifeomic/terraform-provider-phc/internal/lambda"
+	"github.com/lifeomic/terraform-provider-lifeomic/internal/lambda"
 )
 
 func NewAuthedTransport(authToken, accountID, serviceName string) *AuthedTransport {
@@ -17,7 +17,7 @@ func NewAuthedTransport(authToken, accountID, serviceName string) *AuthedTranspo
 		AccountID: accountID,
 	}
 
-	if user, ok := os.LookupEnv("PHC_USER"); ok {
+	if user, ok := os.LookupEnv("LIFEOMIC_USER"); ok {
 		transport.UserID = user
 	}
 
@@ -65,6 +65,6 @@ func (t *AuthedTransport) Do(req *http.Request) (*http.Response, error) {
 }
 
 func GetUseLambda() bool {
-	useLambda, _ := strconv.ParseBool(os.Getenv("PHC_USE_LAMBDA"))
+	useLambda, _ := strconv.ParseBool(os.Getenv("LIFEOMIC_USE_LAMBDA"))
 	return useLambda
 }

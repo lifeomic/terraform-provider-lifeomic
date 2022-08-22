@@ -1,4 +1,4 @@
-terraform-provider-phc
+terraform-provider-lifeomic
 terraform.tfstate
 terraform.tfstate.backup
 .DS_STORE
