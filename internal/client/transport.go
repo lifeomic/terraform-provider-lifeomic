@@ -11,10 +11,11 @@ import (
 	"github.com/lifeomic/terraform-provider-lifeomic/internal/lambda"
 )
 
-func NewAuthedTransport(authToken, accountID, serviceName string) *AuthedTransport {
+func NewAuthedTransport(authToken, accountID, serviceName string, header map[string]string) *AuthedTransport {
 	transport := &AuthedTransport{
 		AuthToken: authToken,
 		AccountID: accountID,
+		Headers:   header,
 	}
 
 	if user, ok := os.LookupEnv("LIFEOMIC_USER"); ok {
@@ -24,7 +25,7 @@ func NewAuthedTransport(authToken, accountID, serviceName string) *AuthedTranspo
 	if GetUseLambda() {
 		lambdaTransport, err := lambda.NewRoundTripper(context.Background(), lambda.URI{
 			Function: serviceName,
-		})
+		}, header)
 		if err != nil {
 			log.Fatalf("failed to create lambda transport: %s", err)
 		}
@@ -38,6 +39,7 @@ type AuthedTransport struct {
 	AuthToken string
 	AccountID string
 	UserID    string
+	Headers   map[string]string
 
 	Base http.RoundTripper
 }
@@ -51,6 +53,10 @@ func (t *AuthedTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	}
 	if t.UserID != "" {
 		req.Header.Set("LifeOmic-User", t.UserID)
+	}
+
+	for k, v := range t.Headers {
+		req.Header.Set(k, v)
 	}
 
 	baseTransport := t.Base

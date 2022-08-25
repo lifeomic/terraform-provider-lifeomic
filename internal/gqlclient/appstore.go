@@ -40,7 +40,7 @@ func (a *appStoreClient) EditAppStoreListing(ctx context.Context, id string, edi
 	return EditAppStoreListing(ctx, a.client, id, edits)
 }
 
-func NewAppStoreClient(authToken string, accountID string) AppStoreService {
-	transport := client.NewAuthedTransport(authToken, accountID, appStoreServiceName)
+func NewAppStoreClient(authToken string, accountID string, header map[string]string) AppStoreService {
+	transport := client.NewAuthedTransport(authToken, accountID, appStoreServiceName, header)
 	return &appStoreClient{client: graphql.NewClient(appStoreDefaultEndpoint, transport)}
 }

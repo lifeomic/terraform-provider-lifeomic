@@ -131,8 +131,8 @@ func writeStruct(w io.Writer, c client, operations []*ast.OperationDefinition) {
 }
 
 func writeFactory(w io.Writer, c client) {
-	fmt.Fprintf(w, "func New%sClient(authToken string, accountID string) %s {\n", c.UppercaseName(), c.InterfaceName())
-	fmt.Fprintf(w, "\ttransport := client.NewAuthedTransport(authToken, accountID, %s)\n", c.ServiceConstName())
+	fmt.Fprintf(w, "func New%sClient(authToken string, accountID string, header map[string]string) %s {\n", c.UppercaseName(), c.InterfaceName())
+	fmt.Fprintf(w, "\ttransport := client.NewAuthedTransport(authToken, accountID, %s, header)\n", c.ServiceConstName())
 	fmt.Fprintf(w, "\treturn &%s{client: graphql.NewClient(%s, transport)}\n", c.StructName(), c.EndpointConstName())
 	fmt.Fprint(w, "}\n\n")
 }
