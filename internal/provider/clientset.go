@@ -11,16 +11,17 @@ type clientSet struct {
 	Marketplace gqlclient.MarketplaceService
 }
 
-func newClientSet(token, accountID string) *clientSet {
+func newClientSet(token, accountID string, headers map[string]string) *clientSet {
 	policiesClient := client.New(client.Config{
 		AuthToken:   token,
 		AccountID:   accountID,
 		ServiceName: "account-service",
+		Header:      headers,
 	}).Policies()
 
 	return &clientSet{
-		AppStore:    gqlclient.NewAppStoreClient(token, accountID),
-		Marketplace: gqlclient.NewMarketplaceClient(token, accountID),
+		AppStore:    gqlclient.NewAppStoreClient(token, accountID, headers),
+		Marketplace: gqlclient.NewMarketplaceClient(token, accountID, headers),
 
 		Policies: policiesClient,
 	}

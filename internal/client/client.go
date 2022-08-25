@@ -47,6 +47,7 @@ type Config struct {
 
 	AccountID string
 	AuthToken string
+	Header    map[string]string
 
 	MaxRetries       int
 	MaxRetryWaitTime time.Duration
@@ -93,13 +94,16 @@ func New(config Config) *Client {
 	if config.MaxRetryWaitTime == 0 {
 		config.MaxRetryWaitTime = defaultRetryMaxWaitTime
 	}
+	if config.Header == nil {
+		config.Header = map[string]string{}
+	}
 
 	if !config.Debug {
 		// Treat any malformed value as false.
 		config.Debug, _ = strconv.ParseBool(os.Getenv(DebugEnvVar))
 	}
 
-	transport := NewAuthedTransport(config.AuthToken, config.AccountID, config.ServiceName)
+	transport := NewAuthedTransport(config.AuthToken, config.AccountID, config.ServiceName, config.Header)
 	httpClient := &http.Client{Transport: transport}
 	client := &Client{httpClient: resty.NewWithClient(httpClient), config: &config}
 	client.transport = transport

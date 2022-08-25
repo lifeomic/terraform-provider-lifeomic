@@ -31,20 +31,21 @@ type Client interface {
 type RoundTripper struct {
 	uri    *URI
 	client Client
+	header map[string]string
 }
 
 // payloadFromRequest converts the given http.Request into a payload to be
 // interpreted by the underlying service's lambda and marshals it to a byte
 // slice.
-func payloadFromRequest(req *http.Request) ([]byte, error) {
+func payloadFromRequest(req *http.Request, additionalHeader map[string]string) ([]byte, error) {
 	header := make(map[string]string, len(req.Header))
 	for key := range req.Header {
 		header[key] = req.Header.Get(key)
 	}
-	// TODO: allow custom headers
-	header["LifeOmic-Policy"] = "{\"rules\":{\"publishContent\":true}}"
-	header["LifeOmic-User"] = `wellness-service`
-	header["LifeOmic-Account"] = `lifeomic`
+
+	for k, v := range additionalHeader {
+		header[k] = v
+	}
 
 	payload := map[string]any{
 		"headers":    header,
@@ -91,7 +92,7 @@ type response struct {
 }
 
 func (r *RoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
-	payload, err := payloadFromRequest(req)
+	payload, err := payloadFromRequest(req, r.header)
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal lambda payload: %w", err)
@@ -113,7 +114,7 @@ func (r *RoundTripper) Do(req *http.Request) (*http.Response, error) {
 	return r.RoundTrip(req)
 }
 
-func NewRoundTripper(ctx context.Context, uri URI) (*RoundTripper, error) {
+func NewRoundTripper(ctx context.Context, uri URI, header map[string]string) (*RoundTripper, error) {
 	cfg, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
 		return nil, err
@@ -127,5 +128,6 @@ func NewRoundTripper(ctx context.Context, uri URI) (*RoundTripper, error) {
 	return &RoundTripper{
 		client: lambdaClient,
 		uri:    &uri,
+		header: header,
 	}, nil
 }

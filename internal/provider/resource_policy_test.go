@@ -207,7 +207,7 @@ func TestAccPHCPolicy_conflictingComparisonFields(t *testing.T) {
 }
 
 func checkPolicyExists(s *terraform.State) error {
-	policyClient := newClientSet("", "").Policies
+	policyClient := newClientSet("", "", nil).Policies
 
 	for _, res := range s.RootModule().Resources {
 		if res.Type != "lifeomic_policy" {

@@ -75,7 +75,7 @@ func (m *marketplaceClient) UpdateDraftModule(ctx context.Context, input UpdateD
 	return UpdateDraftModule(ctx, m.client, input)
 }
 
-func NewMarketplaceClient(authToken string, accountID string) MarketplaceService {
-	transport := client.NewAuthedTransport(authToken, accountID, marketplaceServiceName)
+func NewMarketplaceClient(authToken string, accountID string, header map[string]string) MarketplaceService {
+	transport := client.NewAuthedTransport(authToken, accountID, marketplaceServiceName, header)
 	return &marketplaceClient{client: graphql.NewClient(marketplaceDefaultEndpoint, transport)}
 }

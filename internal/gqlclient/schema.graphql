@@ -13,7 +13,11 @@ type ActivePost implements Post {
   popularity: Int!
   priority: Priority
   reactionTotals(includeCustomReactions: Boolean = false): [ReactionTotal!]!
-  replies(after: String, first: Int = 5, order: PostOrder = NEWEST): PostConnection!
+  replies(
+    after: String
+    first: Int = 5
+    order: PostOrder = NEWEST
+  ): PostConnection!
   replyCount: Int!
   rootParentId: ID!
   systemGenerated: Boolean!
@@ -28,7 +32,9 @@ input AppLocale {
 interface AppStoreApplication {
   abacResource: String
 
-  """Optional display string - used to display the author if not LifeOmic"""
+  """
+  Optional display string - used to display the author if not LifeOmic
+  """
   authorDisplay: String
   authorId: String!
   description: String
@@ -51,11 +57,15 @@ enum AppStoreProduct {
   LX
 }
 
-"""a basic app meant to simply be loaded in a browser"""
+"""
+a basic app meant to simply be loaded in a browser
+"""
 type AppStoreWebApplication implements AppStoreApplication {
   abacResource: String
 
-  """Optional display string - used to display the author if not LifeOmic"""
+  """
+  Optional display string - used to display the author if not LifeOmic
+  """
   authorDisplay: String
   authorId: String!
   description: String
@@ -230,7 +240,9 @@ input CreateMarketplaceReviewInput {
   moduleId: ID!
   moduleVersion: String!
 
-  """Value of [1-5]"""
+  """
+  Value of [1-5]
+  """
   rating: Int!
 }
 
@@ -264,7 +276,9 @@ input CreateReviewInput {
   """
   entityVersion: String
 
-  """A unique identifier for the review, useful for ensuring idempotency"""
+  """
+  A unique identifier for the review, useful for ensuring idempotency
+  """
   id: ID
   rating: Int!
 }
@@ -292,7 +306,9 @@ input CreateWebAppInput {
   url: URL!
 }
 
-"""An ISO-8601 date string."""
+"""
+An ISO-8601 date string.
+"""
 scalar Date
 
 type DeleteDraftModuleResponse {
@@ -320,7 +336,11 @@ type DeletedPost implements Post {
   parentPost: Post
   popularity: Int!
   priority: Priority
-  replies(after: String, first: Int = 5, order: PostOrder = NEWEST): PostConnection!
+  replies(
+    after: String
+    first: Int = 5
+    order: PostOrder = NEWEST
+  ): PostConnection!
   replyCount: Int!
   rootParentId: ID!
   systemGenerated: Boolean!
@@ -348,7 +368,9 @@ input DoesMyReviewExistInput {
 type DoesMyReviewExistResponse {
   exists: Boolean!
 
-  """ID of the review IFF it exists"""
+  """
+  ID of the review IFF it exists
+  """
   id: ID
 }
 
@@ -396,7 +418,8 @@ type DraftMarketplaceModule {
   organization: OrganizationField!
   parentModule: MarketplaceModule
   parentModuleId: ID
-  previewImages: [PreviewImageWithDescription!] @deprecated(reason: "Use previewImagesV2 instead")
+  previewImages: [PreviewImageWithDescription!]
+    @deprecated(reason: "Use previewImagesV2 instead")
   previewImagesV2: MarketplaceModulePreviewImages
   previewVideoUrls: [String!]
   prices: [DraftModulePrice!]
@@ -419,13 +442,17 @@ type DraftMarketplaceModuleEdge {
 }
 
 type DraftModulePrice {
-  """Amount in pennies USD"""
+  """
+  Amount in pennies USD
+  """
   amount: Int!
   interval: PaymentInterval!
 }
 
 input DraftModulePriceInput {
-  """Amount in pennies USD"""
+  """
+  Amount in pennies USD
+  """
   amount: Int!
   interval: PaymentInterval!
 }
@@ -454,7 +481,9 @@ input EditWebAppInput {
   url: URL
 }
 
-"""Emoji custom scalar type"""
+"""
+Emoji custom scalar type
+"""
 scalar Emoji
 
 enum Entitlement {
@@ -508,7 +537,9 @@ input GenerateWebAppFromManifestInput {
 input GetBillingPortalLinkInput {
   domain: String
 
-  """Path to return to when leaving the billing portal"""
+  """
+  Path to return to when leaving the billing portal
+  """
   success: String!
 }
 
@@ -519,10 +550,14 @@ type GetBillingPortalLinkResponse {
 input GetConnectAccountLinkInput {
   domain: String
 
-  """path for if the link generate is expired, will redirect them here"""
+  """
+  path for if the link generate is expired, will redirect them here
+  """
   expired: String!
 
-  """path for successfully loading up account dashboard and returning"""
+  """
+  path for successfully loading up account dashboard and returning
+  """
   success: String!
 }
 
@@ -633,7 +668,10 @@ type InstallInsightsLayoutModuleResponse {
   version: String!
 }
 
-union InstallModule = IncorrectScopeMessage | MarketplaceModule | ModuleDeletedMessage
+union InstallModule =
+    IncorrectScopeMessage
+  | MarketplaceModule
+  | ModuleDeletedMessage
 
 input InstallNotebookModuleInput {
   moduleId: ID!
@@ -745,13 +783,19 @@ input InstallWebAppInput {
 }
 
 input InstallWellnessOfferingModuleInput {
-  """The configuration to install for this offering, as a JSON blob."""
+  """
+  The configuration to install for this offering, as a JSON blob.
+  """
   configuration: String!
 
-  """Whether the offering should be enabled."""
+  """
+  Whether the offering should be enabled.
+  """
   enabled: Boolean!
 
-  """The target engagement percentage for employee redemption"""
+  """
+  The target engagement percentage for employee redemption
+  """
   engagementTarget: Int!
   moduleId: ID!
 
@@ -760,7 +804,9 @@ input InstallWellnessOfferingModuleInput {
   """
   subsidyAmount: Int!
 
-  """The frequency by which redemption rules are applied to employees"""
+  """
+  The frequency by which redemption rules are applied to employees
+  """
   subsidyPeriod: Period!
   version: String!
 }
@@ -828,31 +874,44 @@ input LicensedModulesInput {
 }
 
 input ListAppsInput {
-  """pagination: last page token"""
+  """
+  pagination: last page token
+  """
   after: String
 
-  """pagination: number of elements to retrieve"""
+  """
+  pagination: number of elements to retrieve
+  """
   first: Int
   product: AppStoreProduct!
 }
 
 input ListInstalledAppsInput {
-  """pagination: last page token"""
+  """
+  pagination: last page token
+  """
   after: String
 
-  """pagination: number of elements to retrieve"""
+  """
+  pagination: number of elements to retrieve
+  """
   first: Int
   product: AppStoreProduct!
 
-  """current user to filter by"""
+  """
+  current user to filter by
+  """
   userId: String!
 }
 
-"""The `Long` scalar type represents 52-bit integers"""
+"""
+The `Long` scalar type represents 52-bit integers
+"""
 scalar Long
 
 type MarketplaceModule {
-  author: String @deprecated(reason: "Use `authorV2` instead. Always returns null")
+  author: String
+    @deprecated(reason: "Use `authorV2` instead. Always returns null")
   authorV2: String
   category: ModuleCategory!
   description: String!
@@ -863,7 +922,8 @@ type MarketplaceModule {
   languages: [String!]
   licenseDetails: LicenseDetails
   organization: OrganizationField!
-  previewImages: [PreviewImageWithDescription!] @deprecated(reason: "Use previewImagesV2 instead")
+  previewImages: [PreviewImageWithDescription!]
+    @deprecated(reason: "Use previewImagesV2 instead")
   previewImagesV2: MarketplaceModulePreviewImages
   previewVideoUrls: [String!]
   prices: [ModulePrice!]
@@ -877,7 +937,8 @@ type MarketplaceModule {
   tags: [String!]!
   title: String!
   version: String!
-  versions(after: String, first: Int): VersionsConnection! @deprecated(reason: "Use 'versionsV2' instead")
+  versions(after: String, first: Int): VersionsConnection!
+    @deprecated(reason: "Use 'versionsV2' instead")
   versionsV2(after: String, first: Int): VersionsV2Connection!
   websiteUrl: String
 }
@@ -905,7 +966,21 @@ enum MarketplaceModuleScope {
   PUBLIC
 }
 
-union MarketplaceModuleSource = AppTile | Consent | DomainOntology | InsightsLayout | Notebook | OcrReportExtractor | PatientLayout | ProcessOntology | ProgramEnrollment | ProgramTemplate | SearchLayout | Survey | WellnessOffering | Workflow
+union MarketplaceModuleSource =
+    AppTile
+  | Consent
+  | DomainOntology
+  | InsightsLayout
+  | Notebook
+  | OcrReportExtractor
+  | PatientLayout
+  | ProcessOntology
+  | ProgramEnrollment
+  | ProgramTemplate
+  | SearchLayout
+  | Survey
+  | WellnessOffering
+  | Workflow
 
 type MarketplaceModuleTagsConnection {
   edges: [MarketplaceModuleTagsEdge!]!
@@ -958,7 +1033,9 @@ type ModuleDeletedMessage {
 }
 
 type ModulePrice {
-  """Amount in pennies USD"""
+  """
+  Amount in pennies USD
+  """
   amount: Int!
   id: ID!
   interval: PaymentInterval!
@@ -1059,19 +1136,33 @@ input ModulesInput {
 }
 
 type Mutation {
-  """Approves draft module review and publishes module to the marketplace"""
-  approveModulePublish(input: ApproveModulePublishInput!): ApproveModulePublishResponse!
+  """
+  Approves draft module review and publishes module to the marketplace
+  """
+  approveModulePublish(
+    input: ApproveModulePublishInput!
+  ): ApproveModulePublishResponse!
 
-  """Assigns draft module to the current user for manual review"""
+  """
+  Assigns draft module to the current user for manual review
+  """
   assignDraftModuleForReview(moduleId: ID!): AssignDraftModuleForReviewResponse!
 
-  """Module owner cancels publish review process"""
+  """
+  Module owner cancels publish review process
+  """
   cancelModulePublish(moduleId: ID!): CancelModulePublishResponse!
-  cancelSubscription(input: CancelSubscriptionInput!): CancelSubscriptionResponse!
+  cancelSubscription(
+    input: CancelSubscriptionInput!
+  ): CancelSubscriptionResponse!
   createDraftModule(input: CreateDraftModuleInput!): CreateDraftModuleResponse!
   createMarketplaceReview(input: CreateMarketplaceReviewInput!): Review!
-  createMarketplaceReviewReply(input: CreateMarketplaceReviewReplyInput!): Review!
-  createModuleCheckoutSession(input: CreateModuleCheckoutSessionInput!): CreateModuleCheckoutSessionResponse!
+  createMarketplaceReviewReply(
+    input: CreateMarketplaceReviewReplyInput!
+  ): Review!
+  createModuleCheckoutSession(
+    input: CreateModuleCheckoutSessionInput!
+  ): CreateModuleCheckoutSessionResponse!
   createWebApp(input: CreateWebAppInput!): AppStoreWebApplication!
   deleteApp(id: ID!): Boolean!
   deleteDraftModule(moduleId: ID!): DeleteDraftModuleResponse!
@@ -1079,58 +1170,143 @@ type Mutation {
   denyModulePublish(input: DenyModulePublishInput!): DenyModulePublishResponse!
   editWebApp(edits: EditWebAppInput!, id: ID!): Boolean!
   finalizeUpload(input: FinalizeUploadInput!): FinalizeUploadResponse!
-  getBillingPortalLink(input: GetBillingPortalLinkInput!): GetBillingPortalLinkResponse!
-  getConnectAccountLink(input: GetConnectAccountLinkInput!): GetConnectAccountLinkResponse!
-  installConsentModule(input: InstallConsentModuleInput!): InstallConsentModuleResponse!
-  installDomainOntologyModule(input: InstallDomainOntologyModuleInput!): InstallDomainOntologyModuleResponse!
+  getBillingPortalLink(
+    input: GetBillingPortalLinkInput!
+  ): GetBillingPortalLinkResponse!
+  getConnectAccountLink(
+    input: GetConnectAccountLinkInput!
+  ): GetConnectAccountLinkResponse!
+  installConsentModule(
+    input: InstallConsentModuleInput!
+  ): InstallConsentModuleResponse!
+  installDomainOntologyModule(
+    input: InstallDomainOntologyModuleInput!
+  ): InstallDomainOntologyModuleResponse!
 
-  """Install draft module to test account for manual review"""
-  installDraftModule(input: InstallDraftModuleInput!): InstallDraftModuleResponse!
-  installInsightsLayoutModule(input: InstallInsightsLayoutModuleInput!): InstallInsightsLayoutModuleResponse!
-  installNotebookModule(input: InstallNotebookModuleInput!): InstallNotebookModuleResponse!
-  installPatientLayoutModule(input: InstallPatientLayoutModuleInput!): InstallPatientLayoutModuleResponse!
-  installProcessOntologyModule(input: InstallProcessOntologyModuleInput!): InstallProcessOntologyModuleResponse!
-  installProgramEnrollmentModule(input: InstallProgramEnrollmentModuleInput!): InstallProgramEnrollmentModuleResponse!
-  installProgramTemplateModule(input: InstallProgramTemplateModuleInput!): InstallProgramTemplateModuleResponse!
-  installPublicAppTileModule(input: InstallPublicAppTileModuleInput!): InstallPublicAppTileModuleResponse!
-  installReportExtractorModule(input: InstallReportExtractorModuleInput!): InstallReportExtractorModuleResponse!
-  installSearchLayoutModule(input: InstallSearchLayoutModuleInput!): InstallSearchLayoutModuleResponse!
-  installSurveyModule(input: InstallSurveyModuleInput!): InstallSurveyModuleResponse!
+  """
+  Install draft module to test account for manual review
+  """
+  installDraftModule(
+    input: InstallDraftModuleInput!
+  ): InstallDraftModuleResponse!
+  installInsightsLayoutModule(
+    input: InstallInsightsLayoutModuleInput!
+  ): InstallInsightsLayoutModuleResponse!
+  installNotebookModule(
+    input: InstallNotebookModuleInput!
+  ): InstallNotebookModuleResponse!
+  installPatientLayoutModule(
+    input: InstallPatientLayoutModuleInput!
+  ): InstallPatientLayoutModuleResponse!
+  installProcessOntologyModule(
+    input: InstallProcessOntologyModuleInput!
+  ): InstallProcessOntologyModuleResponse!
+  installProgramEnrollmentModule(
+    input: InstallProgramEnrollmentModuleInput!
+  ): InstallProgramEnrollmentModuleResponse!
+  installProgramTemplateModule(
+    input: InstallProgramTemplateModuleInput!
+  ): InstallProgramTemplateModuleResponse!
+  installPublicAppTileModule(
+    input: InstallPublicAppTileModuleInput!
+  ): InstallPublicAppTileModuleResponse!
+  installReportExtractorModule(
+    input: InstallReportExtractorModuleInput!
+  ): InstallReportExtractorModuleResponse!
+  installSearchLayoutModule(
+    input: InstallSearchLayoutModuleInput!
+  ): InstallSearchLayoutModuleResponse!
+  installSurveyModule(
+    input: InstallSurveyModuleInput!
+  ): InstallSurveyModuleResponse!
   installWebApp(input: InstallWebAppInput!): AppStoreWebApplication!
-  installWellnessOfferingModule(input: InstallWellnessOfferingModuleInput!): InstallWellnessOfferingModuleResponse!
-  installWorkflowModule(input: InstallWorkflowModuleInput!): InstallWorkflowModuleResponse!
-  publishDraftModule(input: PublishDraftModuleInput!): PublishDraftModuleResponse! @deprecated(reason: "Use `publishDraftModuleV2` instead")
-  publishDraftModuleV2(input: PublishDraftModuleInputV2!): PublishDraftModuleResponseV2!
+  installWellnessOfferingModule(
+    input: InstallWellnessOfferingModuleInput!
+  ): InstallWellnessOfferingModuleResponse!
+  installWorkflowModule(
+    input: InstallWorkflowModuleInput!
+  ): InstallWorkflowModuleResponse!
+  publishDraftModule(
+    input: PublishDraftModuleInput!
+  ): PublishDraftModuleResponse!
+    @deprecated(reason: "Use `publishDraftModuleV2` instead")
+  publishDraftModuleV2(
+    input: PublishDraftModuleInputV2!
+  ): PublishDraftModuleResponseV2!
 
-  """publish workflow which uses marketplace approval process"""
-  publishDraftModuleV3(input: PublishDraftModuleInputV3!): PublishDraftModuleResponseV3!
+  """
+  publish workflow which uses marketplace approval process
+  """
+  publishDraftModuleV3(
+    input: PublishDraftModuleInputV3!
+  ): PublishDraftModuleResponseV3!
   removeAllMarketplaceReviews(moduleId: ID!): Boolean!
 
-  """Removes the `iconV2` image from the draft"""
-  removeDraftModuleIconV2(input: RemoveDraftModuleIconV2Input!): RemoveDraftModuleIconV2Response!
+  """
+  Removes the `iconV2` image from the draft
+  """
+  removeDraftModuleIconV2(
+    input: RemoveDraftModuleIconV2Input!
+  ): RemoveDraftModuleIconV2Response!
 
   """
   Removes the preview image (`previewImageV2`) from the draft identified by the `imageId`, `fileName` and `fileExtension`
   """
-  removeDraftModulePreviewImagesV2(input: RemoveDraftModulePreviewImagesV2Input!): RemoveDraftModulePreviewImagesV2Response!
+  removeDraftModulePreviewImagesV2(
+    input: RemoveDraftModulePreviewImagesV2Input!
+  ): RemoveDraftModulePreviewImagesV2Response!
   removeMarketplaceReview(input: RemoveMarketplaceReviewInput!): Boolean!
-  removeMarketplaceReviewReply(input: RemoveMarketplaceReviewReplyInput!): Review! @deprecated(reason: "Use removeMarketplaceReviewReply_v2")
-  removeMarketplaceReviewReply_v2(input: RemoveMarketplaceReviewReplyInput_v2!): Review!
-  setConsentDraftModuleSource(input: SetConsentDraftModuleSourceInput!): SetConsentLayoutDraftModuleSourceResponse!
-  setDomainOntologyDraftModuleSource(input: SetDraftModuleDomainOntologySourceInput!): SetDraftModuleDomainOntologySourceResponse!
-  setInsightsLayoutDraftModuleSource(input: SetInsightsLayoutDraftModuleSourceInput!): SetInsightsLayoutDraftModuleSourceResponse!
-  setNotebookDraftModuleSource(input: SetNotebookDraftModuleSourceInput!): SetNotebookDraftModuleSourceResponse!
-  setOrgAppTileDraftModuleSource(input: SetOrgAppTileDraftModuleSourceInput!): SetAppTileDraftModuleSourceResponse!
-  setPatientLayoutDraftModuleSource(input: SetPatientLayoutDraftModuleSourceInput!): SetPatientLayoutDraftModuleSourceResponse!
-  setProcessOntologyDraftModuleSource(input: SetDraftModuleProcessOntologySourceInput!): SetDraftModuleProcessOntologySourceResponse!
-  setProgramEnrollmentDraftModuleSource(input: SetProgramEnrollmentDraftModuleSourceInput!): SetProgramEnrollmentDraftModuleSourceResponse!
-  setProgramTemplateDraftModuleSource(input: SetProgramTemplateDraftModuleSourceInput!): SetProgramTemplateDraftModuleSourceResponse!
-  setPublicAppTileDraftModuleSource(input: SetPublicAppTileDraftModuleSourceInput!): SetAppTileDraftModuleSourceResponse!
-  setReportExtractorDraftModuleSource(input: SetReportExtractorDraftModuleSourceInput!): SetReportExtractorDraftModuleSourceResponse!
-  setSearchLayoutDraftModuleSource(input: SetSearchLayoutDraftModuleSourceInput!): SetSearchLayoutDraftModuleSourceResponse!
-  setSurveyDraftModuleSource(input: SetSurveyDraftModuleSourceInput!): SetSurveyLayoutDraftModuleSourceResponse!
-  setWellnessOfferingDraftModuleSource(input: SetDraftModuleWellnessOfferingSourceInput!): SetDraftModuleWellnessOfferingSourceResponse!
-  setWorkflowDraftModuleSource(input: SetWorkflowDraftModuleSourceInput!): SetWorkflowDraftModuleSourceResponse!
+  removeMarketplaceReviewReply(
+    input: RemoveMarketplaceReviewReplyInput!
+  ): Review! @deprecated(reason: "Use removeMarketplaceReviewReply_v2")
+  removeMarketplaceReviewReply_v2(
+    input: RemoveMarketplaceReviewReplyInput_v2!
+  ): Review!
+  setConsentDraftModuleSource(
+    input: SetConsentDraftModuleSourceInput!
+  ): SetConsentLayoutDraftModuleSourceResponse!
+  setDomainOntologyDraftModuleSource(
+    input: SetDraftModuleDomainOntologySourceInput!
+  ): SetDraftModuleDomainOntologySourceResponse!
+  setInsightsLayoutDraftModuleSource(
+    input: SetInsightsLayoutDraftModuleSourceInput!
+  ): SetInsightsLayoutDraftModuleSourceResponse!
+  setNotebookDraftModuleSource(
+    input: SetNotebookDraftModuleSourceInput!
+  ): SetNotebookDraftModuleSourceResponse!
+  setOrgAppTileDraftModuleSource(
+    input: SetOrgAppTileDraftModuleSourceInput!
+  ): SetAppTileDraftModuleSourceResponse!
+  setPatientLayoutDraftModuleSource(
+    input: SetPatientLayoutDraftModuleSourceInput!
+  ): SetPatientLayoutDraftModuleSourceResponse!
+  setProcessOntologyDraftModuleSource(
+    input: SetDraftModuleProcessOntologySourceInput!
+  ): SetDraftModuleProcessOntologySourceResponse!
+  setProgramEnrollmentDraftModuleSource(
+    input: SetProgramEnrollmentDraftModuleSourceInput!
+  ): SetProgramEnrollmentDraftModuleSourceResponse!
+  setProgramTemplateDraftModuleSource(
+    input: SetProgramTemplateDraftModuleSourceInput!
+  ): SetProgramTemplateDraftModuleSourceResponse!
+  setPublicAppTileDraftModuleSource(
+    input: SetPublicAppTileDraftModuleSourceInput!
+  ): SetAppTileDraftModuleSourceResponse!
+  setReportExtractorDraftModuleSource(
+    input: SetReportExtractorDraftModuleSourceInput!
+  ): SetReportExtractorDraftModuleSourceResponse!
+  setSearchLayoutDraftModuleSource(
+    input: SetSearchLayoutDraftModuleSourceInput!
+  ): SetSearchLayoutDraftModuleSourceResponse!
+  setSurveyDraftModuleSource(
+    input: SetSurveyDraftModuleSourceInput!
+  ): SetSurveyLayoutDraftModuleSourceResponse!
+  setWellnessOfferingDraftModuleSource(
+    input: SetDraftModuleWellnessOfferingSourceInput!
+  ): SetDraftModuleWellnessOfferingSourceResponse!
+  setWorkflowDraftModuleSource(
+    input: SetWorkflowDraftModuleSourceInput!
+  ): SetWorkflowDraftModuleSourceResponse!
   startUpload(input: StartUploadInput!): StartUploadResponse!
   uninstallWebApp(input: UninstallWebAppInput!): Boolean!
   updateDraftModule(input: UpdateDraftModuleInput!): UpdateDraftModuleResponse!
@@ -1139,10 +1315,16 @@ type Mutation {
   Updates the preview image (`previewImageV2`) from the draft identified by the `imageId`, `fileName` and `fileExtension`,
   currently only supports adding or removing a `description` as this is the only field
   """
-  updateDraftModulePreviewImagesV2(input: UpdateDraftModulePreviewImagesV2Input!): UpdateDraftModulePreviewImagesV2Response!
+  updateDraftModulePreviewImagesV2(
+    input: UpdateDraftModulePreviewImagesV2Input!
+  ): UpdateDraftModulePreviewImagesV2Response!
   updateMarketplaceReview(input: UpdateMarketplaceReviewInput!): Review!
-  updateMarketplaceReviewReply(input: UpdateMarketplaceReviewReplyInput!): Review! @deprecated(reason: "Use updateMarketplaceReviewReply_v2")
-  updateMarketplaceReviewReply_v2(input: UpdateMarketplaceReviewReplyInput_v2!): Review!
+  updateMarketplaceReviewReply(
+    input: UpdateMarketplaceReviewReplyInput!
+  ): Review! @deprecated(reason: "Use updateMarketplaceReviewReply_v2")
+  updateMarketplaceReviewReply_v2(
+    input: UpdateMarketplaceReviewReplyInput_v2!
+  ): Review!
 }
 
 type Notebook {
@@ -1225,7 +1407,9 @@ input OrgModulesInput {
 type OrganizationField {
   id: String!
 
-  """URL to the logo image"""
+  """
+  URL to the logo image
+  """
   logo: String
   name: String
 }
@@ -1292,7 +1476,11 @@ interface Post {
   parentPost: Post
   popularity: Int!
   priority: Priority
-  replies(after: String, first: Int = 5, order: PostOrder = NEWEST): PostConnection!
+  replies(
+    after: String
+    first: Int = 5
+    order: PostOrder = NEWEST
+  ): PostConnection!
   replyCount: Int!
   rootParentId: ID!
   systemGenerated: Boolean!
@@ -1533,50 +1721,95 @@ type Query {
   Returns true if the calling user has installed the provided module version
   """
   doesMyInstallExist(input: DoesInstallExistInput!): Boolean!
-  doesMyReviewExist_v2(input: DoesMyReviewExistInput!): DoesMyReviewExistResponse!
+  doesMyReviewExist_v2(
+    input: DoesMyReviewExistInput!
+  ): DoesMyReviewExistResponse!
   domainOntologies(after: String, first: Int): DomainOntologiesConnection!
   domainOntology(input: DomainOntologyInput!): DomainOntology
   draftModule(moduleId: ID!): DraftMarketplaceModule!
   draftModuleInManualReview(moduleId: ID!): DraftMarketplaceModule!
-  draftModules(after: String, first: Int, input: DraftModulesInput!): DraftMarketplaceModuleConnection!
-  draftModulesInManualReview(after: String, first: Int, input: DraftModulesInManualReviewInput!): DraftMarketplaceModuleConnection!
-  generateWebAppFromManifest(input: GenerateWebAppFromManifestInput): WebAppFromManifest!
+  draftModules(
+    after: String
+    first: Int
+    input: DraftModulesInput!
+  ): DraftMarketplaceModuleConnection!
+  draftModulesInManualReview(
+    after: String
+    first: Int
+    input: DraftModulesInManualReviewInput!
+  ): DraftMarketplaceModuleConnection!
+  generateWebAppFromManifest(
+    input: GenerateWebAppFromManifestInput
+  ): WebAppFromManifest!
   insightsLayout(input: InsightsLayoutInput!): InsightsLayout!
-  insightsLayouts(after: String, first: Int, input: InsightsLayoutsInput): InsightsLayoutConnection!
+  insightsLayouts(
+    after: String
+    first: Int
+    input: InsightsLayoutsInput
+  ): InsightsLayoutConnection!
   installedApps(input: ListInstalledAppsInput!): AppStoreApplicationConnection!
   installedTiles(after: String, first: Int): TileConnection!
 
-  """Returns true if the calling user is the owner of the module"""
+  """
+  Returns true if the calling user is the owner of the module
+  """
   isMyModule(moduleId: ID!, version: String): Boolean!
   licensedModule(moduleId: ID!, version: String): MarketplaceModule!
-  licensedModules(after: String, first: Int, input: LicensedModulesInput!): MarketplaceModulesConnection!
+  licensedModules(
+    after: String
+    first: Int
+    input: LicensedModulesInput!
+  ): MarketplaceModulesConnection!
   module(moduleId: ID!, version: String): MarketplaceModule!
   modulePublishReview(id: ID!, moduleId: ID!): ModulePublishReview!
-  modulePublishReviews(after: String, first: Int, moduleId: ID!): ModulePublishReviewsConnection!
+  modulePublishReviews(
+    after: String
+    first: Int
+    moduleId: ID!
+  ): ModulePublishReviewsConnection!
   moduleStats(input: ModuleStatsInput!): ModuleStatsResponse!
-  moduleTags(after: String, first: Int, input: ModuleTagsInput!): MarketplaceModuleTagsConnection!
-  modules(after: String, first: Int, input: ModulesInput!): MarketplaceModulesConnection!
+  moduleTags(
+    after: String
+    first: Int
+    input: ModuleTagsInput!
+  ): MarketplaceModuleTagsConnection!
+  modules(
+    after: String
+    first: Int
+    input: ModulesInput!
+  ): MarketplaceModulesConnection!
   myInstall(installId: ID!, installedOn: Long!): Install!
   myInstalls(
     after: String
     first: Int
     input: InstallsInput
 
-    """The sort order (based on install date)"""
+    """
+    The sort order (based on install date)
+    """
     sort: SortOrder
   ): InstallConnection!
   myModule(moduleId: ID!, version: String): MarketplaceModule!
-  myModules(after: String, first: Int, input: ModulesInput!): MarketplaceModulesConnection!
+  myModules(
+    after: String
+    first: Int
+    input: ModulesInput!
+  ): MarketplaceModulesConnection!
 
   """
   Returns the current active modules that the user has access to
-  
+
   If provided, `type` filters the results to those of just that type.
-  
+
   By default, this query returns all purchases. However, specifying `status`
   will allow you to filter purchases to just those that are active or inactive.
   """
-  myPurchases(after: String, first: Int, status: PurchaseStatus, type: PurchaseType): PurchasesConnection!
+  myPurchases(
+    after: String
+    first: Int
+    status: PurchaseStatus
+    type: PurchaseType
+  ): PurchasesConnection!
   notebook(input: NotebookInput!): Notebook!
   notebooks(after: String, first: Int): NotebookConnection!
   orgInstall(installId: ID!, installedOn: Long!): Install!
@@ -1585,25 +1818,53 @@ type Query {
     first: Int
     input: InstallsInput
 
-    """The sort order (based on install date)"""
+    """
+    The sort order (based on install date)
+    """
     sort: SortOrder
   ): InstallConnection!
   orgModule(moduleId: ID!, version: String): MarketplaceModule!
-  orgModuleTags(after: String, first: Int, input: OrgModuleTagsInput!): MarketplaceModuleTagsConnection!
-  orgModules(after: String, first: Int, input: OrgModulesInput!): MarketplaceModulesConnection!
+  orgModuleTags(
+    after: String
+    first: Int
+    input: OrgModuleTagsInput!
+  ): MarketplaceModuleTagsConnection!
+  orgModules(
+    after: String
+    first: Int
+    input: OrgModulesInput!
+  ): MarketplaceModulesConnection!
   patientLayout(input: PatientLayoutInput!): PatientLayout!
-  patientLayouts(after: String, first: Int, input: PatientLayoutsInput): PatientLayoutConnection!
+  patientLayouts(
+    after: String
+    first: Int
+    input: PatientLayoutsInput
+  ): PatientLayoutConnection!
   processOntologies(after: String, first: Int): ProcessOntologiesConnection!
   processOntology(input: ProcessOntologyInput!): ProcessOntology
   programEnrollment(input: ProgramEnrollmentInput!): ProgramEnrollment!
-  programEnrollments(after: String, first: Int, input: ProgramEnrollmentsInput!): ProgramEnrollmentConnection!
+  programEnrollments(
+    after: String
+    first: Int
+    input: ProgramEnrollmentsInput!
+  ): ProgramEnrollmentConnection!
   programTemplate(input: ProgramTemplateInput!): ProgramTemplate!
-  programTemplates(after: String, first: Int, input: ProgramTemplatesInput!): ProgramTemplateConnection!
+  programTemplates(
+    after: String
+    first: Int
+    input: ProgramTemplatesInput!
+  ): ProgramTemplateConnection!
   projects(after: String, first: Int, input: ProjectsInput): ProjectsConnection!
   reportExtractor(input: OcrReportExtractorInput!): OcrReportExtractor!
-  reportExtractors(input: OcrReportExtractorsInput): OcrReportExtractorConnection!
+  reportExtractors(
+    input: OcrReportExtractorsInput
+  ): OcrReportExtractorConnection!
   searchLayout(input: SearchLayoutInput!): SearchLayout!
-  searchLayouts(after: String, first: Int, input: SearchLayoutsInput): SearchLayoutConnection!
+  searchLayouts(
+    after: String
+    first: Int
+    input: SearchLayoutsInput
+  ): SearchLayoutConnection!
   survey(input: SurveyInput!): Survey!
   surveys(after: String, first: Int, input: SurveysInput!): SurveyConnection!
   userPurchasedModule(moduleId: ID!): UserPurchasedModuleResponse!
@@ -1887,7 +2148,9 @@ type SkillSpringTileBehavior {
   """
   directory: String
 
-  """The SkillSpring account of the coaching service provider."""
+  """
+  The SkillSpring account of the coaching service provider.
+  """
   skillSpringAccount: String!
 }
 
@@ -1969,7 +2232,10 @@ type Tile {
   name: String!
 }
 
-union TileBehavior = LaunchUrlTileBehavior | SkillSpringTileBehavior | WebAppletTileBehavior
+union TileBehavior =
+    LaunchUrlTileBehavior
+  | SkillSpringTileBehavior
+  | WebAppletTileBehavior
 
 type TileConnection {
   edges: [TileEdge!]!
@@ -1980,7 +2246,9 @@ type TileEdge {
   node: Tile!
 }
 
-"""The URL scalar type represents URL addresses."""
+"""
+The URL scalar type represents URL addresses.
+"""
 scalar URL
 
 input UninstallWebAppInput {
@@ -2005,13 +2273,17 @@ input UpdateDraftModuleInput {
 }
 
 input UpdateDraftModulePreviewImagesV2Input {
-  """Pass in `null` to remove the description"""
+  """
+  Pass in `null` to remove the description
+  """
   description: String
   fileExtension: String!
   fileName: String!
   moduleId: ID!
 
-  """Pass in `null` to remove the priority"""
+  """
+  Pass in `null` to remove the priority
+  """
   priority: Int
 }
 
@@ -2056,7 +2328,9 @@ input UpdateReviewReplyInput {
   replyId: ID!
 }
 
-"""The `Upload` scalar type represents a file upload."""
+"""
+The `Upload` scalar type represents a file upload.
+"""
 scalar Upload
 
 enum UploadType {
@@ -2094,42 +2368,64 @@ type VersionsV2Node {
 }
 
 type WebAppFromManifest {
-  """Generated from the manifest.description property"""
+  """
+  Generated from the manifest.description property
+  """
   description: String
 
-  """Generated from the input url and the manifest.icons['240'] property"""
+  """
+  Generated from the input url and the manifest.icons['240'] property
+  """
   image: URL
 
-  """Generated from the manifest.name property"""
+  """
+  Generated from the manifest.name property
+  """
   name: String!
 
-  """Generated from the input URL"""
+  """
+  Generated from the input URL
+  """
   url: URL!
 }
 
-"""Meant to replace AppStoreWebApplication."""
+"""
+Meant to replace AppStoreWebApplication.
+"""
 type WebAppletTileBehavior {
-  """Optional display string - used to display the author if not LifeOmic"""
+  """
+  Optional display string - used to display the author if not LifeOmic
+  """
   authorDisplay: String
   description: String
   url: URL!
 }
 
 type WellnessOffering {
-  """The approximate per-redemption cost of the offering in pennies."""
+  """
+  The approximate per-redemption cost of the offering in pennies.
+  """
   approximateUnitCost: Int!
 
-  """The configuration schema for this offering, as a JSON blob."""
+  """
+  The configuration schema for this offering, as a JSON blob.
+  """
   configurationSchema: String!
   id: String!
 
-  """A URL of a marketing image for the offering."""
+  """
+  A URL of a marketing image for the offering.
+  """
   imageUrl: String!
 
-  """A link to more information about the offering."""
+  """
+  A link to more information about the offering.
+  """
   infoUrl: String!
 
-  """The name of the provider of this offering."""
+  """
+  The name of the provider of this offering.
+  """
   provider: String!
   type: ModuleCategory!
 }
@@ -2148,16 +2444,24 @@ input WellnessOfferingInput {
 }
 
 input WellnessOfferingModuleSourceInfo {
-  """The approximate per-redemption cost of the offering in pennies."""
+  """
+  The approximate per-redemption cost of the offering in pennies.
+  """
   approximateUnitCost: Int!
 
-  """The configuration schema for this offering, as a JSON blob."""
+  """
+  The configuration schema for this offering, as a JSON blob.
+  """
   configurationSchema: String!
 
-  """A URL of a marketing image for the offering."""
+  """
+  A URL of a marketing image for the offering.
+  """
   imageUrl: String!
 
-  """A link to more information about the offering."""
+  """
+  A link to more information about the offering.
+  """
   infoUrl: String!
 
   """
@@ -2166,7 +2470,9 @@ input WellnessOfferingModuleSourceInfo {
   """
   installUrl: String!
 
-  """The name of the provider of this offering."""
+  """
+  The name of the provider of this offering.
+  """
   provider: String!
 }
 

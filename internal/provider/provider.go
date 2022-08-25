@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/lifeomic/terraform-provider-lifeomic/internal/client"
+	"github.com/lifeomic/terraform-provider-lifeomic/internal/common"
 )
 
 const useLambdaEnvVar = "LIFEOMIC_USE_LAMBDA"
@@ -24,6 +25,7 @@ type providerData struct {
 	AccountID types.String `tfsdk:"account_id"`
 	Token     types.String `tfsdk:"token"`
 	Host      types.String `tfsdk:"host"`
+	Headers   types.Map    `tfsdk:"headers"`
 }
 
 func New() tfsdk.Provider {
@@ -53,6 +55,13 @@ func (p *provider) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics)
 				Optional:    true,
 				Description: providerAttributeDescription("The PHC API host to communicate with.", client.HostEnvVar),
 			},
+			"headers": {
+				Type:     types.MapType{ElemType: types.StringType},
+				Optional: true,
+				Description: "Additional headers that will be passed with any requests made. " +
+					"You can also use the LIFEOMIC_HEADERS environment variable as stringified JSON. " +
+					"Environment variables take precedent over other values",
+			},
 		},
 	}, nil
 }
@@ -77,7 +86,27 @@ func (p *provider) Configure(ctx context.Context, req tfsdk.ConfigureProviderReq
 		"provider": p,
 	})
 
-	p.clientSet = newClientSet(config.Token.Value, config.AccountID.Value)
+	headers := map[string]string{}
+	diags = config.Headers.ElementsAs(ctx, &headers, false)
+	if diags.HasError() {
+		resp.Diagnostics.Append(diags...)
+		return
+	}
+
+	if headers == nil {
+		headers = make(map[string]string)
+	}
+
+	envHeaders, err := common.HeaderFromEnv()
+	if err != nil {
+		resp.Diagnostics.AddError("unable to get headers from environment variable", err.Error())
+	}
+
+	for k, v := range envHeaders {
+		headers[k] = v
+	}
+
+	p.clientSet = newClientSet(config.Token.Value, config.AccountID.Value, headers)
 	p.configured = true
 }
 
