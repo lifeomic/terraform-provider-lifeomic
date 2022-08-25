@@ -56,9 +56,11 @@ func (p *provider) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics)
 				Description: providerAttributeDescription("The PHC API host to communicate with.", client.HostEnvVar),
 			},
 			"headers": {
-				Type:        types.MapType{ElemType: types.StringType},
-				Optional:    true,
-				Description: "Additional headers that will be passed with any requests made. Can be provided using the PHC_HEADERS environment variable in stringified JSON. Values provided via environment variable will take precedent over other values",
+				Type:     types.MapType{ElemType: types.StringType},
+				Optional: true,
+				Description: "Additional headers that will be passed with any requests made. " +
+					"You can also use the LIFEOMIC_HEADERS environment variable as stringified JSON. " +
+					"Environment variables take precedent over other values",
 			},
 		},
 	}, nil

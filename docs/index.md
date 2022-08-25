@@ -33,6 +33,6 @@ provider "lifeomic" {
 ### Optional
 
 - `account_id` (String) The unique ID of the PHC Account to use this provider with. If not set explicitly in the provider block, `$LIFEOMIC_ACCOUNT` will be used.
-- `headers` (Map of String) Additional headers that will be passed with any requests made. Can be provided using the PHC_HEADERS environment variable in stringified JSON
+- `headers` (Map of String) Additional headers that will be passed with any requests made. You can also use the LIFEOMIC_HEADERS environment variable as stringified JSON. Environment variables take precedent over other values
 - `host` (String) The PHC API host to communicate with.. If not set explicitly in the provider block, `$LIFEOMIC_HOST` will be used.
 - `token` (String, Sensitive) The token to use for authenticating with the PHC API. If not set explicitly in the provider block, `$LIFEOMIC_TOKEN` will be used.

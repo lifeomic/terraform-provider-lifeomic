@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	HeadersEnvVar = "PHC_HEADERS"
+	HeadersEnvVar = "LIFEOMIC_HEADERS"
 )
 
 func HeaderFromEnv() (map[string]string, error) {

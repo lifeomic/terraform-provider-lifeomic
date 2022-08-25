@@ -3,7 +3,6 @@ package provider
 import (
 	"context"
 	"fmt"
-	"os"
 	"testing"
 
 	"github.com/hashicorp/go-uuid"
@@ -13,13 +12,8 @@ import (
 )
 
 func TestAccMarketplaceWellnessOffering_basic(t *testing.T) {
-	t.Parallel()
-
 	id, _ := uuid.GenerateUUID()
-	err := os.Setenv(common.HeadersEnvVar, "{\"LifeOmic-Policy\":\"{\\\"rules\\\":{\\\"publishContent\\\":true}}\",\"LifeOmic-User\":\"wellness-service\",\"LifeOmic-Account\":\"lifeomic\"}")
-	if err != nil {
-		t.Fatalf("error setting required headers %v", err)
-	}
+	t.Setenv(common.HeadersEnvVar, "{\"LifeOmic-Policy\":\"{\\\"rules\\\":{\\\"publishContent\\\":true}}\",\"LifeOmic-User\":\"wellness-service\",\"LifeOmic-Account\":\"lifeomic\"}")
 	header, err := common.HeaderFromEnv()
 	if err != nil {
 		t.Fatalf("error getting required headers %v", err)
