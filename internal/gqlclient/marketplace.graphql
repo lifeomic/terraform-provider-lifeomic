@@ -55,6 +55,23 @@ mutation PublishModule($input: PublishDraftModuleInputV2!) {
 mutation PublishModuleV3($input: PublishDraftModuleInputV3!) {
   publishDraftModuleV3(input: $input) {
     id
+    publishReviewId
+    version {
+      version
+    }
+  }
+}
+
+mutation AssignModuleReviewToSelf($moduleId: ID!) {
+  assignDraftModuleForReview(moduleId: $moduleId) {
+    assignedReviewer
+    moduleId
+  }
+}
+
+mutation ApproveModule($input: ApproveModulePublishInput!) {
+  approveModulePublish(input: $input) {
+    id
     version {
       version
     }
@@ -83,6 +100,15 @@ mutation SetWellnessOfferingDraftModuleSource(
   }
 }
 
+fragment WellnessOfferingSource on WellnessOffering {
+  id
+  provider
+  imageUrl
+  infoUrl
+  configurationSchema
+  approximateUnitCost
+}
+
 fragment WellnessOfferingModule on MarketplaceModule {
   id
   title
@@ -90,11 +116,18 @@ fragment WellnessOfferingModule on MarketplaceModule {
   version
   source {
     ... on WellnessOffering {
-      provider
-      imageUrl
-      infoUrl
-      configurationSchema
-      approximateUnitCost
+      ...WellnessOfferingSource
+    }
+  }
+}
+
+fragment DraftWellnessOfferingModule on DraftMarketplaceModule {
+  id
+  title
+  description
+  source {
+    ... on WellnessOffering {
+      ...WellnessOfferingSource
     }
   }
 }
@@ -105,8 +138,28 @@ query GetWellnessOfferingModule($moduleId: ID!) {
   }
 }
 
-mutation UpdateDraftModule($input: UpdateDraftModuleInput!) {
+# @genqlient(for: "UpdateDraftModuleInput.description", omitempty: true)
+# @genqlient(for: "UpdateDraftModuleInput.icon", omitempty: true)
+# @genqlient(for: "UpdateDraftModuleInput.languages", omitempty: true)
+# @genqlient(for: "UpdateDraftModuleInput.parentModuleId", omitempty: true)
+# @genqlient(for: "UpdateDraftModuleInput.previewImages", omitempty: true)
+# @genqlient(for: "UpdateDraftModuleInput.previewVideoUrls", omitempty: true)
+# @genqlient(for: "UpdateDraftModuleInput.prices", omitempty: true)
+# @genqlient(for: "UpdateDraftModuleInput.products", omitempty: true)
+# @genqlient(for: "UpdateDraftModuleInput.tags", omitempty: true)
+# @genqlient(for: "UpdateDraftModuleInput.title", omitempty: true)
+# @genqlient(for: "UpdateDraftModuleInput.websiteUrl", omitempty: true)
+mutation UpdateDraftModule(
+  # https://github.com/Khan/genqlient/issues/151
+  $input: UpdateDraftModuleInput!
+) {
   updateDraftModule(input: $input) {
     id
+  }
+}
+
+query GetDraftWellnessOfferingModule($moduleId: ID!) {
+  draftModule(moduleId: $moduleId) {
+    ...DraftWellnessOfferingModule
   }
 }

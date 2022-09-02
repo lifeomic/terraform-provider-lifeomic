@@ -20,11 +20,14 @@ type MarketplaceService interface {
 	SetAppTile(ctx context.Context, input SetPublicAppTileDraftModuleSourceInput) (*SetAppTileResponse, error)
 	PublishModule(ctx context.Context, input PublishDraftModuleInputV2) (*PublishModuleResponse, error)
 	PublishModuleV3(ctx context.Context, input PublishDraftModuleInputV3) (*PublishModuleV3Response, error)
+	AssignModuleReviewToSelf(ctx context.Context, moduleId string) (*AssignModuleReviewToSelfResponse, error)
+	ApproveModule(ctx context.Context, input ApproveModulePublishInput) (*ApproveModuleResponse, error)
 	StartImageUpload(ctx context.Context, input StartUploadInput) (*StartImageUploadResponse, error)
 	FinalizeImageUpload(ctx context.Context, input FinalizeUploadInput) (*FinalizeImageUploadResponse, error)
 	SetWellnessOfferingDraftModuleSource(ctx context.Context, input SetDraftModuleWellnessOfferingSourceInput) (*SetWellnessOfferingDraftModuleSourceResponse, error)
 	GetWellnessOfferingModule(ctx context.Context, moduleId string) (*GetWellnessOfferingModuleResponse, error)
 	UpdateDraftModule(ctx context.Context, input UpdateDraftModuleInput) (*UpdateDraftModuleResponse, error)
+	GetDraftWellnessOfferingModule(ctx context.Context, moduleId string) (*GetDraftWellnessOfferingModuleResponse, error)
 }
 
 type marketplaceClient struct {
@@ -55,6 +58,14 @@ func (m *marketplaceClient) PublishModuleV3(ctx context.Context, input PublishDr
 	return PublishModuleV3(ctx, m.client, input)
 }
 
+func (m *marketplaceClient) AssignModuleReviewToSelf(ctx context.Context, moduleId string) (*AssignModuleReviewToSelfResponse, error) {
+	return AssignModuleReviewToSelf(ctx, m.client, moduleId)
+}
+
+func (m *marketplaceClient) ApproveModule(ctx context.Context, input ApproveModulePublishInput) (*ApproveModuleResponse, error) {
+	return ApproveModule(ctx, m.client, input)
+}
+
 func (m *marketplaceClient) StartImageUpload(ctx context.Context, input StartUploadInput) (*StartImageUploadResponse, error) {
 	return StartImageUpload(ctx, m.client, input)
 }
@@ -73,6 +84,10 @@ func (m *marketplaceClient) GetWellnessOfferingModule(ctx context.Context, modul
 
 func (m *marketplaceClient) UpdateDraftModule(ctx context.Context, input UpdateDraftModuleInput) (*UpdateDraftModuleResponse, error) {
 	return UpdateDraftModule(ctx, m.client, input)
+}
+
+func (m *marketplaceClient) GetDraftWellnessOfferingModule(ctx context.Context, moduleId string) (*GetDraftWellnessOfferingModuleResponse, error) {
+	return GetDraftWellnessOfferingModule(ctx, m.client, moduleId)
 }
 
 func NewMarketplaceClient(authToken string, accountID string, header map[string]string) MarketplaceService {
