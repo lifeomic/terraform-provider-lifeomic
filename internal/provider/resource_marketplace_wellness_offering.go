@@ -40,36 +40,6 @@ type wellnessOfferingResource struct {
 // wellnessOfferingResourceType implements tfsdk.ResourceType
 type wellnessOfferingResourceType struct{}
 
-// createOrUpdateResponse is a wrapper interface for tfsdk.CreateResponse/tfsdkUpdateResponse
-type createOrUpdateResponse interface {
-	GetState() *tfsdk.State
-	GetDiagnostics() *diag.Diagnostics
-}
-
-type wrappedCreateResponse struct {
-	*tfsdk.CreateResourceResponse
-}
-
-func (resp *wrappedCreateResponse) GetState() *tfsdk.State {
-	return &resp.State
-}
-
-func (resp *wrappedCreateResponse) GetDiagnostics() *diag.Diagnostics {
-	return &resp.Diagnostics
-}
-
-type wrappedUpdateResponse struct {
-	*tfsdk.UpdateResourceResponse
-}
-
-func (resp *wrappedUpdateResponse) GetState() *tfsdk.State {
-	return &resp.State
-}
-
-func (resp *wrappedUpdateResponse) GetDiagnostics() *diag.Diagnostics {
-	return &resp.Diagnostics
-}
-
 func (wellnessOfferingResourceType) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		Description: "marketplace_wellness_offering manages Wellness Offering subsidies",
@@ -229,7 +199,7 @@ func (w wellnessOfferingResource) Create(ctx context.Context, req tfsdk.CreateRe
 
 	tflog.Info(ctx, "Published module", map[string]any{"module": publishResp.PublishDraftModuleV3})
 
-	w.handleApproval(ctx, plan, publishResp.PublishDraftModuleV3.Id, &wrappedCreateResponse{resp})
+	w.handleApproval(ctx, plan, publishResp.PublishDraftModuleV3.Id, &resp.State, &resp.Diagnostics)
 
 }
 
@@ -316,7 +286,7 @@ func (w wellnessOfferingResource) Update(ctx context.Context, req tfsdk.UpdateRe
 		return
 	}
 
-	w.handleApproval(ctx, plan, publishResp.PublishDraftModuleV3.Id, &wrappedUpdateResponse{resp})
+	w.handleApproval(ctx, plan, publishResp.PublishDraftModuleV3.Id, &resp.State, &resp.Diagnostics)
 }
 
 func (w wellnessOfferingResource) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
@@ -343,22 +313,22 @@ func (w wellnessOfferingResource) Delete(ctx context.Context, req tfsdk.DeleteRe
 	tflog.Info(ctx, "Deleted Wellness Offering", map[string]any{"Name": state.Title})
 }
 
-func (w wellnessOfferingResource) handleApproval(ctx context.Context, plan wellnessOffering, moduleId string, resp createOrUpdateResponse) {
+func (w wellnessOfferingResource) handleApproval(ctx context.Context, plan wellnessOffering, moduleId string, state *tfsdk.State, diags *diag.Diagnostics) {
 	// if it's a test module, it's automatically approved so we can set state and exit
 	if plan.IsTestModule.Value {
 		offering, err := w.clientSet.Marketplace.GetWellnessOfferingModule(ctx, moduleId)
 		if err != nil {
-			resp.GetDiagnostics().AddError("failed to get published Wellness Offering Module", err.Error())
+			diags.AddError("failed to get published Wellness Offering Module", err.Error())
 			return
 		}
 		tflog.Info(ctx, "Got Wellness Offering Module", map[string]any{"module": offering.MyModule.WellnessOfferingModule})
-		resp.GetDiagnostics().Append(setWellnessOfferingState(ctx, &plan, resp.GetState(), offering.MyModule.WellnessOfferingModule, plan.IsTestModule.Value)...)
+		diags.Append(setWellnessOfferingState(ctx, &plan, state, offering.MyModule.WellnessOfferingModule, plan.IsTestModule.Value)...)
 		return
 	}
 
 	getDraftModuleResp, err := w.clientSet.Marketplace.GetDraftWellnessOfferingModule(ctx, moduleId)
 	if err != nil {
-		resp.GetDiagnostics().AddError("failed to get draft Wellness Offering Module", err.Error())
+		diags.AddError("failed to get draft Wellness Offering Module", err.Error())
 		return
 	}
 	tflog.Info(ctx, "Got draft Wellness Offering Module", map[string]any{"module": getDraftModuleResp.DraftModule})
@@ -367,10 +337,10 @@ func (w wellnessOfferingResource) handleApproval(ctx context.Context, plan welln
 		tflog.Warn(ctx, "unable to automatically approve module. Module will be left in ready to review state and requires manual approval.")
 		nonDraft, err := draftModuleToNonDraft(getDraftModuleResp.DraftModule.DraftWellnessOfferingModule)
 		if err != nil {
-			resp.GetDiagnostics().AddError("unexpected draft module source type", err.Error())
+			diags.AddError("unexpected draft module source type", err.Error())
 			return
 		}
-		resp.GetDiagnostics().Append(setWellnessOfferingState(ctx, &plan, resp.GetState(), nonDraft, false)...)
+		diags.Append(setWellnessOfferingState(ctx, &plan, state, nonDraft, false)...)
 		return
 	}
 
@@ -381,7 +351,7 @@ func (w wellnessOfferingResource) handleApproval(ctx context.Context, plan welln
 	time.Sleep(5 * time.Second)
 	assignModuleResp, err := w.clientSet.Marketplace.AssignModuleReviewToSelf(ctx, moduleId)
 	if err != nil {
-		resp.GetDiagnostics().AddError("failed to assign module for review", err.Error())
+		diags.AddError("failed to assign module for review", err.Error())
 		return
 	}
 	tflog.Info(ctx, "Assigned module to self for review", map[string]any{"assigned": assignModuleResp.AssignDraftModuleForReview})
@@ -391,18 +361,18 @@ func (w wellnessOfferingResource) handleApproval(ctx context.Context, plan welln
 		Notes:    "Automatically approved by terraform provider",
 	})
 	if err != nil {
-		resp.GetDiagnostics().AddError("failed to approve module", err.Error())
+		diags.AddError("failed to approve module", err.Error())
 		return
 	}
 
 	tflog.Info(ctx, "Approved module", map[string]any{"approval": approveResp.ApproveModulePublish})
 	offering, err := w.clientSet.Marketplace.GetWellnessOfferingModule(ctx, moduleId)
 	if err != nil {
-		resp.GetDiagnostics().AddError("failed to get published and approved Wellness Offering Module", err.Error())
+		diags.AddError("failed to get published and approved Wellness Offering Module", err.Error())
 		return
 	}
 	tflog.Info(ctx, "Got Wellness Offering Module", map[string]any{"module": offering.MyModule.WellnessOfferingModule})
-	resp.GetDiagnostics().Append(setWellnessOfferingState(ctx, &plan, resp.GetState(), offering.MyModule.WellnessOfferingModule, true)...)
+	diags.Append(setWellnessOfferingState(ctx, &plan, state, offering.MyModule.WellnessOfferingModule, true)...)
 }
 
 func draftModuleToNonDraft(in gqlclient.DraftWellnessOfferingModule) (gqlclient.WellnessOfferingModule, error) {

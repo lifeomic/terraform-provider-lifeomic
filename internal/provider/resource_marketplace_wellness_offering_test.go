@@ -65,7 +65,7 @@ func TestAccMarketplaceWellnessOffering_basicUpdate(t *testing.T) {
 
 		Steps: []resource.TestStep{
 			{
-				Config: testAccOffering_basic(id, true, ""),
+				Config: testAccOffering_basic(id, true, "1.0.0"),
 				Check: resource.ComposeAggregateTestCheckFunc(testCheckPublishedModule(t, id, header),
 					resource.TestCheckResourceAttr(testWellnessOfferingResName, "is_approved", "true"),
 					resource.TestCheckResourceAttr(testWellnessOfferingResName, "is_test_module", "true")),
@@ -111,7 +111,7 @@ func TestAccMarketplaceWellnessOffering_automaticApproval(t *testing.T) {
 
 		Steps: []resource.TestStep{
 			{
-				Config: testAccOffering_basic(id, false, ""),
+				Config: testAccOffering_basic(id, false, "1.0.0"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					func(s *terraform.State) error {
 						client := newClientSet("", "", header).Marketplace
@@ -145,7 +145,7 @@ func TestAccMarketplaceWellnessOffering_automaticApprovalWithUpdates(t *testing.
 
 		Steps: []resource.TestStep{
 			{
-				Config: testAccOffering_basic(id, false, ""),
+				Config: testAccOffering_basic(id, false, "1.0.0"),
 				Check: resource.ComposeAggregateTestCheckFunc(testCheckPublishedModule(t, id, header),
 					resource.TestCheckResourceAttr(testWellnessOfferingResName, "is_approved", "true")),
 			},
@@ -212,27 +212,23 @@ func TestAccMarketplaceWellnessOffering_automaticApprovalWithUpdates(t *testing.
 // }
 
 func testAccOffering_basic(id string, isTest bool, version string) string {
-	if version == "" {
-		version = "1.0.0"
-	}
-	return fmt.Sprintf(`
-					resource "lifeomic_marketplace_wellness_offering" "test" {
-						id = "%s"
-						title = "Fake Module"
-						description = "A fake marketplace module"
-						marketplace_provider = "LifeOmic"
-						version = "%s"
-						image_url = "https://placekitten.com/1800/1600"
-						info_url = "https://example.com"
-						approximate_unit_cost = 10000
-						configuration_schema = jsonencode({
-							"version": "06-28-2021",
-							"fields": []
-							})
-						is_enabled = true
-						install_url = "lambda://wellness-service:deployed/v1/private/life-league"
-						is_test_module = %t
-					}`, id, version, isTest)
+	return fmt.Sprintf(`resource "lifeomic_marketplace_wellness_offering" "test" {
+	id = "%s"
+	title = "Fake Module"
+	description = "A fake marketplace module"
+	marketplace_provider = "LifeOmic"
+	version = "%s"
+	image_url = "https://placekitten.com/1800/1600"
+	info_url = "https://example.com"
+	approximate_unit_cost = 10000
+	configuration_schema = jsonencode({
+		"version": "06-28-2021",
+		"fields": []
+		})
+	is_enabled = true
+	install_url = "lambda://wellness-service:deployed/v1/private/life-league"
+	is_test_module = %t
+	}`, id, version, isTest)
 }
 
 func testCheckPublishedModule(t *testing.T, id string, header map[string]string) func(s *terraform.State) error {
