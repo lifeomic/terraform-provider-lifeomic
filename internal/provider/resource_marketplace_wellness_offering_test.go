@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/hashicorp/go-uuid"
@@ -14,6 +15,12 @@ import (
 const (
 	defaultHeadersf = "{\"LifeOmic-Policy\":\"{\\\"rules\\\":{\\\"publishContent\\\":true, \\\"lifeomicMarketplaceAdmin\\\": true}}\",\"LifeOmic-User\":\"%s\",\"LifeOmic-Account\":\"%s\"}"
 )
+
+func skipNoLambda(t *testing.T) {
+	if os.Getenv(useLambdaEnvVar) == "" {
+		t.Skipf("skipping test. Set %s env var in order to run this test", useLambdaEnvVar)
+	}
+}
 
 func getHeaders(t *testing.T) string {
 	t.Helper()
@@ -27,9 +34,9 @@ func getHeaders(t *testing.T) string {
 var testWellnessOfferingResName = "lifeomic_marketplace_wellness_offering.test"
 
 func TestAccMarketplaceWellnessOffering_basic(t *testing.T) {
+	skipNoLambda(t)
 	id, _ := uuid.GenerateUUID()
 	t.Setenv(common.HeadersEnvVar, getHeaders(t))
-	t.Setenv(useLambdaEnvVar, "1")
 	header, err := common.HeaderFromEnv()
 	if err != nil {
 		t.Fatalf("error getting required headers %v", err)
@@ -51,6 +58,7 @@ func TestAccMarketplaceWellnessOffering_basic(t *testing.T) {
 }
 
 func TestAccMarketplaceWellnessOffering_basicUpdate(t *testing.T) {
+	skipNoLambda(t)
 	id, _ := uuid.GenerateUUID()
 
 	t.Setenv(common.HeadersEnvVar, getHeaders(t))
@@ -97,6 +105,7 @@ func TestAccMarketplaceWellnessOffering_basicUpdate(t *testing.T) {
 }
 
 func TestAccMarketplaceWellnessOffering_automaticApproval(t *testing.T) {
+	skipNoLambda(t)
 	id, _ := uuid.GenerateUUID()
 
 	t.Setenv(common.HeadersEnvVar, getHeaders(t))
@@ -131,6 +140,7 @@ func TestAccMarketplaceWellnessOffering_automaticApproval(t *testing.T) {
 }
 
 func TestAccMarketplaceWellnessOffering_automaticApprovalWithUpdates(t *testing.T) {
+	skipNoLambda(t)
 	id, _ := uuid.GenerateUUID()
 
 	t.Setenv(common.HeadersEnvVar, getHeaders(t))
