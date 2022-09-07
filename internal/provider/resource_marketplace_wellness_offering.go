@@ -2,12 +2,15 @@ package provider
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
+	"github.com/lifeomic/terraform-provider-lifeomic/internal/client"
 	"github.com/lifeomic/terraform-provider-lifeomic/internal/gqlclient"
 )
 
@@ -26,6 +29,7 @@ type wellnessOffering struct {
 	ConfigurationSchema types.String `tfsdk:"configuration_schema"`
 	IsEnabled           types.Bool   `tfsdk:"is_enabled"`
 	IsTestModule        types.Bool   `tfsdk:"is_test_module"`
+	IsApproved          types.Bool   `tfsdk:"is_approved"`
 }
 
 // wellnessOfferingResource implements tfsdk
@@ -94,6 +98,10 @@ func (wellnessOfferingResourceType) GetSchema(_ context.Context) (tfsdk.Schema, 
 			},
 			"is_test_module": {
 				Optional: true,
+				Type:     types.BoolType,
+			},
+			"is_approved": {
+				Computed: true,
 				Type:     types.BoolType,
 			},
 		},
@@ -191,14 +199,8 @@ func (w wellnessOfferingResource) Create(ctx context.Context, req tfsdk.CreateRe
 
 	tflog.Info(ctx, "Published module", map[string]any{"module": publishResp.PublishDraftModuleV3})
 
-	offering, err := w.clientSet.Marketplace.GetWellnessOfferingModule(ctx, publishResp.PublishDraftModuleV3.Id)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to get published Wellness Offering Module", err.Error())
-		return
-	}
+	w.handleApproval(ctx, plan, publishResp.PublishDraftModuleV3.Id, &resp.State, &resp.Diagnostics)
 
-	tflog.Info(ctx, "Got Wellness Offering Module", map[string]any{"module": offering.MyModule.WellnessOfferingModule})
-	resp.Diagnostics.Append(setWellnessOfferingState(ctx, &plan, &resp.State, offering.MyModule.WellnessOfferingModule)...)
 }
 
 func (w wellnessOfferingResource) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
@@ -218,7 +220,7 @@ func (w wellnessOfferingResource) Read(ctx context.Context, req tfsdk.ReadResour
 	}
 
 	tflog.Info(ctx, "Got Wellness Offering Module", map[string]any{"module": offering.MyModule})
-	resp.Diagnostics.Append(setWellnessOfferingState(ctx, &state, &resp.State, offering.MyModule.WellnessOfferingModule)...)
+	resp.Diagnostics.Append(setWellnessOfferingState(ctx, &state, &resp.State, offering.MyModule.WellnessOfferingModule, false)...)
 }
 
 func (w wellnessOfferingResource) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
@@ -238,21 +240,24 @@ func (w wellnessOfferingResource) Update(ctx context.Context, req tfsdk.UpdateRe
 		return
 	}
 
-	draftModuleInput, diags := plan.ToMarketplaceUpdateInput(ctx)
+	// create new draft
+	draftModuleInput, diags := plan.ToMarketplaceInputObject(ctx)
 	if diags.HasError() {
 		resp.Diagnostics.Append(diags...)
 		return
 	}
+	draftModuleInput.ParentModuleId = state.ID.Value
 
-	updateResp, err := w.clientSet.Marketplace.UpdateDraftModule(ctx, draftModuleInput)
+	// Create the draft module.
+	draftModuleResp, err := w.clientSet.Marketplace.CreateDraftModule(ctx, draftModuleInput)
 	if err != nil {
-		resp.Diagnostics.AddError("failed to update Wellness Offering draft module", err.Error())
+		resp.Diagnostics.AddError("failed to create Wellness Draft Module", err.Error())
 		return
 	}
-	tflog.Info(ctx, "Updated existing Wellness Offering Module", map[string]any{"moduleUpdate": updateResp.UpdateDraftModule})
+	tflog.Info(ctx, "Created new DraftModule", map[string]any{"draftModule": draftModuleResp.CreateDraftModule})
 
 	setSourceResp, err := w.clientSet.Marketplace.SetWellnessOfferingDraftModuleSource(ctx, gqlclient.SetDraftModuleWellnessOfferingSourceInput{
-		ModuleId: updateResp.UpdateDraftModule.Id,
+		ModuleId: draftModuleResp.CreateDraftModule.Id,
 		SourceInfo: gqlclient.WellnessOfferingModuleSourceInfo{
 			ApproximateUnitCost: int(plan.ApproximateUnitCost.Value),
 			ConfigurationSchema: plan.ConfigurationSchema.Value,
@@ -268,14 +273,20 @@ func (w wellnessOfferingResource) Update(ctx context.Context, req tfsdk.UpdateRe
 	}
 
 	tflog.Info(ctx, "Updated existing Wellness Offering Module source", map[string]any{"moduleSource": setSourceResp.SetWellnessOfferingDraftModuleSource})
-
-	offering, err := w.clientSet.Marketplace.GetWellnessOfferingModule(ctx, setSourceResp.SetWellnessOfferingDraftModuleSource.Id)
+	// Publish module
+	publishResp, err := w.clientSet.Marketplace.PublishModuleV3(ctx, gqlclient.PublishDraftModuleInputV3{
+		ModuleId: draftModuleResp.CreateDraftModule.Id,
+		Version: gqlclient.ModuleVersionInput{
+			Version: plan.Version.Value,
+		},
+		IsTestModule: plan.IsTestModule.Value,
+	})
 	if err != nil {
-		resp.Diagnostics.AddError("failed to get wellness offering module", err.Error())
+		resp.Diagnostics.AddError("failed to publish Wellness Offering Module", err.Error())
 		return
 	}
 
-	resp.Diagnostics.Append(setWellnessOfferingState(ctx, &plan, &resp.State, offering.MyModule.WellnessOfferingModule)...)
+	w.handleApproval(ctx, plan, publishResp.PublishDraftModuleV3.Id, &resp.State, &resp.Diagnostics)
 }
 
 func (w wellnessOfferingResource) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
@@ -302,7 +313,84 @@ func (w wellnessOfferingResource) Delete(ctx context.Context, req tfsdk.DeleteRe
 	tflog.Info(ctx, "Deleted Wellness Offering", map[string]any{"Name": state.Title})
 }
 
-func setWellnessOfferingState(ctx context.Context, config *wellnessOffering, state *tfsdk.State, w gqlclient.WellnessOfferingModule) (diags diag.Diagnostics) {
+func (w wellnessOfferingResource) handleApproval(ctx context.Context, plan wellnessOffering, moduleId string, state *tfsdk.State, diags *diag.Diagnostics) {
+	// if it's a test module, it's automatically approved so we can set state and exit
+	if plan.IsTestModule.Value {
+		offering, err := w.clientSet.Marketplace.GetWellnessOfferingModule(ctx, moduleId)
+		if err != nil {
+			diags.AddError("failed to get published Wellness Offering Module", err.Error())
+			return
+		}
+		tflog.Info(ctx, "Got Wellness Offering Module", map[string]any{"module": offering.MyModule.WellnessOfferingModule})
+		diags.Append(setWellnessOfferingState(ctx, &plan, state, offering.MyModule.WellnessOfferingModule, plan.IsTestModule.Value)...)
+		return
+	}
+
+	getDraftModuleResp, err := w.clientSet.Marketplace.GetDraftWellnessOfferingModule(ctx, moduleId)
+	if err != nil {
+		diags.AddError("failed to get draft Wellness Offering Module", err.Error())
+		return
+	}
+	tflog.Info(ctx, "Got draft Wellness Offering Module", map[string]any{"module": getDraftModuleResp.DraftModule})
+
+	if !client.GetUseLambda() {
+		tflog.Warn(ctx, "unable to automatically approve module. Module will be left in ready to review state and requires manual approval.")
+		nonDraft, err := draftModuleToNonDraft(getDraftModuleResp.DraftModule.DraftWellnessOfferingModule)
+		if err != nil {
+			diags.AddError("unexpected draft module source type", err.Error())
+			return
+		}
+		diags.Append(setWellnessOfferingState(ctx, &plan, state, nonDraft, false)...)
+		return
+	}
+
+	// If we're using lambda we automatically attempt to publish a review for the module
+	tflog.Info(ctx, "using lambda detected. Attempting to automatically approve the module")
+
+	// TODO: fight the eventual consistency
+	time.Sleep(5 * time.Second)
+	assignModuleResp, err := w.clientSet.Marketplace.AssignModuleReviewToSelf(ctx, moduleId)
+	if err != nil {
+		diags.AddError("failed to assign module for review", err.Error())
+		return
+	}
+	tflog.Info(ctx, "Assigned module to self for review", map[string]any{"assigned": assignModuleResp.AssignDraftModuleForReview})
+
+	approveResp, err := w.clientSet.Marketplace.ApproveModule(ctx, gqlclient.ApproveModulePublishInput{
+		ModuleId: moduleId,
+		Notes:    "Automatically approved by terraform provider",
+	})
+	if err != nil {
+		diags.AddError("failed to approve module", err.Error())
+		return
+	}
+
+	tflog.Info(ctx, "Approved module", map[string]any{"approval": approveResp.ApproveModulePublish})
+	offering, err := w.clientSet.Marketplace.GetWellnessOfferingModule(ctx, moduleId)
+	if err != nil {
+		diags.AddError("failed to get published and approved Wellness Offering Module", err.Error())
+		return
+	}
+	tflog.Info(ctx, "Got Wellness Offering Module", map[string]any{"module": offering.MyModule.WellnessOfferingModule})
+	diags.Append(setWellnessOfferingState(ctx, &plan, state, offering.MyModule.WellnessOfferingModule, true)...)
+}
+
+func draftModuleToNonDraft(in gqlclient.DraftWellnessOfferingModule) (gqlclient.WellnessOfferingModule, error) {
+	source, ok := in.Source.(*gqlclient.DraftWellnessOfferingModuleSourceWellnessOffering)
+	if !ok {
+		return gqlclient.WellnessOfferingModule{}, fmt.Errorf("unable to convert module source to WellnessOffering source, instead got %s", in.Source.GetTypename())
+	}
+	return gqlclient.WellnessOfferingModule{
+		Id:          in.Id,
+		Title:       in.Title,
+		Description: in.Description,
+		Source: &gqlclient.WellnessOfferingModuleSourceWellnessOffering{
+			WellnessOfferingSource: source.WellnessOfferingSource,
+		},
+	}, nil
+}
+
+func setWellnessOfferingState(ctx context.Context, config *wellnessOffering, state *tfsdk.State, w gqlclient.WellnessOfferingModule, isApproved bool) (diags diag.Diagnostics) {
 
 	source, ok := w.Source.(*gqlclient.WellnessOfferingModuleSourceWellnessOffering)
 	if !ok {
@@ -325,6 +413,7 @@ func setWellnessOfferingState(ctx context.Context, config *wellnessOffering, sta
 		InfoURL:             types.String{Value: source.InfoUrl},
 		ApproximateUnitCost: types.Int64{Value: int64(source.ApproximateUnitCost)},
 		ConfigurationSchema: types.String{Value: source.ConfigurationSchema},
+		IsApproved:          types.Bool{Value: isApproved},
 	})...)
 	return
 }

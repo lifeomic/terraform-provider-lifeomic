@@ -34,4 +34,8 @@ marketplace_wellness_offering manages Wellness Offering subsidies
 - `is_test_module` (Boolean)
 - `parent_module_id` (String)
 
+### Read-Only
+
+- `is_approved` (Boolean)
+
 

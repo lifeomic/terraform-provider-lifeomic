@@ -503,6 +503,83 @@ type AppTileModuleSourceWorkflow struct {
 // GetTypename returns AppTileModuleSourceWorkflow.Typename, and is useful for accessing the field via an interface.
 func (v *AppTileModuleSourceWorkflow) GetTypename() string { return v.Typename }
 
+// ApproveModuleApproveModulePublishApproveModulePublishResponse includes the requested fields of the GraphQL type ApproveModulePublishResponse.
+type ApproveModuleApproveModulePublishApproveModulePublishResponse struct {
+	Id      string                                                                                    `json:"id"`
+	Version ApproveModuleApproveModulePublishApproveModulePublishResponseVersionModuleVersionResponse `json:"version"`
+}
+
+// GetId returns ApproveModuleApproveModulePublishApproveModulePublishResponse.Id, and is useful for accessing the field via an interface.
+func (v *ApproveModuleApproveModulePublishApproveModulePublishResponse) GetId() string { return v.Id }
+
+// GetVersion returns ApproveModuleApproveModulePublishApproveModulePublishResponse.Version, and is useful for accessing the field via an interface.
+func (v *ApproveModuleApproveModulePublishApproveModulePublishResponse) GetVersion() ApproveModuleApproveModulePublishApproveModulePublishResponseVersionModuleVersionResponse {
+	return v.Version
+}
+
+// ApproveModuleApproveModulePublishApproveModulePublishResponseVersionModuleVersionResponse includes the requested fields of the GraphQL type ModuleVersionResponse.
+type ApproveModuleApproveModulePublishApproveModulePublishResponseVersionModuleVersionResponse struct {
+	Version string `json:"version"`
+}
+
+// GetVersion returns ApproveModuleApproveModulePublishApproveModulePublishResponseVersionModuleVersionResponse.Version, and is useful for accessing the field via an interface.
+func (v *ApproveModuleApproveModulePublishApproveModulePublishResponseVersionModuleVersionResponse) GetVersion() string {
+	return v.Version
+}
+
+type ApproveModulePublishInput struct {
+	Entitlements []Entitlement `json:"entitlements"`
+	ModuleId     string        `json:"moduleId"`
+	Notes        string        `json:"notes"`
+}
+
+// GetEntitlements returns ApproveModulePublishInput.Entitlements, and is useful for accessing the field via an interface.
+func (v *ApproveModulePublishInput) GetEntitlements() []Entitlement { return v.Entitlements }
+
+// GetModuleId returns ApproveModulePublishInput.ModuleId, and is useful for accessing the field via an interface.
+func (v *ApproveModulePublishInput) GetModuleId() string { return v.ModuleId }
+
+// GetNotes returns ApproveModulePublishInput.Notes, and is useful for accessing the field via an interface.
+func (v *ApproveModulePublishInput) GetNotes() string { return v.Notes }
+
+// ApproveModuleResponse is returned by ApproveModule on success.
+type ApproveModuleResponse struct {
+	// Approves draft module review and publishes module to the marketplace
+	ApproveModulePublish ApproveModuleApproveModulePublishApproveModulePublishResponse `json:"approveModulePublish"`
+}
+
+// GetApproveModulePublish returns ApproveModuleResponse.ApproveModulePublish, and is useful for accessing the field via an interface.
+func (v *ApproveModuleResponse) GetApproveModulePublish() ApproveModuleApproveModulePublishApproveModulePublishResponse {
+	return v.ApproveModulePublish
+}
+
+// AssignModuleReviewToSelfAssignDraftModuleForReviewAssignDraftModuleForReviewResponse includes the requested fields of the GraphQL type AssignDraftModuleForReviewResponse.
+type AssignModuleReviewToSelfAssignDraftModuleForReviewAssignDraftModuleForReviewResponse struct {
+	AssignedReviewer string `json:"assignedReviewer"`
+	ModuleId         string `json:"moduleId"`
+}
+
+// GetAssignedReviewer returns AssignModuleReviewToSelfAssignDraftModuleForReviewAssignDraftModuleForReviewResponse.AssignedReviewer, and is useful for accessing the field via an interface.
+func (v *AssignModuleReviewToSelfAssignDraftModuleForReviewAssignDraftModuleForReviewResponse) GetAssignedReviewer() string {
+	return v.AssignedReviewer
+}
+
+// GetModuleId returns AssignModuleReviewToSelfAssignDraftModuleForReviewAssignDraftModuleForReviewResponse.ModuleId, and is useful for accessing the field via an interface.
+func (v *AssignModuleReviewToSelfAssignDraftModuleForReviewAssignDraftModuleForReviewResponse) GetModuleId() string {
+	return v.ModuleId
+}
+
+// AssignModuleReviewToSelfResponse is returned by AssignModuleReviewToSelf on success.
+type AssignModuleReviewToSelfResponse struct {
+	// Assigns draft module to the current user for manual review
+	AssignDraftModuleForReview AssignModuleReviewToSelfAssignDraftModuleForReviewAssignDraftModuleForReviewResponse `json:"assignDraftModuleForReview"`
+}
+
+// GetAssignDraftModuleForReview returns AssignModuleReviewToSelfResponse.AssignDraftModuleForReview, and is useful for accessing the field via an interface.
+func (v *AssignModuleReviewToSelfResponse) GetAssignDraftModuleForReview() AssignModuleReviewToSelfAssignDraftModuleForReviewAssignDraftModuleForReviewResponse {
+	return v.AssignDraftModuleForReview
+}
+
 // CreateAppStoreListingCreateWebAppAppStoreWebApplication includes the requested fields of the GraphQL type AppStoreWebApplication.
 // The GraphQL type's documentation follows.
 //
@@ -698,6 +775,550 @@ func (v *DraftModulePriceInput) GetAmount() int { return v.Amount }
 // GetInterval returns DraftModulePriceInput.Interval, and is useful for accessing the field via an interface.
 func (v *DraftModulePriceInput) GetInterval() PaymentInterval { return v.Interval }
 
+// DraftWellnessOfferingModule includes the GraphQL fields of DraftMarketplaceModule requested by the fragment DraftWellnessOfferingModule.
+type DraftWellnessOfferingModule struct {
+	Id          string                                                   `json:"id"`
+	Title       string                                                   `json:"title"`
+	Description string                                                   `json:"description"`
+	Source      DraftWellnessOfferingModuleSourceMarketplaceModuleSource `json:"-"`
+}
+
+// GetId returns DraftWellnessOfferingModule.Id, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModule) GetId() string { return v.Id }
+
+// GetTitle returns DraftWellnessOfferingModule.Title, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModule) GetTitle() string { return v.Title }
+
+// GetDescription returns DraftWellnessOfferingModule.Description, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModule) GetDescription() string { return v.Description }
+
+// GetSource returns DraftWellnessOfferingModule.Source, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModule) GetSource() DraftWellnessOfferingModuleSourceMarketplaceModuleSource {
+	return v.Source
+}
+
+func (v *DraftWellnessOfferingModule) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*DraftWellnessOfferingModule
+		Source json.RawMessage `json:"source"`
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.DraftWellnessOfferingModule = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	{
+		dst := &v.Source
+		src := firstPass.Source
+		if len(src) != 0 && string(src) != "null" {
+			err = __unmarshalDraftWellnessOfferingModuleSourceMarketplaceModuleSource(
+				src, dst)
+			if err != nil {
+				return fmt.Errorf(
+					"Unable to unmarshal DraftWellnessOfferingModule.Source: %w", err)
+			}
+		}
+	}
+	return nil
+}
+
+type __premarshalDraftWellnessOfferingModule struct {
+	Id string `json:"id"`
+
+	Title string `json:"title"`
+
+	Description string `json:"description"`
+
+	Source json.RawMessage `json:"source"`
+}
+
+func (v *DraftWellnessOfferingModule) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *DraftWellnessOfferingModule) __premarshalJSON() (*__premarshalDraftWellnessOfferingModule, error) {
+	var retval __premarshalDraftWellnessOfferingModule
+
+	retval.Id = v.Id
+	retval.Title = v.Title
+	retval.Description = v.Description
+	{
+
+		dst := &retval.Source
+		src := v.Source
+		var err error
+		*dst, err = __marshalDraftWellnessOfferingModuleSourceMarketplaceModuleSource(
+			&src)
+		if err != nil {
+			return nil, fmt.Errorf(
+				"Unable to marshal DraftWellnessOfferingModule.Source: %w", err)
+		}
+	}
+	return &retval, nil
+}
+
+// DraftWellnessOfferingModuleSourceAppTile includes the requested fields of the GraphQL type AppTile.
+type DraftWellnessOfferingModuleSourceAppTile struct {
+	Typename string `json:"__typename"`
+}
+
+// GetTypename returns DraftWellnessOfferingModuleSourceAppTile.Typename, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModuleSourceAppTile) GetTypename() string { return v.Typename }
+
+// DraftWellnessOfferingModuleSourceConsent includes the requested fields of the GraphQL type Consent.
+type DraftWellnessOfferingModuleSourceConsent struct {
+	Typename string `json:"__typename"`
+}
+
+// GetTypename returns DraftWellnessOfferingModuleSourceConsent.Typename, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModuleSourceConsent) GetTypename() string { return v.Typename }
+
+// DraftWellnessOfferingModuleSourceDomainOntology includes the requested fields of the GraphQL type DomainOntology.
+type DraftWellnessOfferingModuleSourceDomainOntology struct {
+	Typename string `json:"__typename"`
+}
+
+// GetTypename returns DraftWellnessOfferingModuleSourceDomainOntology.Typename, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModuleSourceDomainOntology) GetTypename() string { return v.Typename }
+
+// DraftWellnessOfferingModuleSourceInsightsLayout includes the requested fields of the GraphQL type InsightsLayout.
+type DraftWellnessOfferingModuleSourceInsightsLayout struct {
+	Typename string `json:"__typename"`
+}
+
+// GetTypename returns DraftWellnessOfferingModuleSourceInsightsLayout.Typename, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModuleSourceInsightsLayout) GetTypename() string { return v.Typename }
+
+// DraftWellnessOfferingModuleSourceMarketplaceModuleSource includes the requested fields of the GraphQL interface MarketplaceModuleSource.
+//
+// DraftWellnessOfferingModuleSourceMarketplaceModuleSource is implemented by the following types:
+// DraftWellnessOfferingModuleSourceAppTile
+// DraftWellnessOfferingModuleSourceConsent
+// DraftWellnessOfferingModuleSourceDomainOntology
+// DraftWellnessOfferingModuleSourceInsightsLayout
+// DraftWellnessOfferingModuleSourceNotebook
+// DraftWellnessOfferingModuleSourceOcrReportExtractor
+// DraftWellnessOfferingModuleSourcePatientLayout
+// DraftWellnessOfferingModuleSourceProcessOntology
+// DraftWellnessOfferingModuleSourceProgramEnrollment
+// DraftWellnessOfferingModuleSourceProgramTemplate
+// DraftWellnessOfferingModuleSourceSearchLayout
+// DraftWellnessOfferingModuleSourceSurvey
+// DraftWellnessOfferingModuleSourceWellnessOffering
+// DraftWellnessOfferingModuleSourceWorkflow
+type DraftWellnessOfferingModuleSourceMarketplaceModuleSource interface {
+	implementsGraphQLInterfaceDraftWellnessOfferingModuleSourceMarketplaceModuleSource()
+	// GetTypename returns the receiver's concrete GraphQL type-name (see interface doc for possible values).
+	GetTypename() string
+}
+
+func (v *DraftWellnessOfferingModuleSourceAppTile) implementsGraphQLInterfaceDraftWellnessOfferingModuleSourceMarketplaceModuleSource() {
+}
+func (v *DraftWellnessOfferingModuleSourceConsent) implementsGraphQLInterfaceDraftWellnessOfferingModuleSourceMarketplaceModuleSource() {
+}
+func (v *DraftWellnessOfferingModuleSourceDomainOntology) implementsGraphQLInterfaceDraftWellnessOfferingModuleSourceMarketplaceModuleSource() {
+}
+func (v *DraftWellnessOfferingModuleSourceInsightsLayout) implementsGraphQLInterfaceDraftWellnessOfferingModuleSourceMarketplaceModuleSource() {
+}
+func (v *DraftWellnessOfferingModuleSourceNotebook) implementsGraphQLInterfaceDraftWellnessOfferingModuleSourceMarketplaceModuleSource() {
+}
+func (v *DraftWellnessOfferingModuleSourceOcrReportExtractor) implementsGraphQLInterfaceDraftWellnessOfferingModuleSourceMarketplaceModuleSource() {
+}
+func (v *DraftWellnessOfferingModuleSourcePatientLayout) implementsGraphQLInterfaceDraftWellnessOfferingModuleSourceMarketplaceModuleSource() {
+}
+func (v *DraftWellnessOfferingModuleSourceProcessOntology) implementsGraphQLInterfaceDraftWellnessOfferingModuleSourceMarketplaceModuleSource() {
+}
+func (v *DraftWellnessOfferingModuleSourceProgramEnrollment) implementsGraphQLInterfaceDraftWellnessOfferingModuleSourceMarketplaceModuleSource() {
+}
+func (v *DraftWellnessOfferingModuleSourceProgramTemplate) implementsGraphQLInterfaceDraftWellnessOfferingModuleSourceMarketplaceModuleSource() {
+}
+func (v *DraftWellnessOfferingModuleSourceSearchLayout) implementsGraphQLInterfaceDraftWellnessOfferingModuleSourceMarketplaceModuleSource() {
+}
+func (v *DraftWellnessOfferingModuleSourceSurvey) implementsGraphQLInterfaceDraftWellnessOfferingModuleSourceMarketplaceModuleSource() {
+}
+func (v *DraftWellnessOfferingModuleSourceWellnessOffering) implementsGraphQLInterfaceDraftWellnessOfferingModuleSourceMarketplaceModuleSource() {
+}
+func (v *DraftWellnessOfferingModuleSourceWorkflow) implementsGraphQLInterfaceDraftWellnessOfferingModuleSourceMarketplaceModuleSource() {
+}
+
+func __unmarshalDraftWellnessOfferingModuleSourceMarketplaceModuleSource(b []byte, v *DraftWellnessOfferingModuleSourceMarketplaceModuleSource) error {
+	if string(b) == "null" {
+		return nil
+	}
+
+	var tn struct {
+		TypeName string `json:"__typename"`
+	}
+	err := json.Unmarshal(b, &tn)
+	if err != nil {
+		return err
+	}
+
+	switch tn.TypeName {
+	case "AppTile":
+		*v = new(DraftWellnessOfferingModuleSourceAppTile)
+		return json.Unmarshal(b, *v)
+	case "Consent":
+		*v = new(DraftWellnessOfferingModuleSourceConsent)
+		return json.Unmarshal(b, *v)
+	case "DomainOntology":
+		*v = new(DraftWellnessOfferingModuleSourceDomainOntology)
+		return json.Unmarshal(b, *v)
+	case "InsightsLayout":
+		*v = new(DraftWellnessOfferingModuleSourceInsightsLayout)
+		return json.Unmarshal(b, *v)
+	case "Notebook":
+		*v = new(DraftWellnessOfferingModuleSourceNotebook)
+		return json.Unmarshal(b, *v)
+	case "OcrReportExtractor":
+		*v = new(DraftWellnessOfferingModuleSourceOcrReportExtractor)
+		return json.Unmarshal(b, *v)
+	case "PatientLayout":
+		*v = new(DraftWellnessOfferingModuleSourcePatientLayout)
+		return json.Unmarshal(b, *v)
+	case "ProcessOntology":
+		*v = new(DraftWellnessOfferingModuleSourceProcessOntology)
+		return json.Unmarshal(b, *v)
+	case "ProgramEnrollment":
+		*v = new(DraftWellnessOfferingModuleSourceProgramEnrollment)
+		return json.Unmarshal(b, *v)
+	case "ProgramTemplate":
+		*v = new(DraftWellnessOfferingModuleSourceProgramTemplate)
+		return json.Unmarshal(b, *v)
+	case "SearchLayout":
+		*v = new(DraftWellnessOfferingModuleSourceSearchLayout)
+		return json.Unmarshal(b, *v)
+	case "Survey":
+		*v = new(DraftWellnessOfferingModuleSourceSurvey)
+		return json.Unmarshal(b, *v)
+	case "WellnessOffering":
+		*v = new(DraftWellnessOfferingModuleSourceWellnessOffering)
+		return json.Unmarshal(b, *v)
+	case "Workflow":
+		*v = new(DraftWellnessOfferingModuleSourceWorkflow)
+		return json.Unmarshal(b, *v)
+	case "":
+		return fmt.Errorf(
+			"response was missing MarketplaceModuleSource.__typename")
+	default:
+		return fmt.Errorf(
+			`unexpected concrete type for DraftWellnessOfferingModuleSourceMarketplaceModuleSource: "%v"`, tn.TypeName)
+	}
+}
+
+func __marshalDraftWellnessOfferingModuleSourceMarketplaceModuleSource(v *DraftWellnessOfferingModuleSourceMarketplaceModuleSource) ([]byte, error) {
+
+	var typename string
+	switch v := (*v).(type) {
+	case *DraftWellnessOfferingModuleSourceAppTile:
+		typename = "AppTile"
+
+		result := struct {
+			TypeName string `json:"__typename"`
+			*DraftWellnessOfferingModuleSourceAppTile
+		}{typename, v}
+		return json.Marshal(result)
+	case *DraftWellnessOfferingModuleSourceConsent:
+		typename = "Consent"
+
+		result := struct {
+			TypeName string `json:"__typename"`
+			*DraftWellnessOfferingModuleSourceConsent
+		}{typename, v}
+		return json.Marshal(result)
+	case *DraftWellnessOfferingModuleSourceDomainOntology:
+		typename = "DomainOntology"
+
+		result := struct {
+			TypeName string `json:"__typename"`
+			*DraftWellnessOfferingModuleSourceDomainOntology
+		}{typename, v}
+		return json.Marshal(result)
+	case *DraftWellnessOfferingModuleSourceInsightsLayout:
+		typename = "InsightsLayout"
+
+		result := struct {
+			TypeName string `json:"__typename"`
+			*DraftWellnessOfferingModuleSourceInsightsLayout
+		}{typename, v}
+		return json.Marshal(result)
+	case *DraftWellnessOfferingModuleSourceNotebook:
+		typename = "Notebook"
+
+		result := struct {
+			TypeName string `json:"__typename"`
+			*DraftWellnessOfferingModuleSourceNotebook
+		}{typename, v}
+		return json.Marshal(result)
+	case *DraftWellnessOfferingModuleSourceOcrReportExtractor:
+		typename = "OcrReportExtractor"
+
+		result := struct {
+			TypeName string `json:"__typename"`
+			*DraftWellnessOfferingModuleSourceOcrReportExtractor
+		}{typename, v}
+		return json.Marshal(result)
+	case *DraftWellnessOfferingModuleSourcePatientLayout:
+		typename = "PatientLayout"
+
+		result := struct {
+			TypeName string `json:"__typename"`
+			*DraftWellnessOfferingModuleSourcePatientLayout
+		}{typename, v}
+		return json.Marshal(result)
+	case *DraftWellnessOfferingModuleSourceProcessOntology:
+		typename = "ProcessOntology"
+
+		result := struct {
+			TypeName string `json:"__typename"`
+			*DraftWellnessOfferingModuleSourceProcessOntology
+		}{typename, v}
+		return json.Marshal(result)
+	case *DraftWellnessOfferingModuleSourceProgramEnrollment:
+		typename = "ProgramEnrollment"
+
+		result := struct {
+			TypeName string `json:"__typename"`
+			*DraftWellnessOfferingModuleSourceProgramEnrollment
+		}{typename, v}
+		return json.Marshal(result)
+	case *DraftWellnessOfferingModuleSourceProgramTemplate:
+		typename = "ProgramTemplate"
+
+		result := struct {
+			TypeName string `json:"__typename"`
+			*DraftWellnessOfferingModuleSourceProgramTemplate
+		}{typename, v}
+		return json.Marshal(result)
+	case *DraftWellnessOfferingModuleSourceSearchLayout:
+		typename = "SearchLayout"
+
+		result := struct {
+			TypeName string `json:"__typename"`
+			*DraftWellnessOfferingModuleSourceSearchLayout
+		}{typename, v}
+		return json.Marshal(result)
+	case *DraftWellnessOfferingModuleSourceSurvey:
+		typename = "Survey"
+
+		result := struct {
+			TypeName string `json:"__typename"`
+			*DraftWellnessOfferingModuleSourceSurvey
+		}{typename, v}
+		return json.Marshal(result)
+	case *DraftWellnessOfferingModuleSourceWellnessOffering:
+		typename = "WellnessOffering"
+
+		premarshaled, err := v.__premarshalJSON()
+		if err != nil {
+			return nil, err
+		}
+		result := struct {
+			TypeName string `json:"__typename"`
+			*__premarshalDraftWellnessOfferingModuleSourceWellnessOffering
+		}{typename, premarshaled}
+		return json.Marshal(result)
+	case *DraftWellnessOfferingModuleSourceWorkflow:
+		typename = "Workflow"
+
+		result := struct {
+			TypeName string `json:"__typename"`
+			*DraftWellnessOfferingModuleSourceWorkflow
+		}{typename, v}
+		return json.Marshal(result)
+	case nil:
+		return []byte("null"), nil
+	default:
+		return nil, fmt.Errorf(
+			`unexpected concrete type for DraftWellnessOfferingModuleSourceMarketplaceModuleSource: "%T"`, v)
+	}
+}
+
+// DraftWellnessOfferingModuleSourceNotebook includes the requested fields of the GraphQL type Notebook.
+type DraftWellnessOfferingModuleSourceNotebook struct {
+	Typename string `json:"__typename"`
+}
+
+// GetTypename returns DraftWellnessOfferingModuleSourceNotebook.Typename, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModuleSourceNotebook) GetTypename() string { return v.Typename }
+
+// DraftWellnessOfferingModuleSourceOcrReportExtractor includes the requested fields of the GraphQL type OcrReportExtractor.
+type DraftWellnessOfferingModuleSourceOcrReportExtractor struct {
+	Typename string `json:"__typename"`
+}
+
+// GetTypename returns DraftWellnessOfferingModuleSourceOcrReportExtractor.Typename, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModuleSourceOcrReportExtractor) GetTypename() string { return v.Typename }
+
+// DraftWellnessOfferingModuleSourcePatientLayout includes the requested fields of the GraphQL type PatientLayout.
+type DraftWellnessOfferingModuleSourcePatientLayout struct {
+	Typename string `json:"__typename"`
+}
+
+// GetTypename returns DraftWellnessOfferingModuleSourcePatientLayout.Typename, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModuleSourcePatientLayout) GetTypename() string { return v.Typename }
+
+// DraftWellnessOfferingModuleSourceProcessOntology includes the requested fields of the GraphQL type ProcessOntology.
+type DraftWellnessOfferingModuleSourceProcessOntology struct {
+	Typename string `json:"__typename"`
+}
+
+// GetTypename returns DraftWellnessOfferingModuleSourceProcessOntology.Typename, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModuleSourceProcessOntology) GetTypename() string { return v.Typename }
+
+// DraftWellnessOfferingModuleSourceProgramEnrollment includes the requested fields of the GraphQL type ProgramEnrollment.
+type DraftWellnessOfferingModuleSourceProgramEnrollment struct {
+	Typename string `json:"__typename"`
+}
+
+// GetTypename returns DraftWellnessOfferingModuleSourceProgramEnrollment.Typename, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModuleSourceProgramEnrollment) GetTypename() string { return v.Typename }
+
+// DraftWellnessOfferingModuleSourceProgramTemplate includes the requested fields of the GraphQL type ProgramTemplate.
+type DraftWellnessOfferingModuleSourceProgramTemplate struct {
+	Typename string `json:"__typename"`
+}
+
+// GetTypename returns DraftWellnessOfferingModuleSourceProgramTemplate.Typename, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModuleSourceProgramTemplate) GetTypename() string { return v.Typename }
+
+// DraftWellnessOfferingModuleSourceSearchLayout includes the requested fields of the GraphQL type SearchLayout.
+type DraftWellnessOfferingModuleSourceSearchLayout struct {
+	Typename string `json:"__typename"`
+}
+
+// GetTypename returns DraftWellnessOfferingModuleSourceSearchLayout.Typename, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModuleSourceSearchLayout) GetTypename() string { return v.Typename }
+
+// DraftWellnessOfferingModuleSourceSurvey includes the requested fields of the GraphQL type Survey.
+type DraftWellnessOfferingModuleSourceSurvey struct {
+	Typename string `json:"__typename"`
+}
+
+// GetTypename returns DraftWellnessOfferingModuleSourceSurvey.Typename, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModuleSourceSurvey) GetTypename() string { return v.Typename }
+
+// DraftWellnessOfferingModuleSourceWellnessOffering includes the requested fields of the GraphQL type WellnessOffering.
+type DraftWellnessOfferingModuleSourceWellnessOffering struct {
+	Typename               string `json:"__typename"`
+	WellnessOfferingSource `json:"-"`
+}
+
+// GetTypename returns DraftWellnessOfferingModuleSourceWellnessOffering.Typename, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModuleSourceWellnessOffering) GetTypename() string { return v.Typename }
+
+// GetId returns DraftWellnessOfferingModuleSourceWellnessOffering.Id, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModuleSourceWellnessOffering) GetId() string {
+	return v.WellnessOfferingSource.Id
+}
+
+// GetProvider returns DraftWellnessOfferingModuleSourceWellnessOffering.Provider, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModuleSourceWellnessOffering) GetProvider() string {
+	return v.WellnessOfferingSource.Provider
+}
+
+// GetImageUrl returns DraftWellnessOfferingModuleSourceWellnessOffering.ImageUrl, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModuleSourceWellnessOffering) GetImageUrl() string {
+	return v.WellnessOfferingSource.ImageUrl
+}
+
+// GetInfoUrl returns DraftWellnessOfferingModuleSourceWellnessOffering.InfoUrl, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModuleSourceWellnessOffering) GetInfoUrl() string {
+	return v.WellnessOfferingSource.InfoUrl
+}
+
+// GetConfigurationSchema returns DraftWellnessOfferingModuleSourceWellnessOffering.ConfigurationSchema, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModuleSourceWellnessOffering) GetConfigurationSchema() string {
+	return v.WellnessOfferingSource.ConfigurationSchema
+}
+
+// GetApproximateUnitCost returns DraftWellnessOfferingModuleSourceWellnessOffering.ApproximateUnitCost, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModuleSourceWellnessOffering) GetApproximateUnitCost() int {
+	return v.WellnessOfferingSource.ApproximateUnitCost
+}
+
+func (v *DraftWellnessOfferingModuleSourceWellnessOffering) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*DraftWellnessOfferingModuleSourceWellnessOffering
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.DraftWellnessOfferingModuleSourceWellnessOffering = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.WellnessOfferingSource)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalDraftWellnessOfferingModuleSourceWellnessOffering struct {
+	Typename string `json:"__typename"`
+
+	Id string `json:"id"`
+
+	Provider string `json:"provider"`
+
+	ImageUrl string `json:"imageUrl"`
+
+	InfoUrl string `json:"infoUrl"`
+
+	ConfigurationSchema string `json:"configurationSchema"`
+
+	ApproximateUnitCost int `json:"approximateUnitCost"`
+}
+
+func (v *DraftWellnessOfferingModuleSourceWellnessOffering) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *DraftWellnessOfferingModuleSourceWellnessOffering) __premarshalJSON() (*__premarshalDraftWellnessOfferingModuleSourceWellnessOffering, error) {
+	var retval __premarshalDraftWellnessOfferingModuleSourceWellnessOffering
+
+	retval.Typename = v.Typename
+	retval.Id = v.WellnessOfferingSource.Id
+	retval.Provider = v.WellnessOfferingSource.Provider
+	retval.ImageUrl = v.WellnessOfferingSource.ImageUrl
+	retval.InfoUrl = v.WellnessOfferingSource.InfoUrl
+	retval.ConfigurationSchema = v.WellnessOfferingSource.ConfigurationSchema
+	retval.ApproximateUnitCost = v.WellnessOfferingSource.ApproximateUnitCost
+	return &retval, nil
+}
+
+// DraftWellnessOfferingModuleSourceWorkflow includes the requested fields of the GraphQL type Workflow.
+type DraftWellnessOfferingModuleSourceWorkflow struct {
+	Typename string `json:"__typename"`
+}
+
+// GetTypename returns DraftWellnessOfferingModuleSourceWorkflow.Typename, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModuleSourceWorkflow) GetTypename() string { return v.Typename }
+
 // EditAppStoreListingResponse is returned by EditAppStoreListing on success.
 type EditAppStoreListingResponse struct {
 	EditWebApp bool `json:"editWebApp"`
@@ -736,6 +1357,14 @@ func (v *EditWebAppInput) GetName() string { return v.Name }
 
 // GetUrl returns EditWebAppInput.Url, and is useful for accessing the field via an interface.
 func (v *EditWebAppInput) GetUrl() string { return v.Url }
+
+type Entitlement string
+
+const (
+	EntitlementLifeascent       Entitlement = "lifeAscent"
+	EntitlementLifeascentlegacy Entitlement = "lifeAscentLegacy"
+	EntitlementLifeplus         Entitlement = "lifePlus"
+)
 
 type FileWithDescription struct {
 	Description string `json:"description"`
@@ -964,6 +1593,105 @@ func (v *GetAppStoreListingResponse) __premarshalJSON() (*__premarshalGetAppStor
 		}
 	}
 	return &retval, nil
+}
+
+// GetDraftWellnessOfferingModuleDraftModuleDraftMarketplaceModule includes the requested fields of the GraphQL type DraftMarketplaceModule.
+type GetDraftWellnessOfferingModuleDraftModuleDraftMarketplaceModule struct {
+	DraftWellnessOfferingModule `json:"-"`
+}
+
+// GetId returns GetDraftWellnessOfferingModuleDraftModuleDraftMarketplaceModule.Id, and is useful for accessing the field via an interface.
+func (v *GetDraftWellnessOfferingModuleDraftModuleDraftMarketplaceModule) GetId() string {
+	return v.DraftWellnessOfferingModule.Id
+}
+
+// GetTitle returns GetDraftWellnessOfferingModuleDraftModuleDraftMarketplaceModule.Title, and is useful for accessing the field via an interface.
+func (v *GetDraftWellnessOfferingModuleDraftModuleDraftMarketplaceModule) GetTitle() string {
+	return v.DraftWellnessOfferingModule.Title
+}
+
+// GetDescription returns GetDraftWellnessOfferingModuleDraftModuleDraftMarketplaceModule.Description, and is useful for accessing the field via an interface.
+func (v *GetDraftWellnessOfferingModuleDraftModuleDraftMarketplaceModule) GetDescription() string {
+	return v.DraftWellnessOfferingModule.Description
+}
+
+// GetSource returns GetDraftWellnessOfferingModuleDraftModuleDraftMarketplaceModule.Source, and is useful for accessing the field via an interface.
+func (v *GetDraftWellnessOfferingModuleDraftModuleDraftMarketplaceModule) GetSource() DraftWellnessOfferingModuleSourceMarketplaceModuleSource {
+	return v.DraftWellnessOfferingModule.Source
+}
+
+func (v *GetDraftWellnessOfferingModuleDraftModuleDraftMarketplaceModule) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*GetDraftWellnessOfferingModuleDraftModuleDraftMarketplaceModule
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.GetDraftWellnessOfferingModuleDraftModuleDraftMarketplaceModule = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.DraftWellnessOfferingModule)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalGetDraftWellnessOfferingModuleDraftModuleDraftMarketplaceModule struct {
+	Id string `json:"id"`
+
+	Title string `json:"title"`
+
+	Description string `json:"description"`
+
+	Source json.RawMessage `json:"source"`
+}
+
+func (v *GetDraftWellnessOfferingModuleDraftModuleDraftMarketplaceModule) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *GetDraftWellnessOfferingModuleDraftModuleDraftMarketplaceModule) __premarshalJSON() (*__premarshalGetDraftWellnessOfferingModuleDraftModuleDraftMarketplaceModule, error) {
+	var retval __premarshalGetDraftWellnessOfferingModuleDraftModuleDraftMarketplaceModule
+
+	retval.Id = v.DraftWellnessOfferingModule.Id
+	retval.Title = v.DraftWellnessOfferingModule.Title
+	retval.Description = v.DraftWellnessOfferingModule.Description
+	{
+
+		dst := &retval.Source
+		src := v.DraftWellnessOfferingModule.Source
+		var err error
+		*dst, err = __marshalDraftWellnessOfferingModuleSourceMarketplaceModuleSource(
+			&src)
+		if err != nil {
+			return nil, fmt.Errorf(
+				"Unable to marshal GetDraftWellnessOfferingModuleDraftModuleDraftMarketplaceModule.DraftWellnessOfferingModule.Source: %w", err)
+		}
+	}
+	return &retval, nil
+}
+
+// GetDraftWellnessOfferingModuleResponse is returned by GetDraftWellnessOfferingModule on success.
+type GetDraftWellnessOfferingModuleResponse struct {
+	DraftModule GetDraftWellnessOfferingModuleDraftModuleDraftMarketplaceModule `json:"draftModule"`
+}
+
+// GetDraftModule returns GetDraftWellnessOfferingModuleResponse.DraftModule, and is useful for accessing the field via an interface.
+func (v *GetDraftWellnessOfferingModuleResponse) GetDraftModule() GetDraftWellnessOfferingModuleDraftModuleDraftMarketplaceModule {
+	return v.DraftModule
 }
 
 // GetPublishedModuleMyModuleMarketplaceModule includes the requested fields of the GraphQL type MarketplaceModule.
@@ -1331,12 +2059,18 @@ func (v *PublishModuleResponse) GetPublishDraftModuleV2() PublishModulePublishDr
 
 // PublishModuleV3PublishDraftModuleV3PublishDraftModuleResponseV3 includes the requested fields of the GraphQL type PublishDraftModuleResponseV3.
 type PublishModuleV3PublishDraftModuleV3PublishDraftModuleResponseV3 struct {
-	Id      string                                                                                      `json:"id"`
-	Version PublishModuleV3PublishDraftModuleV3PublishDraftModuleResponseV3VersionModuleVersionResponse `json:"version"`
+	Id              string                                                                                      `json:"id"`
+	PublishReviewId string                                                                                      `json:"publishReviewId"`
+	Version         PublishModuleV3PublishDraftModuleV3PublishDraftModuleResponseV3VersionModuleVersionResponse `json:"version"`
 }
 
 // GetId returns PublishModuleV3PublishDraftModuleV3PublishDraftModuleResponseV3.Id, and is useful for accessing the field via an interface.
 func (v *PublishModuleV3PublishDraftModuleV3PublishDraftModuleResponseV3) GetId() string { return v.Id }
+
+// GetPublishReviewId returns PublishModuleV3PublishDraftModuleV3PublishDraftModuleResponseV3.PublishReviewId, and is useful for accessing the field via an interface.
+func (v *PublishModuleV3PublishDraftModuleV3PublishDraftModuleResponseV3) GetPublishReviewId() string {
+	return v.PublishReviewId
+}
 
 // GetVersion returns PublishModuleV3PublishDraftModuleV3PublishDraftModuleResponseV3.Version, and is useful for accessing the field via an interface.
 func (v *PublishModuleV3PublishDraftModuleV3PublishDraftModuleResponseV3) GetVersion() PublishModuleV3PublishDraftModuleV3PublishDraftModuleResponseV3VersionModuleVersionResponse {
@@ -1466,19 +2200,19 @@ type StartUploadInput struct {
 func (v *StartUploadInput) GetFileName() string { return v.FileName }
 
 type UpdateDraftModuleInput struct {
-	Description      string                  `json:"description"`
-	Icon             any                     `json:"icon"`
-	Languages        []string                `json:"languages"`
+	Description      string                  `json:"description,omitempty"`
+	Icon             any                     `json:"icon,omitempty"`
+	Languages        []string                `json:"languages,omitempty"`
 	ModuleId         string                  `json:"moduleId"`
-	ParentModuleId   string                  `json:"parentModuleId"`
-	PreviewImages    []FileWithDescription   `json:"previewImages"`
-	PreviewVideoUrls []string                `json:"previewVideoUrls"`
-	Prices           []DraftModulePriceInput `json:"prices"`
-	Products         []ModuleProduct         `json:"products"`
+	ParentModuleId   string                  `json:"parentModuleId,omitempty"`
+	PreviewImages    []FileWithDescription   `json:"previewImages,omitempty"`
+	PreviewVideoUrls []string                `json:"previewVideoUrls,omitempty"`
+	Prices           []DraftModulePriceInput `json:"prices,omitempty"`
+	Products         []ModuleProduct         `json:"products,omitempty"`
 	Support          string                  `json:"support"`
-	Tags             []string                `json:"tags"`
-	Title            string                  `json:"title"`
-	WebsiteUrl       string                  `json:"websiteUrl"`
+	Tags             []string                `json:"tags,omitempty"`
+	Title            string                  `json:"title,omitempty"`
+	WebsiteUrl       string                  `json:"websiteUrl,omitempty"`
 }
 
 // GetDescription returns UpdateDraftModuleInput.Description, and is useful for accessing the field via an interface.
@@ -1934,10 +2668,14 @@ func __marshalWellnessOfferingModuleSourceMarketplaceModuleSource(v *WellnessOff
 	case *WellnessOfferingModuleSourceWellnessOffering:
 		typename = "WellnessOffering"
 
+		premarshaled, err := v.__premarshalJSON()
+		if err != nil {
+			return nil, err
+		}
 		result := struct {
 			TypeName string `json:"__typename"`
-			*WellnessOfferingModuleSourceWellnessOffering
-		}{typename, v}
+			*__premarshalWellnessOfferingModuleSourceWellnessOffering
+		}{typename, premarshaled}
 		return json.Marshal(result)
 	case *WellnessOfferingModuleSourceWorkflow:
 		typename = "Workflow"
@@ -2021,7 +2759,116 @@ func (v *WellnessOfferingModuleSourceSurvey) GetTypename() string { return v.Typ
 
 // WellnessOfferingModuleSourceWellnessOffering includes the requested fields of the GraphQL type WellnessOffering.
 type WellnessOfferingModuleSourceWellnessOffering struct {
+	Typename               string `json:"__typename"`
+	WellnessOfferingSource `json:"-"`
+}
+
+// GetTypename returns WellnessOfferingModuleSourceWellnessOffering.Typename, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingModuleSourceWellnessOffering) GetTypename() string { return v.Typename }
+
+// GetId returns WellnessOfferingModuleSourceWellnessOffering.Id, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingModuleSourceWellnessOffering) GetId() string {
+	return v.WellnessOfferingSource.Id
+}
+
+// GetProvider returns WellnessOfferingModuleSourceWellnessOffering.Provider, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingModuleSourceWellnessOffering) GetProvider() string {
+	return v.WellnessOfferingSource.Provider
+}
+
+// GetImageUrl returns WellnessOfferingModuleSourceWellnessOffering.ImageUrl, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingModuleSourceWellnessOffering) GetImageUrl() string {
+	return v.WellnessOfferingSource.ImageUrl
+}
+
+// GetInfoUrl returns WellnessOfferingModuleSourceWellnessOffering.InfoUrl, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingModuleSourceWellnessOffering) GetInfoUrl() string {
+	return v.WellnessOfferingSource.InfoUrl
+}
+
+// GetConfigurationSchema returns WellnessOfferingModuleSourceWellnessOffering.ConfigurationSchema, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingModuleSourceWellnessOffering) GetConfigurationSchema() string {
+	return v.WellnessOfferingSource.ConfigurationSchema
+}
+
+// GetApproximateUnitCost returns WellnessOfferingModuleSourceWellnessOffering.ApproximateUnitCost, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingModuleSourceWellnessOffering) GetApproximateUnitCost() int {
+	return v.WellnessOfferingSource.ApproximateUnitCost
+}
+
+func (v *WellnessOfferingModuleSourceWellnessOffering) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*WellnessOfferingModuleSourceWellnessOffering
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.WellnessOfferingModuleSourceWellnessOffering = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.WellnessOfferingSource)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalWellnessOfferingModuleSourceWellnessOffering struct {
 	Typename string `json:"__typename"`
+
+	Id string `json:"id"`
+
+	Provider string `json:"provider"`
+
+	ImageUrl string `json:"imageUrl"`
+
+	InfoUrl string `json:"infoUrl"`
+
+	ConfigurationSchema string `json:"configurationSchema"`
+
+	ApproximateUnitCost int `json:"approximateUnitCost"`
+}
+
+func (v *WellnessOfferingModuleSourceWellnessOffering) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *WellnessOfferingModuleSourceWellnessOffering) __premarshalJSON() (*__premarshalWellnessOfferingModuleSourceWellnessOffering, error) {
+	var retval __premarshalWellnessOfferingModuleSourceWellnessOffering
+
+	retval.Typename = v.Typename
+	retval.Id = v.WellnessOfferingSource.Id
+	retval.Provider = v.WellnessOfferingSource.Provider
+	retval.ImageUrl = v.WellnessOfferingSource.ImageUrl
+	retval.InfoUrl = v.WellnessOfferingSource.InfoUrl
+	retval.ConfigurationSchema = v.WellnessOfferingSource.ConfigurationSchema
+	retval.ApproximateUnitCost = v.WellnessOfferingSource.ApproximateUnitCost
+	return &retval, nil
+}
+
+// WellnessOfferingModuleSourceWorkflow includes the requested fields of the GraphQL type Workflow.
+type WellnessOfferingModuleSourceWorkflow struct {
+	Typename string `json:"__typename"`
+}
+
+// GetTypename returns WellnessOfferingModuleSourceWorkflow.Typename, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingModuleSourceWorkflow) GetTypename() string { return v.Typename }
+
+// WellnessOfferingSource includes the GraphQL fields of WellnessOffering requested by the fragment WellnessOfferingSource.
+type WellnessOfferingSource struct {
+	Id string `json:"id"`
 	// The name of the provider of this offering.
 	Provider string `json:"provider"`
 	// A URL of a marketing image for the offering.
@@ -2034,35 +2881,39 @@ type WellnessOfferingModuleSourceWellnessOffering struct {
 	ApproximateUnitCost int `json:"approximateUnitCost"`
 }
 
-// GetTypename returns WellnessOfferingModuleSourceWellnessOffering.Typename, and is useful for accessing the field via an interface.
-func (v *WellnessOfferingModuleSourceWellnessOffering) GetTypename() string { return v.Typename }
+// GetId returns WellnessOfferingSource.Id, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingSource) GetId() string { return v.Id }
 
-// GetProvider returns WellnessOfferingModuleSourceWellnessOffering.Provider, and is useful for accessing the field via an interface.
-func (v *WellnessOfferingModuleSourceWellnessOffering) GetProvider() string { return v.Provider }
+// GetProvider returns WellnessOfferingSource.Provider, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingSource) GetProvider() string { return v.Provider }
 
-// GetImageUrl returns WellnessOfferingModuleSourceWellnessOffering.ImageUrl, and is useful for accessing the field via an interface.
-func (v *WellnessOfferingModuleSourceWellnessOffering) GetImageUrl() string { return v.ImageUrl }
+// GetImageUrl returns WellnessOfferingSource.ImageUrl, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingSource) GetImageUrl() string { return v.ImageUrl }
 
-// GetInfoUrl returns WellnessOfferingModuleSourceWellnessOffering.InfoUrl, and is useful for accessing the field via an interface.
-func (v *WellnessOfferingModuleSourceWellnessOffering) GetInfoUrl() string { return v.InfoUrl }
+// GetInfoUrl returns WellnessOfferingSource.InfoUrl, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingSource) GetInfoUrl() string { return v.InfoUrl }
 
-// GetConfigurationSchema returns WellnessOfferingModuleSourceWellnessOffering.ConfigurationSchema, and is useful for accessing the field via an interface.
-func (v *WellnessOfferingModuleSourceWellnessOffering) GetConfigurationSchema() string {
-	return v.ConfigurationSchema
+// GetConfigurationSchema returns WellnessOfferingSource.ConfigurationSchema, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingSource) GetConfigurationSchema() string { return v.ConfigurationSchema }
+
+// GetApproximateUnitCost returns WellnessOfferingSource.ApproximateUnitCost, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingSource) GetApproximateUnitCost() int { return v.ApproximateUnitCost }
+
+// __ApproveModuleInput is used internally by genqlient
+type __ApproveModuleInput struct {
+	Input ApproveModulePublishInput `json:"input"`
 }
 
-// GetApproximateUnitCost returns WellnessOfferingModuleSourceWellnessOffering.ApproximateUnitCost, and is useful for accessing the field via an interface.
-func (v *WellnessOfferingModuleSourceWellnessOffering) GetApproximateUnitCost() int {
-	return v.ApproximateUnitCost
+// GetInput returns __ApproveModuleInput.Input, and is useful for accessing the field via an interface.
+func (v *__ApproveModuleInput) GetInput() ApproveModulePublishInput { return v.Input }
+
+// __AssignModuleReviewToSelfInput is used internally by genqlient
+type __AssignModuleReviewToSelfInput struct {
+	ModuleId string `json:"moduleId"`
 }
 
-// WellnessOfferingModuleSourceWorkflow includes the requested fields of the GraphQL type Workflow.
-type WellnessOfferingModuleSourceWorkflow struct {
-	Typename string `json:"__typename"`
-}
-
-// GetTypename returns WellnessOfferingModuleSourceWorkflow.Typename, and is useful for accessing the field via an interface.
-func (v *WellnessOfferingModuleSourceWorkflow) GetTypename() string { return v.Typename }
+// GetModuleId returns __AssignModuleReviewToSelfInput.ModuleId, and is useful for accessing the field via an interface.
+func (v *__AssignModuleReviewToSelfInput) GetModuleId() string { return v.ModuleId }
 
 // __CreateAppStoreListingInput is used internally by genqlient
 type __CreateAppStoreListingInput struct {
@@ -2123,6 +2974,14 @@ type __GetAppStoreListingInput struct {
 
 // GetId returns __GetAppStoreListingInput.Id, and is useful for accessing the field via an interface.
 func (v *__GetAppStoreListingInput) GetId() string { return v.Id }
+
+// __GetDraftWellnessOfferingModuleInput is used internally by genqlient
+type __GetDraftWellnessOfferingModuleInput struct {
+	ModuleId string `json:"moduleId"`
+}
+
+// GetModuleId returns __GetDraftWellnessOfferingModuleInput.ModuleId, and is useful for accessing the field via an interface.
+func (v *__GetDraftWellnessOfferingModuleInput) GetModuleId() string { return v.ModuleId }
 
 // __GetPublishedModuleInput is used internally by genqlient
 type __GetPublishedModuleInput struct {
@@ -2193,6 +3052,74 @@ type __UpdateDraftModuleInput struct {
 
 // GetInput returns __UpdateDraftModuleInput.Input, and is useful for accessing the field via an interface.
 func (v *__UpdateDraftModuleInput) GetInput() UpdateDraftModuleInput { return v.Input }
+
+func ApproveModule(
+	ctx context.Context,
+	client graphql.Client,
+	input ApproveModulePublishInput,
+) (*ApproveModuleResponse, error) {
+	req := &graphql.Request{
+		OpName: "ApproveModule",
+		Query: `
+mutation ApproveModule ($input: ApproveModulePublishInput!) {
+	approveModulePublish(input: $input) {
+		id
+		version {
+			version
+		}
+	}
+}
+`,
+		Variables: &__ApproveModuleInput{
+			Input: input,
+		},
+	}
+	var err error
+
+	var data ApproveModuleResponse
+	resp := &graphql.Response{Data: &data}
+
+	err = client.MakeRequest(
+		ctx,
+		req,
+		resp,
+	)
+
+	return &data, err
+}
+
+func AssignModuleReviewToSelf(
+	ctx context.Context,
+	client graphql.Client,
+	moduleId string,
+) (*AssignModuleReviewToSelfResponse, error) {
+	req := &graphql.Request{
+		OpName: "AssignModuleReviewToSelf",
+		Query: `
+mutation AssignModuleReviewToSelf ($moduleId: ID!) {
+	assignDraftModuleForReview(moduleId: $moduleId) {
+		assignedReviewer
+		moduleId
+	}
+}
+`,
+		Variables: &__AssignModuleReviewToSelfInput{
+			ModuleId: moduleId,
+		},
+	}
+	var err error
+
+	var data AssignModuleReviewToSelfResponse
+	resp := &graphql.Response{Data: &data}
+
+	err = client.MakeRequest(
+		ctx,
+		req,
+		resp,
+	)
+
+	return &data, err
+}
 
 func CreateAppStoreListing(
 	ctx context.Context,
@@ -2423,6 +3350,57 @@ query GetAppStoreListing ($id: ID!) {
 	return &data, err
 }
 
+func GetDraftWellnessOfferingModule(
+	ctx context.Context,
+	client graphql.Client,
+	moduleId string,
+) (*GetDraftWellnessOfferingModuleResponse, error) {
+	req := &graphql.Request{
+		OpName: "GetDraftWellnessOfferingModule",
+		Query: `
+query GetDraftWellnessOfferingModule ($moduleId: ID!) {
+	draftModule(moduleId: $moduleId) {
+		... DraftWellnessOfferingModule
+	}
+}
+fragment DraftWellnessOfferingModule on DraftMarketplaceModule {
+	id
+	title
+	description
+	source {
+		__typename
+		... on WellnessOffering {
+			... WellnessOfferingSource
+		}
+	}
+}
+fragment WellnessOfferingSource on WellnessOffering {
+	id
+	provider
+	imageUrl
+	infoUrl
+	configurationSchema
+	approximateUnitCost
+}
+`,
+		Variables: &__GetDraftWellnessOfferingModuleInput{
+			ModuleId: moduleId,
+		},
+	}
+	var err error
+
+	var data GetDraftWellnessOfferingModuleResponse
+	resp := &graphql.Response{Data: &data}
+
+	err = client.MakeRequest(
+		ctx,
+		req,
+		resp,
+	)
+
+	return &data, err
+}
+
 func GetPublishedModule(
 	ctx context.Context,
 	client graphql.Client,
@@ -2494,13 +3472,17 @@ fragment WellnessOfferingModule on MarketplaceModule {
 	source {
 		__typename
 		... on WellnessOffering {
-			provider
-			imageUrl
-			infoUrl
-			configurationSchema
-			approximateUnitCost
+			... WellnessOfferingSource
 		}
 	}
+}
+fragment WellnessOfferingSource on WellnessOffering {
+	id
+	provider
+	imageUrl
+	infoUrl
+	configurationSchema
+	approximateUnitCost
 }
 `,
 		Variables: &__GetWellnessOfferingModuleInput{
@@ -2567,6 +3549,7 @@ func PublishModuleV3(
 mutation PublishModuleV3 ($input: PublishDraftModuleInputV3!) {
 	publishDraftModuleV3(input: $input) {
 		id
+		publishReviewId
 		version {
 			version
 		}
