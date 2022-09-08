@@ -7,6 +7,7 @@ import (
 
 	"github.com/blang/semver/v4"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -323,6 +324,10 @@ func (w wellnessOfferingResource) Delete(ctx context.Context, req tfsdk.DeleteRe
 
 	resp.State.RemoveResource(ctx)
 	tflog.Info(ctx, "Deleted Wellness Offering", map[string]any{"Name": state.Title})
+}
+
+func (w wellnessOfferingResource) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
+	tfsdk.ResourceImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
 
 func (w wellnessOfferingResource) handleApproval(ctx context.Context, plan wellnessOffering, moduleId string, state *tfsdk.State, diags *diag.Diagnostics) {

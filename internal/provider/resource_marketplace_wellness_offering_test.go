@@ -187,6 +187,40 @@ func TestAccMarketplaceWellnessOffering_automaticApprovalWithUpdates(t *testing.
 	})
 }
 
+func TestAccMarketplaceWellnessOffering_import(t *testing.T) {
+	skipNoLambda(t)
+	id, _ := uuid.GenerateUUID()
+
+	t.Setenv(common.HeadersEnvVar, getHeaders(t))
+	t.Setenv(useLambdaEnvVar, "1")
+	header, err := common.HeaderFromEnv()
+	if err != nil {
+		t.Fatalf("error getting required headers %v", err)
+	}
+
+	resource.Test(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProviderFactories,
+
+		Steps: []resource.TestStep{
+			{
+				Config: testAccOffering_basic(id, false, defaultDesc),
+				Check: resource.ComposeAggregateTestCheckFunc(testCheckPublishedModule(t, id, header),
+					resource.TestCheckResourceAttr(testWellnessOfferingResName, "is_approved", "true"),
+					resource.TestCheckResourceAttr(testWellnessOfferingResName, "version", "1.0.0")),
+			},
+			{
+				ImportState:   true,
+				ImportStateId: id,
+				ResourceName:  testWellnessOfferingResName,
+				Config:        testAccOffering_basic(id, false, defaultDesc),
+				Check: resource.ComposeAggregateTestCheckFunc(testCheckPublishedModule(t, id, header),
+					resource.TestCheckResourceAttr(testWellnessOfferingResName, "is_approved", "true"),
+					resource.TestCheckResourceAttr(testWellnessOfferingResName, "version", "1.0.0")),
+			},
+		},
+	})
+}
+
 // TODO: finalize this test.
 // - require valid PHC account credentials
 
