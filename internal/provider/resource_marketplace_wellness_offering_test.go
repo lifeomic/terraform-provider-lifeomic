@@ -14,6 +14,7 @@ import (
 
 const (
 	defaultHeadersf = "{\"LifeOmic-Policy\":\"{\\\"rules\\\":{\\\"publishContent\\\":true, \\\"lifeomicMarketplaceAdmin\\\": true}}\",\"LifeOmic-User\":\"%s\",\"LifeOmic-Account\":\"%s\"}"
+	defaultDesc     = "A fake marketplace wellness offering"
 )
 
 func skipNoLambda(t *testing.T) {
@@ -47,7 +48,7 @@ func TestAccMarketplaceWellnessOffering_basic(t *testing.T) {
 
 		Steps: []resource.TestStep{
 			{
-				Config: testAccOffering_basic(id, true, "1.0.0"),
+				Config: testAccOffering_basic(id, true, defaultDesc),
 				Check: resource.ComposeAggregateTestCheckFunc(testCheckPublishedModule(t, id, header),
 					resource.TestCheckResourceAttr(testWellnessOfferingResName, "is_test_module", "true"),
 					resource.TestCheckResourceAttr(testWellnessOfferingResName, "is_approved", "true"),
@@ -73,13 +74,14 @@ func TestAccMarketplaceWellnessOffering_basicUpdate(t *testing.T) {
 
 		Steps: []resource.TestStep{
 			{
-				Config: testAccOffering_basic(id, true, "1.0.0"),
+				Config: testAccOffering_basic(id, true, defaultDesc),
 				Check: resource.ComposeAggregateTestCheckFunc(testCheckPublishedModule(t, id, header),
 					resource.TestCheckResourceAttr(testWellnessOfferingResName, "is_approved", "true"),
-					resource.TestCheckResourceAttr(testWellnessOfferingResName, "is_test_module", "true")),
+					resource.TestCheckResourceAttr(testWellnessOfferingResName, "is_test_module", "true"),
+					resource.TestCheckResourceAttr(testWellnessOfferingResName, "version", "1.0.0")),
 			},
 			{
-				Config: testAccOffering_basic(id, true, "1.0.1"),
+				Config: testAccOffering_basic(id, true, "a new description"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					func(s *terraform.State) error {
 						client := newClientSet("", "", header).Marketplace
@@ -89,15 +91,15 @@ func TestAccMarketplaceWellnessOffering_basicUpdate(t *testing.T) {
 							return err
 						}
 
-						if module.MyModule.Version != "1.0.1" {
-							t.Fatalf("expected module version to be 1.0.1, instead got %s", module.MyModule.Version)
+						if module.MyModule.Version != "1.1.0" {
+							t.Fatalf("expected module version to be 1.1.0, instead got %s", module.MyModule.Version)
 						}
 
 						return nil
 					},
 					resource.TestCheckResourceAttr(testWellnessOfferingResName, "is_approved", "true"),
 					resource.TestCheckResourceAttr(testWellnessOfferingResName, "is_test_module", "true"),
-					resource.TestCheckResourceAttr(testWellnessOfferingResName, "version", "1.0.1"),
+					resource.TestCheckResourceAttr(testWellnessOfferingResName, "version", "1.1.0"),
 				),
 			},
 		},
@@ -120,7 +122,7 @@ func TestAccMarketplaceWellnessOffering_automaticApproval(t *testing.T) {
 
 		Steps: []resource.TestStep{
 			{
-				Config: testAccOffering_basic(id, false, "1.0.0"),
+				Config: testAccOffering_basic(id, false, defaultDesc),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					func(s *terraform.State) error {
 						client := newClientSet("", "", header).Marketplace
@@ -155,12 +157,13 @@ func TestAccMarketplaceWellnessOffering_automaticApprovalWithUpdates(t *testing.
 
 		Steps: []resource.TestStep{
 			{
-				Config: testAccOffering_basic(id, false, "1.0.0"),
+				Config: testAccOffering_basic(id, false, defaultDesc),
 				Check: resource.ComposeAggregateTestCheckFunc(testCheckPublishedModule(t, id, header),
-					resource.TestCheckResourceAttr(testWellnessOfferingResName, "is_approved", "true")),
+					resource.TestCheckResourceAttr(testWellnessOfferingResName, "is_approved", "true"),
+					resource.TestCheckResourceAttr(testWellnessOfferingResName, "version", "1.0.0")),
 			},
 			{
-				Config: testAccOffering_basic(id, false, "1.0.1"),
+				Config: testAccOffering_basic(id, false, "a really fake module"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					func(s *terraform.State) error {
 						client := newClientSet("", "", header).Marketplace
@@ -170,14 +173,14 @@ func TestAccMarketplaceWellnessOffering_automaticApprovalWithUpdates(t *testing.
 							return err
 						}
 
-						if module.MyModule.Version != "1.0.1" {
-							t.Fatalf("expected module version to be 1.0.1, instead got %s", module.MyModule.Version)
+						if module.MyModule.Version != "1.1.0" {
+							t.Fatalf("expected module version to be 1.1.0, instead got %s", module.MyModule.Version)
 						}
 
 						return nil
 					},
 					resource.TestCheckResourceAttr(testWellnessOfferingResName, "is_approved", "true"),
-					resource.TestCheckResourceAttr(testWellnessOfferingResName, "version", "1.0.1"),
+					resource.TestCheckResourceAttr(testWellnessOfferingResName, "version", "1.1.0"),
 				),
 			},
 		},
@@ -221,13 +224,12 @@ func TestAccMarketplaceWellnessOffering_automaticApprovalWithUpdates(t *testing.
 // 	})
 // }
 
-func testAccOffering_basic(id string, isTest bool, version string) string {
+func testAccOffering_basic(id string, isTest bool, desc string) string {
 	return fmt.Sprintf(`resource "lifeomic_marketplace_wellness_offering" "test" {
 	id = "%s"
 	title = "Fake Module"
-	description = "A fake marketplace module"
+	description = "%s"
 	marketplace_provider = "LifeOmic"
-	version = "%s"
 	image_url = "https://placekitten.com/1800/1600"
 	info_url = "https://example.com"
 	approximate_unit_cost = 10000
@@ -238,7 +240,7 @@ func testAccOffering_basic(id string, isTest bool, version string) string {
 	is_enabled = true
 	install_url = "lambda://wellness-service:deployed/v1/private/life-league"
 	is_test_module = %t
-	}`, id, version, isTest)
+	}`, id, desc, isTest)
 }
 
 func testCheckPublishedModule(t *testing.T, id string, header map[string]string) func(s *terraform.State) error {

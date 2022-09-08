@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/blang/semver/v4"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -68,8 +69,8 @@ func (wellnessOfferingResourceType) GetSchema(_ context.Context) (tfsdk.Schema, 
 				Type:     types.StringType,
 			},
 			"version": {
-				Required: true,
 				Type:     types.StringType,
+				Computed: true,
 			},
 			"image_url": {
 				Required: true,
@@ -188,7 +189,7 @@ func (w wellnessOfferingResource) Create(ctx context.Context, req tfsdk.CreateRe
 	publishResp, err := w.clientSet.Marketplace.PublishModuleV3(ctx, gqlclient.PublishDraftModuleInputV3{
 		ModuleId: draftModuleResp.CreateDraftModule.Id,
 		Version: gqlclient.ModuleVersionInput{
-			Version: plan.Version.Value,
+			Version: "1.0.0",
 		},
 		IsTestModule: plan.IsTestModule.Value,
 	})
@@ -240,6 +241,17 @@ func (w wellnessOfferingResource) Update(ctx context.Context, req tfsdk.UpdateRe
 		return
 	}
 
+	currentVersion, err := semver.Parse(state.Version.Value)
+	if err != nil {
+		resp.Diagnostics.AddError("unable to parse module version in state", err.Error())
+		return
+	}
+	err = currentVersion.IncrementMinor()
+	if err != nil {
+		resp.Diagnostics.AddError("unable to increment module version", err.Error())
+		return
+	}
+
 	// create new draft
 	draftModuleInput, diags := plan.ToMarketplaceInputObject(ctx)
 	if diags.HasError() {
@@ -277,7 +289,7 @@ func (w wellnessOfferingResource) Update(ctx context.Context, req tfsdk.UpdateRe
 	publishResp, err := w.clientSet.Marketplace.PublishModuleV3(ctx, gqlclient.PublishDraftModuleInputV3{
 		ModuleId: draftModuleResp.CreateDraftModule.Id,
 		Version: gqlclient.ModuleVersionInput{
-			Version: plan.Version.Value,
+			Version: currentVersion.String(),
 		},
 		IsTestModule: plan.IsTestModule.Value,
 	})
