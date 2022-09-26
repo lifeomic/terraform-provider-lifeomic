@@ -27,7 +27,7 @@ type wellnessOffering struct {
 	ImageURL            types.String `tfsdk:"image_url"`
 	InfoURL             types.String `tfsdk:"info_url"`
 	ApproximateUnitCost types.Int64  `tfsdk:"approximate_unit_cost"`
-	SubsidyType         types.String `tfsdk:subsidy_type`
+	SubsidyType         types.String `tfsdk:"subsidy_type"`
 	InstallURL          types.String `tfsdk:"install_url"`
 	ConfigurationSchema types.String `tfsdk:"configuration_schema"`
 	IsEnabled           types.Bool   `tfsdk:"is_enabled"`
@@ -100,8 +100,9 @@ func (wellnessOfferingResourceType) GetSchema(_ context.Context) (tfsdk.Schema, 
 				Type:     types.BoolType,
 			},
 			"subsidy_type": {
-				Required: true,
-				Type:     types.StringType,
+				Required:    true,
+				Type:        types.StringType,
+				Description: "One of SERVICE | REDEMPTION | LIFE_LEAGUE_PARTNER | LIFE_LEAGUE_PARENT",
 			},
 			"is_test_module": {
 				Optional: true,
@@ -178,7 +179,7 @@ func (w wellnessOfferingResource) Create(ctx context.Context, req tfsdk.CreateRe
 		SourceInfo: gqlclient.WellnessOfferingModuleSourceInfo{
 			ApproximateUnitCost: int(plan.ApproximateUnitCost.Value),
 			ConfigurationSchema: plan.ConfigurationSchema.Value,
-			SubsidyType:         plan.SubsidyType.Value,
+			SubsidyType:         gqlclient.SubsidyType(plan.SubsidyType.Value),
 			ImageUrl:            plan.ImageURL.Value,
 			InfoUrl:             plan.InfoURL.Value,
 			InstallUrl:          plan.InstallURL.Value,
@@ -280,7 +281,7 @@ func (w wellnessOfferingResource) Update(ctx context.Context, req tfsdk.UpdateRe
 		SourceInfo: gqlclient.WellnessOfferingModuleSourceInfo{
 			ApproximateUnitCost: int(plan.ApproximateUnitCost.Value),
 			ConfigurationSchema: plan.ConfigurationSchema.Value,
-			SubsidyType:         plan.SubsidyType.Value,
+			SubsidyType:         gqlclient.SubsidyType(plan.SubsidyType.Value),
 			ImageUrl:            plan.ImageURL.Value,
 			InfoUrl:             plan.InfoURL.Value,
 			InstallUrl:          plan.InstallURL.Value,
@@ -431,7 +432,7 @@ func setWellnessOfferingState(ctx context.Context, config *wellnessOffering, sta
 		ID:                  types.String{Value: w.Id},
 		Title:               types.String{Value: w.Title},
 		Description:         types.String{Value: w.Description},
-		SubsidyType:         types.String{Value: w.SubsidyType},
+		SubsidyType:         types.String{Value: string(source.SubsidyType)},
 		MarketplaceProvider: types.String{Value: source.Provider},
 		Version:             types.String{Value: w.Version},
 		ImageURL:            types.String{Value: source.ImageUrl},

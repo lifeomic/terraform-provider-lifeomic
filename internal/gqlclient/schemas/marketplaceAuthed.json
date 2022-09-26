@@ -7050,6 +7050,16 @@
                 }
               },
               "defaultValue": null
+            },
+            {
+              "name": "isTestModule",
+              "description": null,
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              },
+              "defaultValue": null
             }
           ],
           "interfaces": null,
@@ -7087,6 +7097,16 @@
                   "name": "String",
                   "ofType": null
                 }
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "isTestModule",
+              "description": null,
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
               },
               "defaultValue": null
             }
@@ -14536,6 +14556,16 @@
                 }
               },
               "defaultValue": null
+            },
+            {
+              "name": "subsidyType",
+              "description": "The type of subsidy, defaults to SERVICE",
+              "type": {
+                "kind": "ENUM",
+                "name": "SubsidyType",
+                "ofType": null
+              },
+              "defaultValue": null
             }
           ],
           "interfaces": null,
@@ -19406,6 +19436,41 @@
           "possibleTypes": null
         },
         {
+          "kind": "ENUM",
+          "name": "SubsidyType",
+          "description": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "enumValues": [
+            {
+              "name": "SERVICE",
+              "description": null,
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "REDEMPTION",
+              "description": null,
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "LIFE_LEAGUE_PARENT",
+              "description": null,
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "LIFE_LEAGUE_PARTNER",
+              "description": null,
+              "isDeprecated": false,
+              "deprecationReason": null
+            }
+          ],
+          "possibleTypes": null
+        },
+        {
           "kind": "OBJECT",
           "name": "WellnessOffering",
           "description": null,
@@ -19518,6 +19583,18 @@
                   "name": "String",
                   "ofType": null
                 }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "subsidyType",
+              "description": "The type of subsidy, defaults to SERVICE",
+              "args": [],
+              "type": {
+                "kind": "ENUM",
+                "name": "SubsidyType",
+                "ofType": null
               },
               "isDeprecated": false,
               "deprecationReason": null
