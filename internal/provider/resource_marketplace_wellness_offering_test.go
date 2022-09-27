@@ -273,6 +273,7 @@ func testAccOffering_basic(id string, isTest bool, desc string) string {
 		})
 	is_enabled = true
 	install_url = "lambda://wellness-service:deployed/v1/private/life-league"
+	subsidy_type = "SERVICE"
 	is_test_module = %t
 	}`, id, desc, isTest)
 }

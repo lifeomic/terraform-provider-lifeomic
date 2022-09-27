@@ -107,6 +107,7 @@ fragment WellnessOfferingSource on WellnessOffering {
   infoUrl
   configurationSchema
   approximateUnitCost
+  subsidyType
 }
 
 fragment WellnessOfferingModule on MarketplaceModule {

@@ -25,8 +25,8 @@ marketplace_wellness_offering manages Wellness Offering subsidies
 - `install_url` (String)
 - `is_enabled` (Boolean)
 - `marketplace_provider` (String)
+- `subsidy_type` (String)
 - `title` (String) The title of the Wellness Offering
-- `version` (String)
 
 ### Optional
 
@@ -37,5 +37,6 @@ marketplace_wellness_offering manages Wellness Offering subsidies
 ### Read-Only
 
 - `is_approved` (Boolean)
+- `version` (String)
 
 
