@@ -28,6 +28,7 @@ type wellnessOffering struct {
 	InfoURL             types.String `tfsdk:"info_url"`
 	ApproximateUnitCost types.Int64  `tfsdk:"approximate_unit_cost"`
 	SubsidyType         types.String `tfsdk:"subsidy_type"`
+	AppLink             types.String `tfsdk:"app_link"`
 	InstallURL          types.String `tfsdk:"install_url"`
 	ConfigurationSchema types.String `tfsdk:"configuration_schema"`
 	IsEnabled           types.Bool   `tfsdk:"is_enabled"`
@@ -103,6 +104,11 @@ func (wellnessOfferingResourceType) GetSchema(_ context.Context) (tfsdk.Schema, 
 				Required:    true,
 				Type:        types.StringType,
 				Description: "One of SERVICE | REDEMPTION | LIFE_LEAGUE_PARTNER | LIFE_LEAGUE_PARENT",
+			},
+			"app_link": {
+				Optional:   true,
+				Type:				types.StringType,
+				Description: "Link to open the subsidy in-app",
 			},
 			"is_test_module": {
 				Optional: true,
@@ -180,6 +186,7 @@ func (w wellnessOfferingResource) Create(ctx context.Context, req tfsdk.CreateRe
 			ApproximateUnitCost: int(plan.ApproximateUnitCost.Value),
 			ConfigurationSchema: plan.ConfigurationSchema.Value,
 			SubsidyType:         gqlclient.SubsidyType(plan.SubsidyType.Value),
+			AppLink:             plan.AppLink.Value,
 			ImageUrl:            plan.ImageURL.Value,
 			InfoUrl:             plan.InfoURL.Value,
 			InstallUrl:          plan.InstallURL.Value,
@@ -282,6 +289,7 @@ func (w wellnessOfferingResource) Update(ctx context.Context, req tfsdk.UpdateRe
 			ApproximateUnitCost: int(plan.ApproximateUnitCost.Value),
 			ConfigurationSchema: plan.ConfigurationSchema.Value,
 			SubsidyType:         gqlclient.SubsidyType(plan.SubsidyType.Value),
+			AppLink:             plan.AppLink.Value,
 			ImageUrl:            plan.ImageURL.Value,
 			InfoUrl:             plan.InfoURL.Value,
 			InstallUrl:          plan.InstallURL.Value,
@@ -433,6 +441,7 @@ func setWellnessOfferingState(ctx context.Context, config *wellnessOffering, sta
 		Title:               types.String{Value: w.Title},
 		Description:         types.String{Value: w.Description},
 		SubsidyType:         types.String{Value: string(source.SubsidyType)},
+		AppLink:             types.String{Value: source.AppLink},
 		MarketplaceProvider: types.String{Value: source.Provider},
 		Version:             types.String{Value: w.Version},
 		ImageURL:            types.String{Value: source.ImageUrl},

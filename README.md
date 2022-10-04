@@ -16,6 +16,10 @@ in this repository to demonstrate usage.
 In order to build the provider from source, you'll need to have [go][go-binaries]1.19+
 installed. Then run `make build`.
 
+### Regenerating GQL Client
+
+If you're picking up changes to GQL APIs, run `make generate`
+
 ### Using a local provider build
 
 Refer to the upstream documentation on [development overrides][tf-dev-overrides].

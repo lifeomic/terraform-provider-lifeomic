@@ -2131,6 +2131,9 @@ type WebAppletTileBehavior {
 }
 
 type WellnessOffering {
+  """The link to open details about the subsidy for the participant"""
+  appLink: String
+
   """The approximate per-redemption cost of the offering in pennies."""
   approximateUnitCost: Int!
 
@@ -2166,6 +2169,9 @@ input WellnessOfferingInput {
 }
 
 input WellnessOfferingModuleSourceInfo {
+  """The link to open details about the subsidy for the participant"""
+  appLink: String
+
   """The approximate per-redemption cost of the offering in pennies."""
   approximateUnitCost: Int!
 
