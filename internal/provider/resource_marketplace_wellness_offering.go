@@ -106,8 +106,8 @@ func (wellnessOfferingResourceType) GetSchema(_ context.Context) (tfsdk.Schema, 
 				Description: "One of SERVICE | REDEMPTION | LIFE_LEAGUE_PARTNER | LIFE_LEAGUE_PARENT",
 			},
 			"app_link": {
-				Optional:   true,
-				Type:				types.StringType,
+				Optional:    true,
+				Type:        types.StringType,
 				Description: "Link to open the subsidy in-app",
 			},
 			"is_test_module": {
@@ -437,11 +437,16 @@ func setWellnessOfferingState(ctx context.Context, config *wellnessOffering, sta
 		IsTestModule:   config.IsTestModule,
 		InstallURL:     config.InstallURL,
 
-		ID:                  types.String{Value: w.Id},
-		Title:               types.String{Value: w.Title},
-		Description:         types.String{Value: w.Description},
-		SubsidyType:         types.String{Value: string(source.SubsidyType)},
-		AppLink:             types.String{Value: source.AppLink},
+		ID:          types.String{Value: w.Id},
+		Title:       types.String{Value: w.Title},
+		Description: types.String{Value: w.Description},
+		SubsidyType: types.String{Value: string(source.SubsidyType)},
+		AppLink: types.String{
+			// Since AppLink is optional, but GQL returns string for a null value
+			// we explicitly set this to null so we don't get inconsistent plans
+			Null:  source.AppLink == "",
+			Value: source.AppLink,
+		},
 		MarketplaceProvider: types.String{Value: source.Provider},
 		Version:             types.String{Value: w.Version},
 		ImageURL:            types.String{Value: source.ImageUrl},
