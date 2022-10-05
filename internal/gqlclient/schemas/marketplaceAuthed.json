@@ -14566,6 +14566,16 @@
                 "ofType": null
               },
               "defaultValue": null
+            },
+            {
+              "name": "appLink",
+              "description": "The link to open details about the subsidy for the participant",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "defaultValue": null
             }
           ],
           "interfaces": null,
@@ -19594,6 +19604,18 @@
               "type": {
                 "kind": "ENUM",
                 "name": "SubsidyType",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "appLink",
+              "description": "The link to open details about the subsidy for the participant",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               },
               "isDeprecated": false,

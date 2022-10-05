@@ -1258,6 +1258,11 @@ func (v *DraftWellnessOfferingModuleSourceWellnessOffering) GetSubsidyType() Sub
 	return v.WellnessOfferingSource.SubsidyType
 }
 
+// GetAppLink returns DraftWellnessOfferingModuleSourceWellnessOffering.AppLink, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModuleSourceWellnessOffering) GetAppLink() string {
+	return v.WellnessOfferingSource.AppLink
+}
+
 func (v *DraftWellnessOfferingModuleSourceWellnessOffering) UnmarshalJSON(b []byte) error {
 
 	if string(b) == "null" {
@@ -1299,6 +1304,8 @@ type __premarshalDraftWellnessOfferingModuleSourceWellnessOffering struct {
 	ApproximateUnitCost int `json:"approximateUnitCost"`
 
 	SubsidyType SubsidyType `json:"subsidyType"`
+
+	AppLink string `json:"appLink"`
 }
 
 func (v *DraftWellnessOfferingModuleSourceWellnessOffering) MarshalJSON() ([]byte, error) {
@@ -1320,6 +1327,7 @@ func (v *DraftWellnessOfferingModuleSourceWellnessOffering) __premarshalJSON() (
 	retval.ConfigurationSchema = v.WellnessOfferingSource.ConfigurationSchema
 	retval.ApproximateUnitCost = v.WellnessOfferingSource.ApproximateUnitCost
 	retval.SubsidyType = v.WellnessOfferingSource.SubsidyType
+	retval.AppLink = v.WellnessOfferingSource.AppLink
 	return &retval, nil
 }
 
@@ -2426,6 +2434,8 @@ type WellnessOfferingModuleSourceDomainOntology struct {
 func (v *WellnessOfferingModuleSourceDomainOntology) GetTypename() string { return v.Typename }
 
 type WellnessOfferingModuleSourceInfo struct {
+	// The link to open details about the subsidy for the participant
+	AppLink string `json:"appLink"`
 	// The approximate per-redemption cost of the offering in pennies.
 	ApproximateUnitCost int `json:"approximateUnitCost"`
 	// The configuration schema for this offering, as a JSON blob.
@@ -2442,6 +2452,9 @@ type WellnessOfferingModuleSourceInfo struct {
 	// The type of subsidy, defaults to SERVICE
 	SubsidyType SubsidyType `json:"subsidyType"`
 }
+
+// GetAppLink returns WellnessOfferingModuleSourceInfo.AppLink, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingModuleSourceInfo) GetAppLink() string { return v.AppLink }
 
 // GetApproximateUnitCost returns WellnessOfferingModuleSourceInfo.ApproximateUnitCost, and is useful for accessing the field via an interface.
 func (v *WellnessOfferingModuleSourceInfo) GetApproximateUnitCost() int { return v.ApproximateUnitCost }
@@ -2827,6 +2840,11 @@ func (v *WellnessOfferingModuleSourceWellnessOffering) GetSubsidyType() SubsidyT
 	return v.WellnessOfferingSource.SubsidyType
 }
 
+// GetAppLink returns WellnessOfferingModuleSourceWellnessOffering.AppLink, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingModuleSourceWellnessOffering) GetAppLink() string {
+	return v.WellnessOfferingSource.AppLink
+}
+
 func (v *WellnessOfferingModuleSourceWellnessOffering) UnmarshalJSON(b []byte) error {
 
 	if string(b) == "null" {
@@ -2868,6 +2886,8 @@ type __premarshalWellnessOfferingModuleSourceWellnessOffering struct {
 	ApproximateUnitCost int `json:"approximateUnitCost"`
 
 	SubsidyType SubsidyType `json:"subsidyType"`
+
+	AppLink string `json:"appLink"`
 }
 
 func (v *WellnessOfferingModuleSourceWellnessOffering) MarshalJSON() ([]byte, error) {
@@ -2889,6 +2909,7 @@ func (v *WellnessOfferingModuleSourceWellnessOffering) __premarshalJSON() (*__pr
 	retval.ConfigurationSchema = v.WellnessOfferingSource.ConfigurationSchema
 	retval.ApproximateUnitCost = v.WellnessOfferingSource.ApproximateUnitCost
 	retval.SubsidyType = v.WellnessOfferingSource.SubsidyType
+	retval.AppLink = v.WellnessOfferingSource.AppLink
 	return &retval, nil
 }
 
@@ -2915,6 +2936,8 @@ type WellnessOfferingSource struct {
 	ApproximateUnitCost int `json:"approximateUnitCost"`
 	// The type of subsidy, defaults to SERVICE
 	SubsidyType SubsidyType `json:"subsidyType"`
+	// The link to open details about the subsidy for the participant
+	AppLink string `json:"appLink"`
 }
 
 // GetId returns WellnessOfferingSource.Id, and is useful for accessing the field via an interface.
@@ -2937,6 +2960,9 @@ func (v *WellnessOfferingSource) GetApproximateUnitCost() int { return v.Approxi
 
 // GetSubsidyType returns WellnessOfferingSource.SubsidyType, and is useful for accessing the field via an interface.
 func (v *WellnessOfferingSource) GetSubsidyType() SubsidyType { return v.SubsidyType }
+
+// GetAppLink returns WellnessOfferingSource.AppLink, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingSource) GetAppLink() string { return v.AppLink }
 
 // __ApproveModuleInput is used internally by genqlient
 type __ApproveModuleInput struct {
@@ -3421,6 +3447,7 @@ fragment WellnessOfferingSource on WellnessOffering {
 	configurationSchema
 	approximateUnitCost
 	subsidyType
+	appLink
 }
 `,
 		Variables: &__GetDraftWellnessOfferingModuleInput{
@@ -3524,6 +3551,7 @@ fragment WellnessOfferingSource on WellnessOffering {
 	configurationSchema
 	approximateUnitCost
 	subsidyType
+	appLink
 }
 `,
 		Variables: &__GetWellnessOfferingModuleInput{

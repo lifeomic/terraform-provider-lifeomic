@@ -25,11 +25,12 @@ marketplace_wellness_offering manages Wellness Offering subsidies
 - `install_url` (String)
 - `is_enabled` (Boolean)
 - `marketplace_provider` (String)
-- `subsidy_type` (String)
+- `subsidy_type` (String) One of SERVICE | REDEMPTION | LIFE_LEAGUE_PARTNER | LIFE_LEAGUE_PARENT
 - `title` (String) The title of the Wellness Offering
 
 ### Optional
 
+- `app_link` (String) Link to open the subsidy in-app
 - `id` (String) An optional id for the Wellness Offering
 - `is_test_module` (Boolean)
 - `parent_module_id` (String)

@@ -58,6 +58,31 @@ func TestAccMarketplaceWellnessOffering_basic(t *testing.T) {
 	})
 }
 
+func TestAccMarketplaceWellnessOffering_basicWithAppLink(t *testing.T) {
+	skipNoLambda(t)
+	id, _ := uuid.GenerateUUID()
+	t.Setenv(common.HeadersEnvVar, getHeaders(t))
+	header, err := common.HeaderFromEnv()
+	if err != nil {
+		t.Fatalf("error getting required headers %v", err)
+	}
+
+	resource.Test(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProviderFactories,
+
+		Steps: []resource.TestStep{
+			{
+				Config: testAccOffering_withAppLink(id, true, defaultDesc),
+				Check: resource.ComposeAggregateTestCheckFunc(testCheckPublishedModule(t, id, header),
+					resource.TestCheckResourceAttr(testWellnessOfferingResName, "is_test_module", "true"),
+					resource.TestCheckResourceAttr(testWellnessOfferingResName, "is_approved", "true"),
+					resource.TestCheckResourceAttr(testWellnessOfferingResName, "app_link", "https://example.com"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccMarketplaceWellnessOffering_basicUpdate(t *testing.T) {
 	skipNoLambda(t)
 	id, _ := uuid.GenerateUUID()
@@ -275,6 +300,27 @@ func testAccOffering_basic(id string, isTest bool, desc string) string {
 	install_url = "lambda://wellness-service:deployed/v1/private/life-league"
 	subsidy_type = "SERVICE"
 	is_test_module = %t
+	}`, id, desc, isTest)
+}
+
+func testAccOffering_withAppLink(id string, isTest bool, desc string) string {
+	return fmt.Sprintf(`resource "lifeomic_marketplace_wellness_offering" "test" {
+	id = "%s"
+	title = "Fake Module"
+	description = "%s"
+	marketplace_provider = "LifeOmic"
+	image_url = "https://placekitten.com/1800/1600"
+	info_url = "https://example.com"
+	approximate_unit_cost = 10000
+	configuration_schema = jsonencode({
+		"version": "06-28-2021",
+		"fields": []
+		})
+	is_enabled = true
+	install_url = "lambda://wellness-service:deployed/v1/private/life-league"
+	subsidy_type = "SERVICE"
+	is_test_module = %t
+	app_link = "https://example.com"
 	}`, id, desc, isTest)
 }
 
