@@ -1325,6 +1325,16 @@ type PreviewImageWithDescription {
   url: String!
 }
 
+type PriceRange {
+  high: Int!
+  low: Int!
+}
+
+input PriceRangeInput {
+  high: Int!
+  low: Int!
+}
+
 input PriceSearchInput {
   interval: PaymentInterval!
   range: IntRange
@@ -2139,6 +2149,9 @@ type WellnessOffering {
 
   """The configuration schema for this offering, as a JSON blob."""
   configurationSchema: String!
+
+  """A URL for an icon representing the offering"""
+  iconUrl: String
   id: String!
 
   """A URL of a marketing image for the offering."""
@@ -2146,6 +2159,9 @@ type WellnessOffering {
 
   """A link to more information about the offering."""
   infoUrl: String!
+
+  """A low and high value for the offering in integer USD pennies"""
+  priceRange: PriceRange
 
   """The name of the provider of this offering."""
   provider: String!
@@ -2178,6 +2194,9 @@ input WellnessOfferingModuleSourceInfo {
   """The configuration schema for this offering, as a JSON blob."""
   configurationSchema: String!
 
+  """A URL for an icon representing the offering"""
+  iconUrl: String
+
   """A URL of a marketing image for the offering."""
   imageUrl: String!
 
@@ -2189,6 +2208,9 @@ input WellnessOfferingModuleSourceInfo {
   the offering, and can be an Alpha-compatible internal lambda url (e.g. lambda://ulta-service:deployed).
   """
   installUrl: String!
+
+  """A low and high value for the offering in integer USD pennies"""
+  priceRange: PriceRangeInput
 
   """The name of the provider of this offering."""
   provider: String!

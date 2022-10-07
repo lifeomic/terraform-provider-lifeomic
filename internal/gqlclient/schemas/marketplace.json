@@ -5796,6 +5796,49 @@
         },
         {
           "kind": "OBJECT",
+          "name": "PriceRange",
+          "description": null,
+          "fields": [
+            {
+              "name": "low",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "high",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
           "name": "WellnessOffering",
           "description": null,
           "fields": [
@@ -5930,6 +5973,30 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "iconUrl",
+              "description": "A URL for an icon representing the offering",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "priceRange",
+              "description": "A low and high value for the offering in integer USD pennies",
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "PriceRange",
                 "ofType": null
               },
               "isDeprecated": false,
