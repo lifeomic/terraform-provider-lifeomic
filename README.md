@@ -18,7 +18,9 @@ installed. Then run `make build`.
 
 ### Regenerating GQL Client
 
-If you're picking up changes to GQL APIs, run `make generate`
+If you're picking up changes to GQL APIs, run `make generate`.
+
+If it's not downloading schema updates try running `make -B generate`
 
 ### Using a local provider build
 
@@ -37,3 +39,11 @@ LIFEOMIC_TOKEN=<auth-token> LIFEOMIC_ACCOUNT=<account-id> make acctest
 [go-binaries]: https://go.dev/dl/
 [tf-dev-overrides]: https://www.terraform.io/cli/config/config-file#development-overrides-for-provider-developers
 [auth-token-guide]: https://phc.docs.lifeomic.com/user-guides/account-management/api-keys
+
+#### Wellness Offering Acceptance Tests
+
+(must be logged in to AWS)
+
+```shell
+ LIFEOMIC_TOKEN=fake-token LIFEOMIC_ACCOUNT=fake-account TESTARGS="-run='TestAccMarketplaceWellnessOffering'" LIFEOMIC_USE_LAMBDA=1 make acctest
+```

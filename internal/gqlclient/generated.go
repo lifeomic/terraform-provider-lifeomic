@@ -1263,6 +1263,16 @@ func (v *DraftWellnessOfferingModuleSourceWellnessOffering) GetAppLink() string 
 	return v.WellnessOfferingSource.AppLink
 }
 
+// GetIconUrl returns DraftWellnessOfferingModuleSourceWellnessOffering.IconUrl, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModuleSourceWellnessOffering) GetIconUrl() string {
+	return v.WellnessOfferingSource.IconUrl
+}
+
+// GetPriceRange returns DraftWellnessOfferingModuleSourceWellnessOffering.PriceRange, and is useful for accessing the field via an interface.
+func (v *DraftWellnessOfferingModuleSourceWellnessOffering) GetPriceRange() WellnessOfferingSourcePriceRange {
+	return v.WellnessOfferingSource.PriceRange
+}
+
 func (v *DraftWellnessOfferingModuleSourceWellnessOffering) UnmarshalJSON(b []byte) error {
 
 	if string(b) == "null" {
@@ -1306,6 +1316,10 @@ type __premarshalDraftWellnessOfferingModuleSourceWellnessOffering struct {
 	SubsidyType SubsidyType `json:"subsidyType"`
 
 	AppLink string `json:"appLink"`
+
+	IconUrl string `json:"iconUrl"`
+
+	PriceRange WellnessOfferingSourcePriceRange `json:"priceRange"`
 }
 
 func (v *DraftWellnessOfferingModuleSourceWellnessOffering) MarshalJSON() ([]byte, error) {
@@ -1328,6 +1342,8 @@ func (v *DraftWellnessOfferingModuleSourceWellnessOffering) __premarshalJSON() (
 	retval.ApproximateUnitCost = v.WellnessOfferingSource.ApproximateUnitCost
 	retval.SubsidyType = v.WellnessOfferingSource.SubsidyType
 	retval.AppLink = v.WellnessOfferingSource.AppLink
+	retval.IconUrl = v.WellnessOfferingSource.IconUrl
+	retval.PriceRange = v.WellnessOfferingSource.PriceRange
 	return &retval, nil
 }
 
@@ -1998,6 +2014,17 @@ const (
 	PaymentIntervalYearly  PaymentInterval = "YEARLY"
 )
 
+type PriceRangeInput struct {
+	High int `json:"high"`
+	Low  int `json:"low"`
+}
+
+// GetHigh returns PriceRangeInput.High, and is useful for accessing the field via an interface.
+func (v *PriceRangeInput) GetHigh() int { return v.High }
+
+// GetLow returns PriceRangeInput.Low, and is useful for accessing the field via an interface.
+func (v *PriceRangeInput) GetLow() int { return v.Low }
+
 type PublicAppTileModuleSourceInfo struct {
 	Id string `json:"id"`
 }
@@ -2440,6 +2467,8 @@ type WellnessOfferingModuleSourceInfo struct {
 	ApproximateUnitCost int `json:"approximateUnitCost"`
 	// The configuration schema for this offering, as a JSON blob.
 	ConfigurationSchema string `json:"configurationSchema"`
+	// A URL for an icon representing the offering
+	IconUrl string `json:"iconUrl"`
 	// A URL of a marketing image for the offering.
 	ImageUrl string `json:"imageUrl"`
 	// A link to more information about the offering.
@@ -2447,6 +2476,8 @@ type WellnessOfferingModuleSourceInfo struct {
 	// A URL to send install events to. This should be the url of a service that manages
 	// the offering, and can be an Alpha-compatible internal lambda url (e.g. lambda://ulta-service:deployed).
 	InstallUrl string `json:"installUrl"`
+	// A low and high value for the offering in integer USD pennies
+	PriceRange PriceRangeInput `json:"priceRange"`
 	// The name of the provider of this offering.
 	Provider string `json:"provider"`
 	// The type of subsidy, defaults to SERVICE
@@ -2464,6 +2495,9 @@ func (v *WellnessOfferingModuleSourceInfo) GetConfigurationSchema() string {
 	return v.ConfigurationSchema
 }
 
+// GetIconUrl returns WellnessOfferingModuleSourceInfo.IconUrl, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingModuleSourceInfo) GetIconUrl() string { return v.IconUrl }
+
 // GetImageUrl returns WellnessOfferingModuleSourceInfo.ImageUrl, and is useful for accessing the field via an interface.
 func (v *WellnessOfferingModuleSourceInfo) GetImageUrl() string { return v.ImageUrl }
 
@@ -2472,6 +2506,9 @@ func (v *WellnessOfferingModuleSourceInfo) GetInfoUrl() string { return v.InfoUr
 
 // GetInstallUrl returns WellnessOfferingModuleSourceInfo.InstallUrl, and is useful for accessing the field via an interface.
 func (v *WellnessOfferingModuleSourceInfo) GetInstallUrl() string { return v.InstallUrl }
+
+// GetPriceRange returns WellnessOfferingModuleSourceInfo.PriceRange, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingModuleSourceInfo) GetPriceRange() PriceRangeInput { return v.PriceRange }
 
 // GetProvider returns WellnessOfferingModuleSourceInfo.Provider, and is useful for accessing the field via an interface.
 func (v *WellnessOfferingModuleSourceInfo) GetProvider() string { return v.Provider }
@@ -2845,6 +2882,16 @@ func (v *WellnessOfferingModuleSourceWellnessOffering) GetAppLink() string {
 	return v.WellnessOfferingSource.AppLink
 }
 
+// GetIconUrl returns WellnessOfferingModuleSourceWellnessOffering.IconUrl, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingModuleSourceWellnessOffering) GetIconUrl() string {
+	return v.WellnessOfferingSource.IconUrl
+}
+
+// GetPriceRange returns WellnessOfferingModuleSourceWellnessOffering.PriceRange, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingModuleSourceWellnessOffering) GetPriceRange() WellnessOfferingSourcePriceRange {
+	return v.WellnessOfferingSource.PriceRange
+}
+
 func (v *WellnessOfferingModuleSourceWellnessOffering) UnmarshalJSON(b []byte) error {
 
 	if string(b) == "null" {
@@ -2888,6 +2935,10 @@ type __premarshalWellnessOfferingModuleSourceWellnessOffering struct {
 	SubsidyType SubsidyType `json:"subsidyType"`
 
 	AppLink string `json:"appLink"`
+
+	IconUrl string `json:"iconUrl"`
+
+	PriceRange WellnessOfferingSourcePriceRange `json:"priceRange"`
 }
 
 func (v *WellnessOfferingModuleSourceWellnessOffering) MarshalJSON() ([]byte, error) {
@@ -2910,6 +2961,8 @@ func (v *WellnessOfferingModuleSourceWellnessOffering) __premarshalJSON() (*__pr
 	retval.ApproximateUnitCost = v.WellnessOfferingSource.ApproximateUnitCost
 	retval.SubsidyType = v.WellnessOfferingSource.SubsidyType
 	retval.AppLink = v.WellnessOfferingSource.AppLink
+	retval.IconUrl = v.WellnessOfferingSource.IconUrl
+	retval.PriceRange = v.WellnessOfferingSource.PriceRange
 	return &retval, nil
 }
 
@@ -2938,6 +2991,10 @@ type WellnessOfferingSource struct {
 	SubsidyType SubsidyType `json:"subsidyType"`
 	// The link to open details about the subsidy for the participant
 	AppLink string `json:"appLink"`
+	// A URL for an icon representing the offering
+	IconUrl string `json:"iconUrl"`
+	// A low and high value for the offering in integer USD pennies
+	PriceRange WellnessOfferingSourcePriceRange `json:"priceRange"`
 }
 
 // GetId returns WellnessOfferingSource.Id, and is useful for accessing the field via an interface.
@@ -2963,6 +3020,26 @@ func (v *WellnessOfferingSource) GetSubsidyType() SubsidyType { return v.Subsidy
 
 // GetAppLink returns WellnessOfferingSource.AppLink, and is useful for accessing the field via an interface.
 func (v *WellnessOfferingSource) GetAppLink() string { return v.AppLink }
+
+// GetIconUrl returns WellnessOfferingSource.IconUrl, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingSource) GetIconUrl() string { return v.IconUrl }
+
+// GetPriceRange returns WellnessOfferingSource.PriceRange, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingSource) GetPriceRange() WellnessOfferingSourcePriceRange {
+	return v.PriceRange
+}
+
+// WellnessOfferingSourcePriceRange includes the requested fields of the GraphQL type PriceRange.
+type WellnessOfferingSourcePriceRange struct {
+	Low  int `json:"low"`
+	High int `json:"high"`
+}
+
+// GetLow returns WellnessOfferingSourcePriceRange.Low, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingSourcePriceRange) GetLow() int { return v.Low }
+
+// GetHigh returns WellnessOfferingSourcePriceRange.High, and is useful for accessing the field via an interface.
+func (v *WellnessOfferingSourcePriceRange) GetHigh() int { return v.High }
 
 // __ApproveModuleInput is used internally by genqlient
 type __ApproveModuleInput struct {
@@ -3448,6 +3525,11 @@ fragment WellnessOfferingSource on WellnessOffering {
 	approximateUnitCost
 	subsidyType
 	appLink
+	iconUrl
+	priceRange {
+		low
+		high
+	}
 }
 `,
 		Variables: &__GetDraftWellnessOfferingModuleInput{
@@ -3552,6 +3634,11 @@ fragment WellnessOfferingSource on WellnessOffering {
 	approximateUnitCost
 	subsidyType
 	appLink
+	iconUrl
+	priceRange {
+		low
+		high
+	}
 }
 `,
 		Variables: &__GetWellnessOfferingModuleInput{

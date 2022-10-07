@@ -3,9 +3,11 @@ package provider
 import (
 	"context"
 	"fmt"
+	"math/big"
 	"time"
 
 	"github.com/blang/semver/v4"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
@@ -34,6 +36,39 @@ type wellnessOffering struct {
 	IsEnabled           types.Bool   `tfsdk:"is_enabled"`
 	IsTestModule        types.Bool   `tfsdk:"is_test_module"`
 	IsApproved          types.Bool   `tfsdk:"is_approved"`
+	IconUrl             types.String `tfsdk:"icon_url"`
+	PriceRange          types.Object `tfsdk:"price_range"`
+}
+
+func unmarshalPriceRange(ctx context.Context, input types.Object) (gqlclient.PriceRangeInput, error) {
+	priceRange := gqlclient.PriceRangeInput{}
+	low, err := input.Attrs["low"].ToTerraformValue(ctx)
+	if err != nil {
+		return priceRange, err
+	}
+
+	var l big.Float
+	err = low.As(&l)
+	if err != nil {
+		return priceRange, err
+	}
+	high, err := input.Attrs["high"].ToTerraformValue(ctx)
+	if err != nil {
+		return priceRange, err
+	}
+	var h big.Float
+	err = high.As(&h)
+	if err != nil {
+		return priceRange, err
+	}
+
+	lInt, _ := l.Int(nil)
+	hInt, _ := h.Int(nil)
+
+	priceRange.Low = int(lInt.Int64())
+	priceRange.High = int(hInt.Int64())
+
+	return priceRange, nil
 }
 
 // wellnessOfferingResource implements tfsdk
@@ -110,6 +145,21 @@ func (wellnessOfferingResourceType) GetSchema(_ context.Context) (tfsdk.Schema, 
 				Type:        types.StringType,
 				Description: "Link to open the subsidy in-app",
 			},
+			"icon_url": {
+				Optional:    true,
+				Type:        types.StringType,
+				Description: "Link to an icon representing the subsidy",
+			},
+			"price_range": {
+				Optional: true,
+				Type: types.ObjectType{
+					AttrTypes: map[string]attr.Type{
+						"low":  types.Int64Type,
+						"high": types.Int64Type,
+					},
+				},
+				Description: "Link to an icon representing the subsidy",
+			},
 			"is_test_module": {
 				Optional: true,
 				Type:     types.BoolType,
@@ -179,8 +229,7 @@ func (w wellnessOfferingResource) Create(ctx context.Context, req tfsdk.CreateRe
 
 	tflog.Info(ctx, "Created new DraftModule", map[string]any{"draftModule": draftModuleResp.CreateDraftModule})
 
-	// Set module source
-	setSourceResp, err := w.clientSet.Marketplace.SetWellnessOfferingDraftModuleSource(ctx, gqlclient.SetDraftModuleWellnessOfferingSourceInput{
+	sourceInput := gqlclient.SetDraftModuleWellnessOfferingSourceInput{
 		ModuleId: draftModuleResp.CreateDraftModule.Id,
 		SourceInfo: gqlclient.WellnessOfferingModuleSourceInfo{
 			ApproximateUnitCost: int(plan.ApproximateUnitCost.Value),
@@ -191,8 +240,21 @@ func (w wellnessOfferingResource) Create(ctx context.Context, req tfsdk.CreateRe
 			InfoUrl:             plan.InfoURL.Value,
 			InstallUrl:          plan.InstallURL.Value,
 			Provider:            plan.MarketplaceProvider.Value,
+			IconUrl:             plan.IconUrl.Value,
 		},
-	})
+	}
+
+	if !plan.PriceRange.Null {
+		priceRange, err := unmarshalPriceRange(ctx, plan.PriceRange)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to get values from price_range", err.Error())
+			return
+		}
+		sourceInput.SourceInfo.PriceRange = priceRange
+	}
+
+	// Set module source
+	setSourceResp, err := w.clientSet.Marketplace.SetWellnessOfferingDraftModuleSource(ctx, sourceInput)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to set source of Wellness Draft Module", err.Error())
 		return
@@ -283,7 +345,7 @@ func (w wellnessOfferingResource) Update(ctx context.Context, req tfsdk.UpdateRe
 	}
 	tflog.Info(ctx, "Created new DraftModule", map[string]any{"draftModule": draftModuleResp.CreateDraftModule})
 
-	setSourceResp, err := w.clientSet.Marketplace.SetWellnessOfferingDraftModuleSource(ctx, gqlclient.SetDraftModuleWellnessOfferingSourceInput{
+	sourceInput := gqlclient.SetDraftModuleWellnessOfferingSourceInput{
 		ModuleId: draftModuleResp.CreateDraftModule.Id,
 		SourceInfo: gqlclient.WellnessOfferingModuleSourceInfo{
 			ApproximateUnitCost: int(plan.ApproximateUnitCost.Value),
@@ -294,8 +356,20 @@ func (w wellnessOfferingResource) Update(ctx context.Context, req tfsdk.UpdateRe
 			InfoUrl:             plan.InfoURL.Value,
 			InstallUrl:          plan.InstallURL.Value,
 			Provider:            plan.MarketplaceProvider.Value,
+			IconUrl:             plan.IconUrl.Value,
 		},
-	})
+	}
+
+	if !plan.PriceRange.Null {
+		priceRange, err := unmarshalPriceRange(ctx, plan.PriceRange)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to get values from price_range", err.Error())
+			return
+		}
+		sourceInput.SourceInfo.PriceRange = priceRange
+	}
+
+	setSourceResp, err := w.clientSet.Marketplace.SetWellnessOfferingDraftModuleSource(ctx, sourceInput)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to set source of Wellness Offering draft module", err.Error())
 		return
@@ -454,6 +528,20 @@ func setWellnessOfferingState(ctx context.Context, config *wellnessOffering, sta
 		ApproximateUnitCost: types.Int64{Value: int64(source.ApproximateUnitCost)},
 		ConfigurationSchema: types.String{Value: source.ConfigurationSchema},
 		IsApproved:          types.Bool{Value: isApproved},
+		IconUrl: types.String{
+			Null:  source.IconUrl == "",
+			Value: source.IconUrl},
+		PriceRange: types.Object{
+			Null: source.PriceRange.Low == 0 && source.PriceRange.High == 0,
+			Attrs: map[string]attr.Value{
+				"low":  types.Int64{Value: int64(source.PriceRange.Low)},
+				"high": types.Int64{Value: int64(source.PriceRange.High)},
+			},
+			AttrTypes: map[string]attr.Type{
+				"low":  types.Int64Type,
+				"high": types.Int64Type,
+			},
+		},
 	})...)
 	return
 }

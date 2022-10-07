@@ -31,13 +31,23 @@ marketplace_wellness_offering manages Wellness Offering subsidies
 ### Optional
 
 - `app_link` (String) Link to open the subsidy in-app
+- `icon_url` (String) Link to an icon representing the subsidy
 - `id` (String) An optional id for the Wellness Offering
 - `is_test_module` (Boolean)
 - `parent_module_id` (String)
+- `price_range` (Object) Link to an icon representing the subsidy (see [below for nested schema](#nestedatt--price_range))
 
 ### Read-Only
 
 - `is_approved` (Boolean)
 - `version` (String)
+
+<a id="nestedatt--price_range"></a>
+### Nested Schema for `price_range`
+
+Optional:
+
+- `high` (Number)
+- `low` (Number)
 
 

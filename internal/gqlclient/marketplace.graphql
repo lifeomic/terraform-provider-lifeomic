@@ -109,6 +109,11 @@ fragment WellnessOfferingSource on WellnessOffering {
   approximateUnitCost
   subsidyType
   appLink
+  iconUrl
+  priceRange {
+    low
+    high
+  }
 }
 
 fragment WellnessOfferingModule on MarketplaceModule {

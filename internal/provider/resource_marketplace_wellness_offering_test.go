@@ -212,6 +212,55 @@ func TestAccMarketplaceWellnessOffering_automaticApprovalWithUpdates(t *testing.
 	})
 }
 
+func TestAccMarketplaceWellnessOffering_priceRange(t *testing.T) {
+	skipNoLambda(t)
+	id, _ := uuid.GenerateUUID()
+
+	t.Setenv(common.HeadersEnvVar, getHeaders(t))
+	t.Setenv(useLambdaEnvVar, "1")
+	header, err := common.HeaderFromEnv()
+	if err != nil {
+		t.Fatalf("error getting required headers %v", err)
+	}
+
+	resource.Test(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProviderFactories,
+
+		Steps: []resource.TestStep{
+			{
+				Config: testAccOffering_withPriceRange(id, false, 5_000, 10_000),
+				Check: resource.ComposeAggregateTestCheckFunc(testCheckPublishedModule(t, id, header),
+					resource.TestCheckResourceAttr(testWellnessOfferingResName, "is_approved", "true"),
+					resource.TestCheckResourceAttr(testWellnessOfferingResName, "version", "1.0.0"),
+					resource.TestCheckResourceAttr(testWellnessOfferingResName, "price_range.low", "5000"),
+					resource.TestCheckResourceAttr(testWellnessOfferingResName, "price_range.high", "10000")),
+			},
+			{
+				Config: testAccOffering_withPriceRange(id, false, 1_000, 10_000),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					func(s *terraform.State) error {
+						client := newClientSet("", "", header).Marketplace
+
+						module, err := client.GetPublishedModule(context.Background(), id, "")
+						if err != nil {
+							return err
+						}
+
+						if module.MyModule.Version != "1.1.0" {
+							t.Fatalf("expected module version to be 1.1.0, instead got %s", module.MyModule.Version)
+						}
+
+						return nil
+					},
+					resource.TestCheckResourceAttr(testWellnessOfferingResName, "is_approved", "true"),
+					resource.TestCheckResourceAttr(testWellnessOfferingResName, "version", "1.1.0"),
+					resource.TestCheckResourceAttr(testWellnessOfferingResName, "price_range.low", "1000"),
+					resource.TestCheckResourceAttr(testWellnessOfferingResName, "price_range.high", "10000")),
+			},
+		},
+	})
+}
+
 func TestAccMarketplaceWellnessOffering_import(t *testing.T) {
 	skipNoLambda(t)
 	id, _ := uuid.GenerateUUID()
@@ -298,6 +347,7 @@ func testAccOffering_basic(id string, isTest bool, desc string) string {
 		})
 	is_enabled = true
 	install_url = "lambda://wellness-service:deployed/v1/private/life-league"
+	icon_url = "https://placekitten/200/200"
 	subsidy_type = "SERVICE"
 	is_test_module = %t
 	}`, id, desc, isTest)
@@ -322,6 +372,30 @@ func testAccOffering_withAppLink(id string, isTest bool, desc string) string {
 	is_test_module = %t
 	app_link = "https://example.com"
 	}`, id, desc, isTest)
+}
+
+func testAccOffering_withPriceRange(id string, isTest bool, low, high int) string {
+	return fmt.Sprintf(`resource "lifeomic_marketplace_wellness_offering" "test" {
+	id = "%s"
+	title = "Fake Module"
+	description = "A fake module"
+	marketplace_provider = "LifeOmic"
+	image_url = "https://placekitten.com/1800/1600"
+	info_url = "https://example.com"
+	approximate_unit_cost = 10000
+	configuration_schema = jsonencode({
+		"version": "06-28-2021",
+		"fields": []
+		})
+	is_enabled = true
+	install_url = "lambda://wellness-service:deployed/v1/private/life-league"
+	subsidy_type = "SERVICE"
+	is_test_module = %t
+	price_range = {
+		low = %d,
+		high = %d 
+	}
+	}`, id, isTest, low, high)
 }
 
 func testCheckPublishedModule(t *testing.T, id string, header map[string]string) func(s *terraform.State) error {
