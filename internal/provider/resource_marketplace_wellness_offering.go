@@ -18,6 +18,19 @@ import (
 	"github.com/lifeomic/terraform-provider-lifeomic/internal/gqlclient"
 )
 
+func retry[T any](fn func() (T, error), maxRetries int, delay time.Duration) (T, error) {
+	var err error
+	var res T
+	for attempts := 0; attempts < maxRetries; attempts++ {
+		res, err = fn()
+		if err == nil {
+			return res, err
+		}
+		time.Sleep(delay)
+	}
+	return res, err
+}
+
 // wellnessOffering represents the state of marketplace_wellness_offering resource
 type wellnessOffering struct {
 	ID                  types.String `tfsdk:"id"`
@@ -454,9 +467,11 @@ func (w wellnessOfferingResource) handleApproval(ctx context.Context, plan welln
 	// If we're using lambda we automatically attempt to publish a review for the module
 	tflog.Info(ctx, "using lambda detected. Attempting to automatically approve the module")
 
-	// TODO: fight the eventual consistency
-	time.Sleep(5 * time.Second)
-	assignModuleResp, err := w.clientSet.Marketplace.AssignModuleReviewToSelf(ctx, moduleId)
+	assignModuleForReview := func() (*gqlclient.AssignModuleReviewToSelfResponse, error) {
+		return w.clientSet.Marketplace.AssignModuleReviewToSelf(ctx, moduleId)
+	}
+
+	assignModuleResp, err := retry(assignModuleForReview, 10, time.Second*1)
 	if err != nil {
 		diags.AddError("failed to assign module for review", err.Error())
 		return
@@ -471,9 +486,13 @@ func (w wellnessOfferingResource) handleApproval(ctx context.Context, plan welln
 		diags.AddError("failed to approve module", err.Error())
 		return
 	}
-
 	tflog.Info(ctx, "Approved module", map[string]any{"approval": approveResp.ApproveModulePublish})
-	offering, err := w.clientSet.Marketplace.GetWellnessOfferingModule(ctx, moduleId)
+
+	getApprovedModule := func() (*gqlclient.GetWellnessOfferingModuleResponse, error) {
+		return w.clientSet.Marketplace.GetWellnessOfferingModule(ctx, moduleId)
+	}
+
+	offering, err := retry(getApprovedModule, 10, time.Second*1)
 	if err != nil {
 		diags.AddError("failed to get published and approved Wellness Offering Module", err.Error())
 		return
