@@ -38,7 +38,7 @@ LIFEOMIC_TOKEN=<auth-token> LIFEOMIC_ACCOUNT=<account-id> make acctest
 
 [go-binaries]: https://go.dev/dl/
 [tf-dev-overrides]: https://www.terraform.io/cli/config/config-file#development-overrides-for-provider-developers
-[auth-token-guide]: https://phc.docs.lifeomic.com/user-guides/account-management/api-keys
+[auth-token-guide]: https://platform.docs.lifeomic.com/user-guides/account-info/api-keys
 
 #### Wellness Offering Acceptance Tests
 
