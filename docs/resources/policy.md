@@ -60,7 +60,7 @@ resource "lifeomic_policy" "my-policy" {
 
 ### Optional
 
-- `id` (String) The ID of this ABAC policy resource.
+- `id` (String) The ID of the ABAC policy resource.
 
 <a id="nestedblock--rule"></a>
 ### Nested Schema for `rule`
