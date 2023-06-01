@@ -10,27 +10,27 @@ import (
 
 // PolicyService facilitates communication with the Policy-related endpoints of
 // the PHC API.
-// See: https://docs.us.lifeomic.com/api/#lifeomic-core-api-policy
+// See: https://api.docs.lifeomic.com/#tag/Policy
 type PolicyService interface {
 	// List returns all policies.
-	// See: https://docs.us.lifeomic.com/api/#list-policies
+	// See: https://api.docs.lifeomic.com/#tag/Policy/operation/list-policies
 	List(context.Context, ListOptions) (PaginatedList[Policy], error)
 	// Create creates a new policy.
-	// See: https://docs.us.lifeomic.com/api/#create-policy
+	// See: https://api.docs.lifeomic.com/#tag/Policy/operation/create-policy
 	Create(context.Context, *Policy) (*Policy, error)
 	// Get gets a policy by name.
-	// See: https://docs.us.lifeomic.com/api/#get-a-policy
+	// See: https://api.docs.lifeomic.com/#tag/Policy/operation/list-policies
 	Get(context.Context, string) (*Policy, error)
 	// Update updates an existing policy.
-	// See: https://docs.us.lifeomic.com/api/#update-a-policy
+	// See: https://api.docs.lifeomic.com/#tag/Policy/operation/update-policy
 	Update(context.Context, string, *Policy) (*Policy, error)
 	// Delete deletes an existing policy.
-	// See: https://docs.us.lifeomic.com/api/#delete-a-policy
+	// See: https://api.docs.lifeomic.com/#tag/Policy/operation/delete-policy
 	Delete(context.Context, string) error
 }
 
 // Policy represents an ABAC policy document, mapping operations to rules.
-// See: https://phc.docs.lifeomic.com/development/abac-syntax
+// See: https://devcenter.docs.lifeomic.com/development/abac-syntax
 // Example Policy:
 //
 //		policy := client.Policy{
@@ -52,13 +52,13 @@ type Policy struct {
 }
 
 // PolicyDocument represents an ABAC policy document.
-// See: https://phc.docs.lifeomic.com/development/abac-syntax
+// See: https://devcenter.docs.lifeomic.com/development/abac-syntax
 type PolicyDocument struct {
 	Rules PolicyRules `json:"rules"`
 }
 
 // PolicyRules maps operations to ABAC rules.
-// See: https://phc.docs.lifeomic.com/development/abac-syntax#rules
+// See: https://devcenter.docs.lifeomic.com/development/abac-syntax#rules
 // Example with staitc rule:
 //
 //	rules := PolicyRules{"readData": StaticRule(true)}
@@ -120,7 +120,7 @@ type RuleExpression interface {
 
 // StaticRule represents an operation rule which is either fully permissive or
 // disabled. Use of this is heavily discouraged.
-// See: https://phc.docs.lifeomic.com/development/abac-syntax#rules
+// See: https://devcenter.docs.lifeomic.com/development/abac-syntax#rules
 type StaticRule bool
 
 func (StaticRule) ruleExpression() {}
@@ -131,7 +131,7 @@ type RuleMappings []RuleMap
 func (RuleMappings) ruleExpression() {}
 
 // RuleMap maps an attribute to an ABAC comparison.
-// See: https://phc.docs.lifeomic.com/development/abac-syntax#rules
+// See: https://devcenter.docs.lifeomic.com/development/abac-syntax#rules
 type RuleMap map[string]Comparison
 
 // GetComparison attempts to get the single attribute/subject to Comparison
@@ -197,14 +197,14 @@ func (r *RuleMap) UnmarshalJSON(b []byte) error {
 // polymorphic JSON which can either express a comparison between an attribute
 // and another attribute (TargetComparison), a single value (ValueComparison),
 // or an array of values (MultivalueComparison).
-// See: https://phc.docs.lifeomic.com/development/abac-syntax#comparisons
+// See: https://devcenter.docs.lifeomic.com/development/abac-syntax#comparisons
 type Comparison interface {
 	GetComparisonType() ComparisonType
 }
 
 // ValueComparison represents an ABAC comparison between an attribute and some
 // value.
-// See: https://phc.docs.lifeomic.com/development/abac-syntax#comparisons
+// See: https://devcenter.docs.lifeomic.com/development/abac-syntax#comparisons
 type ValueComparison struct {
 	Comparison ComparisonType `json:"comparison"`
 	Value      string         `json:"value"`
@@ -214,7 +214,7 @@ func (c ValueComparison) GetComparisonType() ComparisonType { return c.Compariso
 
 // MultivalueComparison represents an ABAC comparison between an attirbute and
 // some values.
-// See: https://phc.docs.lifeomic.com/development/abac-syntax#comparisons
+// See: https://devcenter.docs.lifeomic.com/development/abac-syntax#comparisons
 type MultivalueComparison struct {
 	Comparison ComparisonType `json:"comparison"`
 	Values     []string       `json:"value"`
@@ -231,7 +231,7 @@ type TargetComparison struct {
 func (c TargetComparison) GetComparisonType() ComparisonType { return c.Comparison }
 
 // A ComparisonType represents an ABAC comparison type.
-// See: https://phc.docs.lifeomic.com/development/abac-syntax#supported-comparisons
+// See: https://devcenter.docs.lifeomic.com/development/abac-syntax#supported-comparisons
 type ComparisonType string
 
 // supported comparison constants
