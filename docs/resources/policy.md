@@ -3,12 +3,12 @@
 page_title: "lifeomic_policy Resource - terraform-provider-lifeomic"
 subcategory: ""
 description: |-
-  lifeomic_policy manages an Attribute Based Access Control (ABAC) policy https://phc.docs.lifeomic.com/user-guides/access-control#privileges-and-permissions.
+  lifeomic_policy manages an Attribute Based Access Control (ABAC) policy https://platform.docs.lifeomic.com/user-guides/access-control#privileges-and-permissions.
 ---
 
 # lifeomic_policy (Resource)
 
-`lifeomic_policy` manages an [Attribute Based Access Control (ABAC) policy](https://phc.docs.lifeomic.com/user-guides/access-control#privileges-and-permissions).
+`lifeomic_policy` manages an [Attribute Based Access Control (ABAC) policy](https://platform.docs.lifeomic.com/user-guides/account-info/access-control#privileges-and-permission).
 
 ## Example Usage
 
@@ -56,18 +56,18 @@ resource "lifeomic_policy" "my-policy" {
 ### Required
 
 - `name` (String) The unique name of this ABAC policy.
-- `rule` (Block List, Min: 1) An ABAC [rule](https://phc.docs.lifeomic.com/development/abac-syntax#rules) containing comparisons to be evaluated for the given operation. (see [below for nested schema](#nestedblock--rule))
+- `rule` (Block List, Min: 1) An ABAC [rule](https://devcenter.docs.lifeomic.com/development/abac-syntax#rules) containing comparisons to be evaluated for the given operation. (see [below for nested schema](#nestedblock--rule))
 
 ### Optional
 
-- `id` (String) The ID of this ABAC policy resource.
+- `id` (String) The ID of the ABAC policy resource.
 
 <a id="nestedblock--rule"></a>
 ### Nested Schema for `rule`
 
 Required:
 
-- `operation` (String) The [operation](https://phc.docs.lifeomic.com/development/abac-syntax#operations) this ABAC rule governs.Exactly one of `comparison` and `allowed` should be set.
+- `operation` (String) The [operation](https://devcenter.docs.lifeomic.com/development/abac-syntax#operations) this ABAC rule governs.Exactly one of `comparison` and `allowed` should be set.
 
 Optional:
 
@@ -79,8 +79,8 @@ Optional:
 
 Required:
 
-- `subject` (String) The subject is the [attribute](https://phc.docs.lifeomic.com/development/abac-syntax#attributes) used in this ABAC comparison.
-- `type` (String) The [type](https://phc.docs.lifeomic.com/development/abac-syntax#supported-comparisons) of ABAC comparison.
+- `subject` (String) The subject is the [attribute](https://devcenter.docs.lifeomic.com/development/abac-syntax#attributes) used in this ABAC comparison.
+- `type` (String) The [type](https://devcenter.docs.lifeomic.com/development/abac-syntax#supported-comparisons) of ABAC comparison.
 
 Optional:
 
