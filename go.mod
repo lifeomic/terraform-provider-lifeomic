@@ -15,8 +15,8 @@ require (
 	github.com/hashicorp/terraform-plugin-go v0.12.0
 	github.com/hashicorp/terraform-plugin-log v0.7.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.20.0
-	github.com/stretchr/testify v1.8.0
-	github.com/vektah/gqlparser/v2 v2.4.5
+	github.com/stretchr/testify v1.9.0
+	github.com/vektah/gqlparser/v2 v2.5.14
 	gopkg.in/yaml.v3 v3.0.1
 )
 
